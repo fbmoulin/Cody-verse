@@ -2,6 +2,7 @@ modules = ["flutter"]
 
 [nix]
 channel = "stable-24_05"
+packages = ["flutter", "chromium"]
 
 [workflows]
 runButton = "Project"

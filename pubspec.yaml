@@ -33,7 +33,7 @@ dependencies:
   # UI & Animations
   animate_do: ^3.1.2
   lottie: ^2.7.0
-  material_color_utilities: ^0.5.0
+  material_color_utilities: ^0.8.0
   dynamic_color: ^1.6.8
   
   # Utilities
