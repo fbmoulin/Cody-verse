@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(CodyVerseApp());
+  runApp(MyApp());
 }
 
-class CodyVerseApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Cody Verse',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        useMaterial3: true,
       ),
       home: HomeScreen(),
     );
