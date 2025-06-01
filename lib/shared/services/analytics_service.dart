@@ -17,11 +17,9 @@ class AnalyticsService {
       final analyticsEnabled = await StorageService.getBool('analytics_enabled') ?? true;
       await _analytics.setAnalyticsCollectionEnabled(analyticsEnabled);
       
-      // Set default parameters
-      await _analytics.setDefaultParameters({
-        'app_version': AppConstants.appVersion,
-        'platform': defaultTargetPlatform.name,
-      });
+      // Set user properties for tracking
+      await _analytics.setUserProperty(name: 'app_version', value: AppConstants.appVersion);
+      await _analytics.setUserProperty(name: 'platform', value: defaultTargetPlatform.name);
       
       print('Analytics initialized');
     } catch (e) {

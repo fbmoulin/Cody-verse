@@ -27,3 +27,7 @@ waitForPort = 5000
 
 [deployment]
 run = ["sh", "-c", "flutter pub get && flutter run -d web-server --web-hostname 0.0.0.0 --web-port 5000"]
+
+[[ports]]
+localPort = 5000
+externalPort = 80
