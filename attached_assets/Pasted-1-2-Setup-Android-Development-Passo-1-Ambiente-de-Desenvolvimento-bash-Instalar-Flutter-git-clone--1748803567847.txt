@@ -1,0 +1,195 @@
+1.2 Setup Android Development
+Passo 1: Ambiente de Desenvolvimento
+bash# Instalar Flutter
+git clone https://github.com/flutter/flutter.git
+export PATH="$PATH:`pwd`/flutter/bin"
+
+# Verificar setup
+flutter doctor
+
+# Criar projeto
+flutter create mcp_learning_hub
+cd mcp_learning_hub
+
+# Dependências principais
+flutter pub add:
+  - riverpod_flutter
+  - go_router
+  - firebase_core
+  - cloud_firestore
+  - firebase_auth
+  - shared_preferences
+  - animate_do
+  - lottie
+Passo 2: Configuração Firebase Android
+bash# Install Firebase CLI
+npm install -g firebase-tools
+
+# Login e configure projeto
+firebase login
+firebase projects:create mcp-learning-hub
+
+# Configure Android
+firebase init
+
+# Download google-services.json para android/app/
+# Configure build.gradle files
+Passo 3: Material Design 3 Setup
+dart// pubspec.yaml
+dependencies:
+  material_color_utilities: ^0.5.0
+  dynamic_color: ^1.6.6
+  
+// Theme configuration
+ThemeData(
+  useMaterial3: true,
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: Color(0xFF4A55A2),
+    brightness: Brightness.dark,
+  ),
+)
+
+1.3 Arquitetura Android Específica
+Estrutura de Pastas Flutter
+lib/
+├── main.dart
+├── app/
+│   ├── app.dart
+│   └── routes.dart
+├── core/
+│   ├── constants/
+│   ├── extensions/
+│   ├── utils/
+│   └── theme/
+├── features/
+│   ├── dashboard/
+│   │   ├── presentation/
+│   │   ├── domain/
+│   │   └── data/
+│   ├── learning/
+│   ├── lab/
+│   ├── community/
+│   └── profile/
+├── shared/
+│   ├── widgets/
+│   ├── models/
+│   └── services/
+└── l10n/
+Estado Management com Riverpod
+dart// providers/user_provider.dart
+final userProvider = StateNotifierProvider<UserNotifier, UserState>((ref) {
+  return UserNotifier();
+});
+
+class UserNotifier extends StateNotifier<UserState> {
+  UserNotifier() : super(UserState.initial());
+  
+  void gainXP(int amount) {
+    final newXP = state.xp + amount;
+    final newLevel = (newXP / 500).floor() + 1;
+    
+    state = state.copyWith(
+      xp: newXP,
+      level: newLevel,
+    );
+    
+    if (newLevel > state.level) {
+      _showLevelUp();
+    }
+  }
+}
+UI Components Android
+dart// Material 3 Components customizados
+class MCPCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 0,
+      surfaceTintColor: Theme.of(context).colorScheme.surfaceTint,
+      child: // content
+    );
+  }
+}
+
+class MCPBottomNavigation extends StatelessWidget {
+  @override  
+  Widget build(BuildContext context) {
+    return NavigationBar(
+      selectedIndex: selectedIndex,
+      destinations: [
+        NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
+        NavigationDestination(icon: Icon(Icons.school), label: 'Learn'),
+        NavigationDestination(icon: Icon(Icons.science), label: 'Lab'),
+        NavigationDestination(icon: Icon(Icons.people), label: 'Community'),
+        NavigationDestination(icon: Icon(Icons.person), label: 'Profile'),
+      ],
+    );
+  }
+}
+
+1.4 Funcionalidades Android Específicas
+Notificações Push
+dart// Firebase Messaging
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+class NotificationService {
+  static final _messaging = FirebaseMessaging.instance;
+  
+  static Future<void> initialize() async {
+    await _messaging.requestPermission();
+    
+    // Handle foreground messages
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      _showLocalNotification(message);
+    });
+  }
+  
+  static void scheduleDaily() {
+    // Daily learning reminder
+    // Achievement notifications
+    // Streak reminders
+  }
+}
+Storage Offline
+dart// Local database com Hive
+import 'package:hive_flutter/hive_flutter.dart';
+
+@HiveType(typeId: 0)
+class UserProgress extends HiveObject {
+  @HiveField(0)
+  int xp;
+  
+  @HiveField(1)
+  int level;
+  
+  @HiveField(2)
+  List<String> completedModules;
+  
+  @HiveField(3)
+  Map<String, dynamic> achievements;
+}
+Analytics Android
+dart// Firebase Analytics
+import 'package:firebase_analytics/firebase_analytics.dart';
+
+class AnalyticsService {
+  static final _analytics = FirebaseAnalytics.instance;
+  
+  static void trackScreenView(String screenName) {
+    _analytics.logScreenView(screenName: screenName);
+  }
+  
+  static void trackLessonComplete(String lessonId) {
+    _analytics.logEvent(
+      name: 'lesson_complete',
+      parameters: {'lesson_id': lessonId},
+    );
+  }
+  
+  static void trackXPGain(int amount) {
+    _analytics.logEvent(
+      name: 'xp_gained',
+      parameters: {'amount': amount},
+    );
+  }
+}
