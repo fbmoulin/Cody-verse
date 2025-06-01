@@ -131,40 +131,49 @@ class HomeScreen extends StatelessWidget {
 class LearningModulesScreen extends StatelessWidget {
   final List<Map<String, dynamic>> modules = [
     {
-      'id': 1,
-      'title': 'Introduction to MCP',
-      'description': 'Learn the fundamentals of Model Context Protocol and its applications in AI systems',
-      'category': 'mcp_basics',
-      'difficulty_level': 'beginner',
-      'estimated_duration_minutes': 30,
-      'xp_reward': 20,
-    },
-    {
-      'id': 2,
-      'title': 'AI Prompt Engineering',
-      'description': 'Master the art of crafting effective prompts for AI models',
+      'id': 5,
+      'title': 'AI Basics',
+      'description': 'Fundamental concepts of artificial intelligence, machine learning, and neural networks',
       'category': 'ai_fundamentals',
       'difficulty_level': 'beginner',
       'estimated_duration_minutes': 45,
-      'xp_reward': 25,
+      'xp_reward': 30,
     },
     {
-      'id': 3,
-      'title': 'MCP Server Setup',
-      'description': 'Build and configure your first MCP server',
-      'category': 'mcp_implementation',
-      'difficulty_level': 'intermediate',
+      'id': 6,
+      'title': 'Prompt Engineering',
+      'description': 'Master the art of crafting effective prompts for optimal AI responses and behavior',
+      'category': 'prompt_engineering',
+      'difficulty_level': 'beginner',
       'estimated_duration_minutes': 60,
       'xp_reward': 35,
     },
     {
-      'id': 4,
-      'title': 'Advanced AI Concepts',
-      'description': 'Explore complex AI architectures and patterns',
-      'category': 'ai_advanced',
-      'difficulty_level': 'advanced',
+      'id': 7,
+      'title': 'AI Assistants',
+      'description': 'Understanding and building intelligent AI assistants for various applications',
+      'category': 'ai_assistants',
+      'difficulty_level': 'intermediate',
+      'estimated_duration_minutes': 75,
+      'xp_reward': 40,
+    },
+    {
+      'id': 8,
+      'title': 'AI Agents',
+      'description': 'Advanced autonomous AI agents with decision-making and goal-oriented behavior',
+      'category': 'ai_agents',
+      'difficulty_level': 'intermediate',
       'estimated_duration_minutes': 90,
       'xp_reward': 50,
+    },
+    {
+      'id': 9,
+      'title': 'Model Context Protocol (MCP)',
+      'description': 'Professional implementation of MCP for enterprise AI system integration',
+      'category': 'mcp_professional',
+      'difficulty_level': 'advanced',
+      'estimated_duration_minutes': 120,
+      'xp_reward': 60,
     },
   ];
 
@@ -253,14 +262,16 @@ class LearningModulesScreen extends StatelessWidget {
 
   IconData _getCategoryIcon(String category) {
     switch (category) {
-      case 'mcp_basics':
-        return Icons.foundation;
       case 'ai_fundamentals':
         return Icons.psychology;
-      case 'mcp_implementation':
-        return Icons.code;
-      case 'ai_advanced':
-        return Icons.rocket_launch;
+      case 'prompt_engineering':
+        return Icons.edit_note;
+      case 'ai_assistants':
+        return Icons.assistant;
+      case 'ai_agents':
+        return Icons.smart_toy;
+      case 'mcp_professional':
+        return Icons.integration_instructions;
       default:
         return Icons.book;
     }
@@ -274,61 +285,203 @@ class LessonsScreen extends StatelessWidget {
   LessonsScreen({required this.moduleId, required this.moduleTitle});
 
   final Map<int, List<Map<String, dynamic>>> lessonsData = {
-    1: [
+    5: [ // AI Basics
       {
         'id': 1,
-        'title': 'What is MCP?',
+        'title': 'What is Artificial Intelligence?',
+        'lesson_type': 'theory',
+        'xp_reward': 5,
+        'estimated_duration_minutes': 12,
+      },
+      {
+        'id': 2,
+        'title': 'Machine Learning Fundamentals',
+        'lesson_type': 'interactive',
+        'xp_reward': 8,
+        'estimated_duration_minutes': 15,
+      },
+      {
+        'id': 3,
+        'title': 'Neural Networks Explained',
+        'lesson_type': 'interactive',
+        'xp_reward': 8,
+        'estimated_duration_minutes': 18,
+      },
+      {
+        'id': 4,
+        'title': 'AI Ethics and Responsible Development',
         'lesson_type': 'theory',
         'xp_reward': 5,
         'estimated_duration_minutes': 10,
       },
       {
-        'id': 2,
-        'title': 'MCP Architecture Overview',
-        'lesson_type': 'theory',
-        'xp_reward': 5,
+        'id': 5,
+        'title': 'AI Basics Assessment',
+        'lesson_type': 'quiz',
+        'xp_reward': 15,
+        'estimated_duration_minutes': 8,
+      },
+    ],
+    6: [ // Prompt Engineering
+      {
+        'id': 6,
+        'title': 'Introduction to Prompt Engineering',
+        'lesson_type': 'interactive',
+        'xp_reward': 8,
         'estimated_duration_minutes': 15,
       },
       {
-        'id': 3,
-        'title': 'MCP Quiz',
-        'lesson_type': 'quiz',
+        'id': 7,
+        'title': 'Prompt Structure and Techniques',
+        'lesson_type': 'interactive',
         'xp_reward': 10,
-        'estimated_duration_minutes': 5,
-      },
-    ],
-    2: [
-      {
-        'id': 4,
-        'title': 'Understanding AI Prompts',
-        'lesson_type': 'theory',
-        'xp_reward': 5,
         'estimated_duration_minutes': 20,
       },
       {
-        'id': 5,
-        'title': 'Prompt Engineering Techniques',
+        'id': 8,
+        'title': 'Advanced Prompting Strategies',
         'lesson_type': 'interactive',
-        'xp_reward': 8,
+        'xp_reward': 12,
         'estimated_duration_minutes': 25,
       },
-    ],
-    3: [
       {
-        'id': 6,
-        'title': 'Setting Up Your First MCP Server',
+        'id': 9,
+        'title': 'Prompt Optimization and Testing',
         'lesson_type': 'lab',
         'xp_reward': 15,
+        'estimated_duration_minutes': 30,
+      },
+      {
+        'id': 10,
+        'title': 'Prompt Engineering Mastery Assessment',
+        'lesson_type': 'quiz',
+        'xp_reward': 20,
+        'estimated_duration_minutes': 12,
+      },
+    ],
+    7: [ // AI Assistants
+      {
+        'id': 11,
+        'title': 'Understanding AI Assistants',
+        'lesson_type': 'theory',
+        'xp_reward': 8,
+        'estimated_duration_minutes': 18,
+      },
+      {
+        'id': 12,
+        'title': 'Designing Assistant Personalities',
+        'lesson_type': 'interactive',
+        'xp_reward': 10,
+        'estimated_duration_minutes': 22,
+      },
+      {
+        'id': 13,
+        'title': 'Assistant Training and Fine-tuning',
+        'lesson_type': 'lab',
+        'xp_reward': 15,
+        'estimated_duration_minutes': 35,
+      },
+      {
+        'id': 14,
+        'title': 'Building Production AI Assistants',
+        'lesson_type': 'lab',
+        'xp_reward': 18,
+        'estimated_duration_minutes': 40,
+      },
+      {
+        'id': 15,
+        'title': 'AI Assistants Practical Project',
+        'lesson_type': 'lab',
+        'xp_reward': 25,
         'estimated_duration_minutes': 45,
       },
     ],
-    4: [
+    8: [ // AI Agents
       {
-        'id': 7,
-        'title': 'AI Model Architectures',
+        'id': 16,
+        'title': 'From Assistants to Autonomous Agents',
         'lesson_type': 'theory',
         'xp_reward': 10,
+        'estimated_duration_minutes': 20,
+      },
+      {
+        'id': 17,
+        'title': 'Goal-Oriented Agent Behavior',
+        'lesson_type': 'interactive',
+        'xp_reward': 12,
+        'estimated_duration_minutes': 25,
+      },
+      {
+        'id': 18,
+        'title': 'Multi-Agent Systems',
+        'lesson_type': 'interactive',
+        'xp_reward': 15,
         'estimated_duration_minutes': 30,
+      },
+      {
+        'id': 19,
+        'title': 'Agent Development Frameworks',
+        'lesson_type': 'lab',
+        'xp_reward': 18,
+        'estimated_duration_minutes': 40,
+      },
+      {
+        'id': 20,
+        'title': 'Advanced Agent Deployment',
+        'lesson_type': 'lab',
+        'xp_reward': 20,
+        'estimated_duration_minutes': 35,
+      },
+      {
+        'id': 21,
+        'title': 'AI Agents Capstone Project',
+        'lesson_type': 'lab',
+        'xp_reward': 30,
+        'estimated_duration_minutes': 60,
+      },
+    ],
+    9: [ // Model Context Protocol
+      {
+        'id': 22,
+        'title': 'Introduction to Model Context Protocol',
+        'lesson_type': 'theory',
+        'xp_reward': 12,
+        'estimated_duration_minutes': 25,
+      },
+      {
+        'id': 23,
+        'title': 'MCP Server Development',
+        'lesson_type': 'lab',
+        'xp_reward': 18,
+        'estimated_duration_minutes': 45,
+      },
+      {
+        'id': 24,
+        'title': 'MCP Client Integration',
+        'lesson_type': 'lab',
+        'xp_reward': 18,
+        'estimated_duration_minutes': 40,
+      },
+      {
+        'id': 25,
+        'title': 'Advanced MCP Patterns',
+        'lesson_type': 'lab',
+        'xp_reward': 22,
+        'estimated_duration_minutes': 50,
+      },
+      {
+        'id': 26,
+        'title': 'MCP Production Deployment',
+        'lesson_type': 'lab',
+        'xp_reward': 25,
+        'estimated_duration_minutes': 55,
+      },
+      {
+        'id': 27,
+        'title': 'MCP Professional Certification',
+        'lesson_type': 'quiz',
+        'xp_reward': 40,
+        'estimated_duration_minutes': 90,
       },
     ],
   };
