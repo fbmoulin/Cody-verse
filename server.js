@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const { config, validateConfig } = require('./server/config');
-const { testConnection, closeConnections } = require('./server/database');
+const { dbManager, testConnection, closeConnections } = require('./server/database');
 const dataInitializer = require('./services/dataInitializer');
 
 // Middleware
@@ -30,15 +30,18 @@ class CodyVerseServer {
       // Validar configurações
       validateConfig();
       
-      // Testar conexão com banco (não crítico)
+      // Initialize database with migrations
       try {
+        await dbManager.initialize();
+        console.log('Database initialized with migrations');
+        
         const dbConnected = await testConnection();
         if (!dbConnected) {
-          console.warn('Banco de dados indisponível - servidor continuará sem persistência');
+          console.warn('Database unavailable - server will continue without persistence');
         }
       } catch (error) {
-        console.warn('Erro na conexão com banco:', error.message);
-        console.log('Servidor continuará funcionando com dados em memória');
+        console.warn('Database connection error:', error.message);
+        console.log('Server will continue with in-memory data');
       }
       
       // Configurar middleware

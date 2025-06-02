@@ -20,10 +20,9 @@ async function testConnection() {
 
 async function closeConnections() {
   try {
-    await pool.end();
-    console.log('Conexões com banco de dados fechadas');
+    await dbManager.close();
   } catch (error) {
-    console.error('Erro ao fechar conexões:', error.message);
+    console.error('Error closing database connections:', error);
   }
 }
 
