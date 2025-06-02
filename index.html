@@ -843,6 +843,10 @@
         
         function renderCourseModules() {
             const grid = document.getElementById('courseGrid');
+            if (!courseModules || courseModules.length === 0) {
+                grid.innerHTML = '<p style="text-align: center; color: #666;">Loading courses...</p>';
+                return;
+            }
             grid.innerHTML = courseModules.map(module => `
                 <div class="module-card ${module.difficulty}" onclick="showModuleDetails(${module.id})">
                     <div class="module-header">
@@ -873,6 +877,10 @@
         
         function showModuleDetails(moduleId) {
             const module = courseModules.find(m => m.id === moduleId);
+            if (!module) {
+                console.error('Module not found:', moduleId);
+                return;
+            }
             const modalContent = document.getElementById('modalContent');
             
             modalContent.innerHTML = `
@@ -885,7 +893,7 @@
                 </div>
                 <div class="lessons-list">
                     <h3>Lições do Curso</h3>
-                    ${module.lessons.map((lesson, index) => `
+                    ${module.lessons && module.lessons.length > 0 ? module.lessons.map((lesson, index) => `
                         <div class="lesson-item" onclick="startLesson(${moduleId}, ${index})">
                             <div>
                                 <strong>${lesson.title}</strong>
@@ -896,7 +904,7 @@
                                 <div>${lesson.xp}</div>
                             </div>
                         </div>
-                    `).join('')}
+                    `).join('') : '<p>Lições em breve...</p>'}
                 </div>
                 <div style="margin-top: 30px; text-align: center;">
                     <button class="btn btn-primary" onclick="startModule(${moduleId})">Iniciar Módulo</button>
@@ -922,7 +930,10 @@
         
         function showLearningInterface(moduleId, lessonIndex) {
             const module = courseModules.find(m => m.id === moduleId);
-            if (!module) return;
+            if (!module || !module.lessons || module.lessons.length === 0) {
+                showNotification('Este módulo ainda não possui lições disponíveis.');
+                return;
+            }
 
             currentLearningState = {
                 moduleId: moduleId,
