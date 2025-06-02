@@ -257,6 +257,159 @@
         .type-interactive { background: #f3e5f5; color: #7b1fa2; }
         .type-lab { background: #e8f5e8; color: #388e3c; }
         .type-quiz { background: #fff3e0; color: #f57c00; }
+        
+        /* Cody Avatar Styles */
+        .cody-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .cody-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            border: 3px solid white;
+        }
+        
+        .cody-avatar:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+        
+        .cody-face {
+            font-size: 30px;
+            color: white;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .cody-chat {
+            position: absolute;
+            bottom: 100px;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 320px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: scale(0);
+            transform-origin: bottom right;
+            transition: all 0.3s ease;
+        }
+        
+        .cody-chat.active {
+            transform: scale(1);
+        }
+        
+        .cody-chat::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 30px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid white;
+        }
+        
+        .cody-message {
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .cody-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .cody-option {
+            background: #f0f0f0;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.2s ease;
+        }
+        
+        .cody-option:hover {
+            background: #e0e0e0;
+        }
+        
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: #666;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typing {
+            0%, 60%, 100% { opacity: 0.3; }
+            30% { opacity: 1; }
+        }
+        
+        .cody-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1001;
+        }
+        
+        .cody-notification.show {
+            transform: translateX(0);
+        }
+        
+        .progress-ring {
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            width: 90px;
+            height: 90px;
+        }
+        
+        .progress-ring-circle {
+            stroke: #4caf50;
+            stroke-width: 3;
+            fill: transparent;
+            stroke-dasharray: 283;
+            stroke-dashoffset: 283;
+            transition: stroke-dashoffset 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -274,6 +427,31 @@
         <div class="course-grid" id="courseGrid">
             <!-- Course modules will be populated by JavaScript -->
         </div>
+    </div>
+    
+    <!-- Cody Avatar -->
+    <div class="cody-container">
+        <div class="cody-chat" id="codyChat">
+            <div id="codyMessage" class="cody-message">
+                Hi! I'm Cody, your AI learning companion! 🤖 Ready to explore the world of AI together?
+            </div>
+            <div class="cody-options" id="codyOptions">
+                <button class="cody-option" onclick="codyHelp('course')">Tell me about the course</button>
+                <button class="cody-option" onclick="codyHelp('progress')">How do I track progress?</button>
+                <button class="cody-option" onclick="codyHelp('tips')">Give me learning tips</button>
+            </div>
+        </div>
+        <div class="cody-avatar" onclick="toggleCody()">
+            <svg class="progress-ring">
+                <circle class="progress-ring-circle" cx="45" cy="45" r="40" id="progressRing"></circle>
+            </svg>
+            <div class="cody-face" id="codyFace">🤖</div>
+        </div>
+    </div>
+    
+    <!-- Cody Notification -->
+    <div class="cody-notification" id="codyNotification">
+        <div id="notificationText"></div>
     </div>
     
     <!-- Modal for lesson details -->
@@ -458,8 +636,304 @@
             }
         }
         
+        // Cody AI Avatar System
+        let codyState = {
+            isOpen: false,
+            currentContext: 'welcome',
+            userProgress: 0,
+            lastInteraction: Date.now()
+        };
+        
+        const codyResponses = {
+            welcome: [
+                "Hi there! I'm Cody, your AI learning buddy! 🤖 I'm here to guide you through your AI journey.",
+                "Welcome to Cody Verse! I'll help you understand complex AI concepts step by step.",
+                "Ready to dive into the fascinating world of AI? I'm here to make learning fun and engaging!"
+            ],
+            course: [
+                "Our course is designed as a scaling journey! We start with AI Basics to build your foundation, then move through Prompt Engineering, AI Assistants, AI Agents, and finally master the Model Context Protocol.",
+                "Think of it like learning to drive - first you learn the basics, then advanced techniques, and finally professional skills. Each module builds on the previous one!",
+                "The course has 27 lessons total, with 390+ minutes of content and 215 XP points to earn. You'll go from beginner to professional level!"
+            ],
+            progress: [
+                "Your progress is tracked through XP points, completed lessons, and achievements! Each lesson gives you experience points based on difficulty.",
+                "I'll show you a progress ring around my avatar - it fills up as you complete modules. Plus you'll unlock badges and certificates!",
+                "Don't worry about going too fast - I'll adapt to your learning pace and provide hints when you need them."
+            ],
+            tips: [
+                "Here's my top learning tip: Practice what you learn immediately! Each interactive lesson has hands-on exercises.",
+                "Try explaining concepts back to me - teaching is the best way to learn. I'll listen and give you feedback!",
+                "Take breaks between modules. AI concepts need time to sink in. I'll send you gentle reminders to keep going!"
+            ],
+            encouragement: [
+                "You're doing great! Every expert was once a beginner. Keep going!",
+                "Learning AI is like building with blocks - each concept supports the next. You're building something amazing!",
+                "Remember, the goal isn't to memorize everything, but to understand how the pieces fit together."
+            ],
+            module_specific: {
+                1: "AI Basics is perfect for beginners! We'll explore what makes machines 'intelligent' and why AI is transforming our world.",
+                2: "Prompt Engineering is like learning a new language - the language of AI! You'll master how to communicate with AI systems effectively.",
+                3: "AI Assistants are where theory meets practice! You'll understand how to design helpful, reliable AI companions.",
+                4: "AI Agents are the next level - autonomous systems that can make decisions and take actions. This is where it gets really exciting!",
+                5: "Model Context Protocol is professional-grade knowledge! This is what top AI engineers use to build enterprise systems."
+            }
+        };
+        
+        function toggleCody() {
+            const chat = document.getElementById('codyChat');
+            codyState.isOpen = !codyState.isOpen;
+            
+            if (codyState.isOpen) {
+                chat.classList.add('active');
+                updateCodyFace('happy');
+                if (Date.now() - codyState.lastInteraction > 300000) { // 5 minutes
+                    showCodyMessage(getRandomResponse('encouragement'));
+                }
+            } else {
+                chat.classList.remove('active');
+                updateCodyFace('normal');
+            }
+            codyState.lastInteraction = Date.now();
+        }
+        
+        function codyHelp(topic) {
+            showTypingIndicator();
+            setTimeout(() => {
+                const response = getRandomResponse(topic);
+                showCodyMessage(response);
+                updateCodyOptions(topic);
+            }, 1500);
+        }
+        
+        function getRandomResponse(category) {
+            const responses = codyResponses[category];
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+        
+        function showCodyMessage(message) {
+            const messageEl = document.getElementById('codyMessage');
+            messageEl.innerHTML = message;
+            updateCodyFace('talking');
+            setTimeout(() => updateCodyFace('happy'), 2000);
+        }
+        
+        function showTypingIndicator() {
+            const messageEl = document.getElementById('codyMessage');
+            messageEl.innerHTML = `
+                <div class="typing-indicator">
+                    Cody is thinking
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            updateCodyFace('thinking');
+        }
+        
+        function updateCodyOptions(context) {
+            const optionsEl = document.getElementById('codyOptions');
+            let options = '';
+            
+            switch(context) {
+                case 'course':
+                    options = `
+                        <button class="cody-option" onclick="codyHelp('progress')">How is progress tracked?</button>
+                        <button class="cody-option" onclick="showModuleHelp()">Tell me about specific modules</button>
+                        <button class="cody-option" onclick="codyHelp('tips')">Any learning tips?</button>
+                    `;
+                    break;
+                case 'progress':
+                    options = `
+                        <button class="cody-option" onclick="showAchievements()">What achievements can I earn?</button>
+                        <button class="cody-option" onclick="codyHelp('tips')">How to learn effectively?</button>
+                        <button class="cody-option" onclick="codyHelp('course')">Tell me about the course</button>
+                    `;
+                    break;
+                case 'tips':
+                    options = `
+                        <button class="cody-option" onclick="codyHelp('course')">About the course structure</button>
+                        <button class="cody-option" onclick="askCodyQuestion()">Ask Cody a question</button>
+                        <button class="cody-option" onclick="codyMotivation()">I need motivation!</button>
+                    `;
+                    break;
+                default:
+                    options = `
+                        <button class="cody-option" onclick="codyHelp('course')">Tell me about the course</button>
+                        <button class="cody-option" onclick="codyHelp('progress')">How do I track progress?</button>
+                        <button class="cody-option" onclick="codyHelp('tips')">Give me learning tips</button>
+                    `;
+            }
+            
+            optionsEl.innerHTML = options;
+        }
+        
+        function updateCodyFace(emotion) {
+            const faceEl = document.getElementById('codyFace');
+            const faces = {
+                normal: '🤖',
+                happy: '😊',
+                thinking: '🤔',
+                talking: '💬',
+                excited: '🎉',
+                encouraging: '👍'
+            };
+            faceEl.textContent = faces[emotion] || faces.normal;
+        }
+        
+        function showModuleHelp() {
+            showTypingIndicator();
+            setTimeout(() => {
+                showCodyMessage("Which module would you like to know more about? Click on any module card and I'll explain what you'll learn!");
+                updateCodyOptions('course');
+                closeCodyChat();
+            }, 1500);
+        }
+        
+        function showAchievements() {
+            showTypingIndicator();
+            setTimeout(() => {
+                showCodyMessage("You can earn badges like 'AI Explorer', 'Prompt Master', 'Agent Builder', and 'MCP Professional'! Each module completion unlocks special achievements and certificates.");
+                updateCodyOptions('progress');
+            }, 2000);
+        }
+        
+        function askCodyQuestion() {
+            showCodyMessage("Great! I love questions! Feel free to ask me anything about AI, the course content, or learning strategies. I'm here to help you succeed!");
+            updateCodyOptions('tips');
+        }
+        
+        function codyMotivation() {
+            showTypingIndicator();
+            setTimeout(() => {
+                const motivationalQuotes = [
+                    "Remember: Every AI expert started exactly where you are now. You've got this! 💪",
+                    "Learning AI is like unlocking superpowers - each lesson makes you more capable! ⚡",
+                    "You're not just learning about AI, you're preparing for the future. That's amazing! 🚀",
+                    "Small progress is still progress. Every minute you spend learning is an investment in yourself! 📈"
+                ];
+                const quote = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
+                showCodyMessage(quote);
+                updateCodyFace('encouraging');
+                setTimeout(() => updateCodyFace('happy'), 3000);
+                updateCodyOptions('tips');
+            }, 1500);
+        }
+        
+        function closeCodyChat() {
+            setTimeout(() => {
+                if (codyState.isOpen) toggleCody();
+            }, 3000);
+        }
+        
+        function showNotification(message) {
+            const notification = document.getElementById('codyNotification');
+            const textEl = document.getElementById('notificationText');
+            textEl.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+        
+        function updateProgressRing(percentage) {
+            const circle = document.getElementById('progressRing');
+            const circumference = 2 * Math.PI * 40;
+            const offset = circumference - (percentage / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+        }
+        
+        // Enhanced module interaction
+        function showModuleDetails(moduleId) {
+            const module = courseModules.find(m => m.id === moduleId);
+            const modalContent = document.getElementById('modalContent');
+            
+            // Cody provides module-specific guidance
+            if (codyResponses.module_specific[moduleId]) {
+                setTimeout(() => {
+                    showNotification(`Cody says: ${codyResponses.module_specific[moduleId]}`);
+                }, 500);
+            }
+            
+            modalContent.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                    <div style="font-size: 2em;">🤖</div>
+                    <div>
+                        <h2>${module.title}</h2>
+                        <p style="color: #666; margin: 5px 0;">Cody's guided learning experience</p>
+                    </div>
+                </div>
+                <p style="color: #666; margin: 15px 0; line-height: 1.6;">${module.description}</p>
+                <div style="display: flex; gap: 15px; margin: 20px 0; flex-wrap: wrap;">
+                    <span class="difficulty-badge ${module.difficulty}">${module.difficulty}</span>
+                    <span style="display: flex; align-items: center; gap: 5px;">⏱️ ${module.duration}</span>
+                    <span style="display: flex; align-items: center; gap: 5px;">⭐ ${module.xp}</span>
+                    <span style="display: flex; align-items: center; gap: 5px;">🎯 ${module.lessons.length} lessons</span>
+                </div>
+                <div class="lessons-list">
+                    <h3>📚 Interactive Lessons with Cody</h3>
+                    ${module.lessons.map((lesson, index) => `
+                        <div class="lesson-item" style="cursor: pointer;" onclick="startLesson(${moduleId}, ${index})">
+                            <div>
+                                <strong>${lesson.title}</strong>
+                                <span class="lesson-type type-${lesson.type}">${lesson.type}</span>
+                                <div style="font-size: 0.85em; color: #888; margin-top: 4px;">
+                                    Cody will guide you through this ${lesson.type} lesson
+                                </div>
+                            </div>
+                            <div style="text-align: right; font-size: 0.9em; color: #666;">
+                                <div>${lesson.duration}</div>
+                                <div>${lesson.xp}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="margin-top: 30px; text-align: center;">
+                    <button class="btn btn-primary" onclick="startModule(${moduleId})">🚀 Start Learning with Cody</button>
+                </div>
+            `;
+            
+            document.getElementById('lessonModal').style.display = 'block';
+        }
+        
+        function startLesson(moduleId, lessonIndex) {
+            const module = courseModules.find(m => m.id === moduleId);
+            const lesson = module.lessons[lessonIndex];
+            
+            closeModal();
+            showNotification(`Starting "${lesson.title}" with Cody as your guide!`);
+            
+            // Simulate lesson start with Cody interaction
+            setTimeout(() => {
+                if (!codyState.isOpen) toggleCody();
+                showTypingIndicator();
+                setTimeout(() => {
+                    showCodyMessage(`Welcome to "${lesson.title}"! I'll be right here to explain concepts, answer questions, and help you master this ${lesson.type} lesson. Ready to begin?`);
+                    updateCodyFace('excited');
+                }, 2000);
+            }, 1000);
+        }
+        
+        // Periodic Cody interactions
+        setInterval(() => {
+            if (!codyState.isOpen && Date.now() - codyState.lastInteraction > 600000) { // 10 minutes
+                const encouragements = [
+                    "Cody here! Ready to continue your AI journey?",
+                    "I'm here when you're ready to learn something new!",
+                    "Your AI adventure awaits! Click me to continue."
+                ];
+                updateCodyFace('encouraging');
+                setTimeout(() => updateCodyFace('normal'), 3000);
+            }
+        }, 300000); // Check every 5 minutes
+        
         // Initialize the page
         renderCourseModules();
+        
+        // Welcome message from Cody
+        setTimeout(() => {
+            showNotification("👋 Welcome! I'm Cody, your AI learning companion. Click on me anytime for help!");
+        }, 2000);
     </script>
 </body>
 </html>
