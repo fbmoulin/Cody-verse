@@ -30,6 +30,9 @@ function setupSecurity(app) {
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
   }));
 
+  // Configurar trust proxy para Replit
+  app.set('trust proxy', 1);
+  
   const limiter = rateLimit({
     windowMs: config.security.rateLimitWindow,
     max: config.security.rateLimitMax,
@@ -38,7 +41,8 @@ function setupSecurity(app) {
       retryAfter: Math.ceil(config.security.rateLimitWindow / 1000)
     },
     standardHeaders: true,
-    legacyHeaders: false
+    legacyHeaders: false,
+    trustProxy: true
   });
   app.use('/api/', limiter);
 
@@ -61,17 +65,42 @@ function setupPerformance(app) {
 }
 
 function setupLogging(app) {
-  const logFormat = config.server.nodeEnv === 'production' 
-    ? 'combined' 
-    : 'dev';
-
-  app.use(morgan(logFormat, {
+  const morgan = require('morgan');
+  const logger = require('./logger');
+  
+  // Criar stream personalizado para morgan que usa winston
+  const stream = {
+    write: (message) => logger.http(message.trim())
+  };
+  
+  // Usar morgan com winston
+  app.use(morgan('combined', { 
+    stream,
     skip: (req, res) => {
       return req.url === '/health' || req.url === '/api/health';
     }
   }));
-
-  console.log('Sistema de logging configurado');
+  
+  // Logging de requisições lentas e erros
+  app.use((req, res, next) => {
+    const start = Date.now();
+    
+    res.on('finish', () => {
+      const duration = Date.now() - start;
+      
+      if (duration > 1000) {
+        logger.warn(`Requisição lenta: ${req.method} ${req.originalUrl} - ${duration}ms`);
+      }
+      
+      if (res.statusCode >= 400) {
+        logger.error(`Erro ${res.statusCode}: ${req.method} ${req.originalUrl}`);
+      }
+    });
+    
+    next();
+  });
+  
+  logger.success('Sistema de logging avançado configurado com Winston');
 }
 
 function setupParsing(app) {
