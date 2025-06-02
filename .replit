@@ -14,7 +14,20 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
+args = "Flutter Server"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
 args = "Educational Platform"
+
+[[workflows.workflow]]
+name = "Flutter Server"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "flutter pub get && flutter run -d web-server --web-hostname 0.0.0.0 --web-port 5000"
+waitForPort = 5000
 
 [[workflows.workflow]]
 name = "Educational Platform"
