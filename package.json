@@ -18,7 +18,7 @@
     "compression": "^1.8.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
-    "drizzle-kit": "^0.31.1",
+    "drizzle-kit": "^0.18.1",
     "drizzle-orm": "^0.44.1",
     "express": "^5.1.0",
     "express-rate-limit": "^7.5.0",
