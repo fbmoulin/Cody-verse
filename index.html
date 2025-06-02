@@ -1050,19 +1050,19 @@
             },
             {
                 id: 6,
-                title: moduleNames[5],
-                description: t('courseDescriptions')[6],
-                difficulty: t('intermediate'),
-                duration: '90 min',
-                xp: '45 XP',
+                title: currentLanguage === 'pt-BR' ? '🎁 Módulo Bônus: Métodos de Estudo' : '🎁 Bonus Module: Study Methods',
+                description: currentLanguage === 'pt-BR' ? 'Técnicas avançadas de aprendizagem, mapas mentais e métodos que viralizaram nas redes sociais. Desbloqueado com 50+ XP.' : 'Advanced learning techniques, mind maps and methods that went viral on social media. Unlocked with 50+ XP.',
+                difficulty: t('advanced'),
+                duration: '120 min',
+                xp: '60 XP',
                 trending: true,
+                bonus: true,
                 lessons: [
-                    { title: currentLanguage === 'pt-BR' ? 'Técnica Feynman: Ensine para Aprender' : 'Feynman Technique: Teach to Learn', type: t('interactive'), duration: '20 min', xp: '10 XP' },
-                    { title: currentLanguage === 'pt-BR' ? 'Active Recall: Testagem Ativa' : 'Active Recall: Active Testing', type: t('interactive'), duration: '18 min', xp: '8 XP' },
-                    { title: currentLanguage === 'pt-BR' ? 'Spaced Repetition: Repetição Espaçada' : 'Spaced Repetition: Spaced Learning', type: t('interactive'), duration: '22 min', xp: '10 XP' },
-                    { title: currentLanguage === 'pt-BR' ? 'Método Pomodoro 2.0' : 'Pomodoro Method 2.0', type: t('interactive'), duration: '15 min', xp: '7 XP' },
-                    { title: currentLanguage === 'pt-BR' ? 'Flow State e Deep Work' : 'Flow State and Deep Work', type: t('theory'), duration: '25 min', xp: '10 XP' },
-                    { title: currentLanguage === 'pt-BR' ? 'Desafio dos Métodos Avançados' : 'Advanced Methods Challenge', type: t('quiz'), duration: '15 min', xp: '15 XP' }
+                    { title: currentLanguage === 'pt-BR' ? 'Técnica Feynman: Ensine para Aprender' : 'Feynman Technique: Teach to Learn', type: t('interactive'), duration: '25 min', xp: '12 XP' },
+                    { title: currentLanguage === 'pt-BR' ? 'Active Recall e Spaced Repetition' : 'Active Recall and Spaced Repetition', type: t('interactive'), duration: '30 min', xp: '15 XP' },
+                    { title: currentLanguage === 'pt-BR' ? 'Mapas Mentais e Visualização' : 'Mind Maps and Visualization', type: t('interactive'), duration: '25 min', xp: '12 XP' },
+                    { title: currentLanguage === 'pt-BR' ? 'Método Cornell e Sistema Zettelkasten' : 'Cornell Method and Zettelkasten System', type: t('lab'), duration: '20 min', xp: '10 XP' },
+                    { title: currentLanguage === 'pt-BR' ? 'Flow State e Deep Work' : 'Flow State and Deep Work', type: t('theory'), duration: '20 min', xp: '11 XP' }
                 ]
             }
         ];
@@ -1075,6 +1075,7 @@
                 <div class="module-card ${module.difficulty}" onclick="showModuleDetails(${module.id})">
                     <div class="status-indicator"></div>
                     ${module.trending ? '<div style="position: absolute; top: 10px; left: 10px; background: #ff6b6b; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; font-weight: 600;">🔥 TRENDING</div>' : ''}
+                    ${module.bonus ? '<div style="position: absolute; top: 10px; right: 10px; background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #333; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; font-weight: 600;">🎁 BÔNUS</div>' : ''}
                     <div class="module-header">
                         <div class="module-icon">${module.id === 6 ? '🧠' : module.id}</div>
                         <h3 class="module-title">${module.title}</h3>
@@ -1288,40 +1289,135 @@
             lastInteraction: Date.now()
         };
         
-        const codyResponses = {
-            welcome: [
-                "Hi there! I'm Cody, your AI learning buddy! 🤖 I'm here to guide you through your AI journey.",
-                "Welcome to Cody Verse! I'll help you understand complex AI concepts step by step.",
-                "Ready to dive into the fascinating world of AI? I'm here to make learning fun and engaging!"
-            ],
-            course: [
-                "Our course is designed as a scaling journey! We start with AI Basics to build your foundation, then move through Prompt Engineering, AI Assistants, AI Agents, and finally master the Model Context Protocol.",
-                "Think of it like learning to drive - first you learn the basics, then advanced techniques, and finally professional skills. Each module builds on the previous one!",
-                "The course has 27 lessons total, with 390+ minutes of content and 215 XP points to earn. You'll go from beginner to professional level!"
-            ],
-            progress: [
-                "Your progress is tracked through XP points, completed lessons, and achievements! Each lesson gives you experience points based on difficulty.",
-                "I'll show you a progress ring around my avatar - it fills up as you complete modules. Plus you'll unlock badges and certificates!",
-                "Don't worry about going too fast - I'll adapt to your learning pace and provide hints when you need them."
-            ],
-            tips: [
-                "Here's my top learning tip: Practice what you learn immediately! Each interactive lesson has hands-on exercises.",
-                "Try explaining concepts back to me - teaching is the best way to learn. I'll listen and give you feedback!",
-                "Take breaks between modules. AI concepts need time to sink in. I'll send you gentle reminders to keep going!"
-            ],
-            encouragement: [
-                "You're doing great! Every expert was once a beginner. Keep going!",
-                "Learning AI is like building with blocks - each concept supports the next. You're building something amazing!",
-                "Remember, the goal isn't to memorize everything, but to understand how the pieces fit together."
-            ],
-            module_specific: {
-                1: "AI Basics is perfect for beginners! We'll explore what makes machines 'intelligent' and why AI is transforming our world.",
-                2: "Prompt Engineering is like learning a new language - the language of AI! You'll master how to communicate with AI systems effectively.",
-                3: "AI Assistants are where theory meets practice! You'll understand how to design helpful, reliable AI companions.",
-                4: "AI Agents are the next level - autonomous systems that can make decisions and take actions. This is where it gets really exciting!",
-                5: "Model Context Protocol is professional-grade knowledge! This is what top AI engineers use to build enterprise systems."
+        const codyPersonality = {
+            'pt-BR': {
+                name: 'Cody',
+                personality: 'amigável, encorajador, brasileirão',
+                welcome: [
+                    "E aí, pessoal! Eu sou o Cody, seu parceiro de estudos em IA! 🤖 Vamos juntos nessa jornada incrível!",
+                    "Opa! Bem-vindos ao Cody Verse! Vou ajudar vocês a entender IA de um jeito divertido e descomplicado!",
+                    "Prontos para mergulhar no mundo fascinante da IA? Vou tornar esse aprendizado massa demais!"
+                ],
+                course: [
+                    "Nosso curso é tipo um RPG de conhecimento! Começamos no AI Basics para construir sua base, depois evoluímos através de Prompt Engineering, AI Assistants, AI Agents, e finalmente masterizamos o Model Context Protocol!",
+                    "É como aprender a dirigir, né? Primeiro o básico, depois as manobras avançadas, e por fim as técnicas profissionais. Cada módulo constrói em cima do anterior!",
+                    "Temos 27 lições no total, com mais de 390 minutos de conteúdo e 215 pontos de XP para conquistar! Você vai de iniciante a profissional!"
+                ],
+                progress: [
+                    "Seu progresso é acompanhado através de pontos de XP, lições concluídas e conquistas! Cada lição te dá experiência baseada na dificuldade.",
+                    "Vou mostrar um anel de progresso ao redor do meu avatar - ele se enche conforme você completa os módulos. Ainda por cima, você desbloqueará badges e certificados!",
+                    "Relaxa, sem pressa! Vou me adaptar ao seu ritmo de aprendizado e dar dicas quando precisar."
+                ],
+                tips: [
+                    "Minha dica gold: pratique o que aprender na hora! Cada lição interativa tem exercícios práticos.",
+                    "Tenta me explicar os conceitos de volta - ensinar é a melhor forma de aprender! Vou escutar e dar feedback!",
+                    "Faz pausas entre os módulos. Conceitos de IA precisam de tempo para sedimentar. Vou mandar lembretes gentis para continuar!"
+                ],
+                encouragement: [
+                    "Você tá mandando bem! Todo expert já foi iniciante um dia. Bora continuar!",
+                    "Aprender IA é como montar um LEGO gigante - cada conceito apoia o próximo. Você tá construindo algo incrível!",
+                    "Lembra: o objetivo não é decorar tudo, mas entender como as peças se encaixam!"
+                ],
+                emotions: {
+                    excited: ["Isso aí! 🚀", "Massa demais! 🎉", "Show de bola! ⭐"],
+                    encouraging: ["Vai que vai! 💪", "Você consegue! 👊", "Foco no objetivo! 🎯"],
+                    thinking: ["Deixa eu pensar aqui... 🤔", "Hmm, interessante... 🧠", "Analisando... ⚙️"],
+                    celebrating: ["PARABÉNS! 🎊", "Arrasou! 🏆", "Que orgulho! 🌟"]
+                },
+                module_specific: {
+                    1: "AI Basics é perfeito para iniciantes! Vamos explorar o que faz as máquinas 'inteligentes' e por que a IA está transformando nosso mundo!",
+                    2: "Prompt Engineering é como aprender uma nova língua - a linguagem da IA! Você vai dominar como se comunicar com sistemas de IA de forma eficaz!",
+                    3: "AI Assistants é onde a teoria encontra a prática! Você vai entender como projetar companheiros de IA úteis e confiáveis!",
+                    4: "AI Agents é o próximo nível - sistemas autônomos que podem tomar decisões e agir. Aqui a coisa fica emocionante!",
+                    5: "Model Context Protocol é conhecimento profissional! É isso que os melhores engenheiros de IA usam para construir sistemas empresariais!",
+                    6: "Métodos de Estudo Avançados é nosso módulo bônus especial! Técnicas que bombaram nas redes sociais para turbinar seu aprendizado!"
+                },
+                contextual: {
+                    morning: "Bom dia! Pronto para começar o dia estudando IA?",
+                    afternoon: "Boa tarde! Que tal continuarmos nossa jornada de aprendizado?",
+                    evening: "Boa noite! Estudar IA à noite pode ser muito produtivo!",
+                    late_night: "Ei, tá estudando tarde? Lembra de descansar também, viu!"
+                }
+            },
+            'en-US': {
+                name: 'Cody',
+                personality: 'friendly, encouraging, tech-savvy',
+                welcome: [
+                    "Hey there! I'm Cody, your AI learning buddy! 🤖 I'm here to guide you through this amazing journey!",
+                    "Welcome to Cody Verse! I'll help you understand AI concepts in a fun and engaging way!",
+                    "Ready to dive into the fascinating world of AI? I'm here to make learning awesome!"
+                ],
+                course: [
+                    "Our course is like a knowledge RPG! We start with AI Basics to build your foundation, then level up through Prompt Engineering, AI Assistants, AI Agents, and finally master the Model Context Protocol!",
+                    "Think of it like learning to drive - first the basics, then advanced maneuvers, and finally professional techniques. Each module builds on the previous one!",
+                    "We have 27 lessons total, with 390+ minutes of content and 215 XP points to earn! You'll go from beginner to pro!"
+                ],
+                progress: [
+                    "Your progress is tracked through XP points, completed lessons, and achievements! Each lesson gives you experience based on difficulty.",
+                    "I'll show you a progress ring around my avatar - it fills up as you complete modules. Plus you'll unlock badges and certificates!",
+                    "Don't worry about going too fast - I'll adapt to your learning pace and provide hints when you need them."
+                ],
+                tips: [
+                    "Here's my golden tip: practice what you learn immediately! Each interactive lesson has hands-on exercises.",
+                    "Try explaining concepts back to me - teaching is the best way to learn! I'll listen and give you feedback!",
+                    "Take breaks between modules. AI concepts need time to sink in. I'll send you gentle reminders to keep going!"
+                ],
+                encouragement: [
+                    "You're doing great! Every expert was once a beginner. Keep going!",
+                    "Learning AI is like building with blocks - each concept supports the next. You're building something amazing!",
+                    "Remember, the goal isn't to memorize everything, but to understand how the pieces fit together!"
+                ],
+                emotions: {
+                    excited: ["Awesome! 🚀", "That's amazing! 🎉", "Fantastic! ⭐"],
+                    encouraging: ["You've got this! 💪", "Keep going! 👊", "Stay focused! 🎯"],
+                    thinking: ["Let me think... 🤔", "Hmm, interesting... 🧠", "Processing... ⚙️"],
+                    celebrating: ["CONGRATULATIONS! 🎊", "You nailed it! 🏆", "So proud! 🌟"]
+                },
+                module_specific: {
+                    1: "AI Basics is perfect for beginners! We'll explore what makes machines 'intelligent' and why AI is transforming our world!",
+                    2: "Prompt Engineering is like learning a new language - the language of AI! You'll master how to communicate with AI systems effectively!",
+                    3: "AI Assistants is where theory meets practice! You'll understand how to design helpful, reliable AI companions!",
+                    4: "AI Agents is the next level - autonomous systems that can make decisions and take actions. This is where it gets really exciting!",
+                    5: "Model Context Protocol is professional-grade knowledge! This is what top AI engineers use to build enterprise systems!",
+                    6: "Advanced Study Methods is our special bonus module! Techniques that went viral on social media to supercharge your learning!"
+                },
+                contextual: {
+                    morning: "Good morning! Ready to start the day learning AI?",
+                    afternoon: "Good afternoon! Shall we continue our learning journey?",
+                    evening: "Good evening! Studying AI in the evening can be very productive!",
+                    late_night: "Hey, studying late? Remember to get some rest too!"
+                }
             }
         };
+
+        function getCodyResponse(category, context = {}) {
+            const personality = codyPersonality[currentLanguage];
+            let responses = personality[category];
+            
+            if (!responses) return "Hi there! I'm here to help you learn!";
+            
+            // Add contextual awareness
+            if (category === 'welcome') {
+                const hour = new Date().getHours();
+                if (hour < 12 && personality.contextual.morning) {
+                    responses = [personality.contextual.morning, ...responses];
+                } else if (hour < 18 && personality.contextual.afternoon) {
+                    responses = [personality.contextual.afternoon, ...responses];
+                } else if (hour < 22 && personality.contextual.evening) {
+                    responses = [personality.contextual.evening, ...responses];
+                } else if (personality.contextual.late_night) {
+                    responses = [personality.contextual.late_night, ...responses];
+                }
+            }
+            
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        function getCodyEmotion(emotion) {
+            const personality = codyPersonality[currentLanguage];
+            const emotions = personality.emotions[emotion];
+            return emotions ? emotions[Math.floor(Math.random() * emotions.length)] : "😊";
+        }
         
         function toggleCody() {
             const chat = document.getElementById('codyChat');
@@ -1350,8 +1446,7 @@
         }
         
         function getRandomResponse(category) {
-            const responses = codyResponses[category];
-            return responses[Math.floor(Math.random() * responses.length)];
+            return getCodyResponse(category);
         }
         
         function showCodyMessage(message) {
@@ -1427,7 +1522,10 @@
         function showModuleHelp() {
             showTypingIndicator();
             setTimeout(() => {
-                showCodyMessage("Which module would you like to know more about? Click on any module card and I'll explain what you'll learn!");
+                const helpMsg = currentLanguage === 'pt-BR' ? 
+                    "Qual módulo você quer saber mais? Clica em qualquer card de módulo que eu explico o que você vai aprender!" :
+                    "Which module would you like to know more about? Click on any module card and I'll explain what you'll learn!";
+                showCodyMessage(helpMsg);
                 updateCodyOptions('course');
                 closeCodyChat();
             }, 1500);
@@ -1436,25 +1534,39 @@
         function showAchievements() {
             showTypingIndicator();
             setTimeout(() => {
-                showCodyMessage("You can earn badges like 'AI Explorer', 'Prompt Master', 'Agent Builder', and 'MCP Professional'! Each module completion unlocks special achievements and certificates.");
+                const achievementMsg = currentLanguage === 'pt-BR' ? 
+                    "Você pode ganhar badges como 'Explorador de IA', 'Mestre dos Prompts', 'Construtor de Agentes' e 'Profissional MCP'! Cada módulo completado desbloqueia conquistas especiais e certificados!" :
+                    "You can earn badges like 'AI Explorer', 'Prompt Master', 'Agent Builder', and 'MCP Professional'! Each module completion unlocks special achievements and certificates.";
+                showCodyMessage(achievementMsg);
                 updateCodyOptions('progress');
             }, 2000);
         }
         
         function askCodyQuestion() {
-            showCodyMessage("Great! I love questions! Feel free to ask me anything about AI, the course content, or learning strategies. I'm here to help you succeed!");
+            const questionMsg = currentLanguage === 'pt-BR' ? 
+                "Opa! Adoro perguntas! Pode me perguntar qualquer coisa sobre IA, conteúdo do curso ou estratégias de aprendizado. Estou aqui para te ajudar a arrasar!" :
+                "Great! I love questions! Feel free to ask me anything about AI, the course content, or learning strategies. I'm here to help you succeed!";
+            showCodyMessage(questionMsg);
             updateCodyOptions('tips');
         }
         
         function codyMotivation() {
             showTypingIndicator();
             setTimeout(() => {
-                const motivationalQuotes = [
+                const motivationalQuotes = currentLanguage === 'pt-BR' ? [
+                    "Lembra: todo expert em IA começou exatamente onde você está agora. Você consegue! 💪",
+                    "Aprender IA é como desbloquear superpoderes - cada lição te deixa mais capaz! ⚡",
+                    "Você não está só aprendendo sobre IA, está se preparando para o futuro. Isso é incrível! 🚀",
+                    "Progresso pequeno ainda é progresso. Cada minuto que você gasta aprendendo é um investimento em si mesmo! 📈",
+                    "Cada linha de código, cada conceito entendido te aproxima do seu objetivo. Bora que bora! 🎯"
+                ] : [
                     "Remember: Every AI expert started exactly where you are now. You've got this! 💪",
                     "Learning AI is like unlocking superpowers - each lesson makes you more capable! ⚡",
                     "You're not just learning about AI, you're preparing for the future. That's amazing! 🚀",
-                    "Small progress is still progress. Every minute you spend learning is an investment in yourself! 📈"
+                    "Small progress is still progress. Every minute you spend learning is an investment in yourself! 📈",
+                    "Every concept understood brings you closer to your goal. Keep pushing forward! 🎯"
                 ];
+                
                 const quote = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
                 showCodyMessage(quote);
                 updateCodyFace('encouraging');
@@ -1493,9 +1605,10 @@
             const modalContent = document.getElementById('modalContent');
             
             // Cody provides module-specific guidance
-            if (codyResponses.module_specific[moduleId]) {
+            const personality = codyPersonality[currentLanguage];
+            if (personality.module_specific[moduleId]) {
                 setTimeout(() => {
-                    showNotification(`Cody says: ${codyResponses.module_specific[moduleId]}`);
+                    showNotification(`Cody: ${personality.module_specific[moduleId]}`);
                 }, 500);
             }
             
@@ -2127,9 +2240,13 @@
             // Update navigation to show completion
             document.getElementById('nextBtn').style.display = 'none';
             
-            // Cody celebration
+            // Cody celebration with enhanced personality
             setTimeout(() => {
-                showNotification(`Cody: Fantástico! Você dominou ${module.title}! Pronto para o próximo desafio?`);
+                const celebration = getCodyEmotion('celebrating');
+                const moduleCompleteMsg = currentLanguage === 'pt-BR' ? 
+                    `Cody: Fantástico! Você dominou ${module.title}! Pronto para o próximo desafio? ${celebration}` :
+                    `Cody: Fantastic! You mastered ${module.title}! Ready for the next challenge? ${celebration}`;
+                showNotification(moduleCompleteMsg);
             }, 1000);
         }
 
@@ -2158,9 +2275,10 @@
             updateInterface();
             renderCourseModules();
             
-            // Welcome message from Cody
+            // Welcome message from Cody with personality
             setTimeout(() => {
-                showNotification(t('codyWelcomeNotification'));
+                const welcomeMsg = getCodyResponse('welcome');
+                showNotification(welcomeMsg);
             }, 2000);
         }
         
