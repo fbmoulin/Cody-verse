@@ -1475,28 +1475,44 @@
             
             switch(context) {
                 case 'course':
-                    options = `
+                    options = currentLanguage === 'pt-BR' ? `
+                        <button class="cody-option" onclick="codyHelp('progress')">Como é acompanhado o progresso?</button>
+                        <button class="cody-option" onclick="showModuleHelp()">Me fale sobre módulos específicos</button>
+                        <button class="cody-option" onclick="codyHelp('tips')">Alguma dica de aprendizado?</button>
+                    ` : `
                         <button class="cody-option" onclick="codyHelp('progress')">How is progress tracked?</button>
                         <button class="cody-option" onclick="showModuleHelp()">Tell me about specific modules</button>
                         <button class="cody-option" onclick="codyHelp('tips')">Any learning tips?</button>
                     `;
                     break;
                 case 'progress':
-                    options = `
+                    options = currentLanguage === 'pt-BR' ? `
+                        <button class="cody-option" onclick="showAchievements()">Que conquistas posso ganhar?</button>
+                        <button class="cody-option" onclick="codyHelp('tips')">Como aprender efetivamente?</button>
+                        <button class="cody-option" onclick="codyHelp('course')">Me fale sobre o curso</button>
+                    ` : `
                         <button class="cody-option" onclick="showAchievements()">What achievements can I earn?</button>
                         <button class="cody-option" onclick="codyHelp('tips')">How to learn effectively?</button>
                         <button class="cody-option" onclick="codyHelp('course')">Tell me about the course</button>
                     `;
                     break;
                 case 'tips':
-                    options = `
+                    options = currentLanguage === 'pt-BR' ? `
+                        <button class="cody-option" onclick="codyHelp('course')">Sobre a estrutura do curso</button>
+                        <button class="cody-option" onclick="askCodyQuestion()">Fazer uma pergunta ao Cody</button>
+                        <button class="cody-option" onclick="codyMotivation()">Preciso de motivação!</button>
+                    ` : `
                         <button class="cody-option" onclick="codyHelp('course')">About the course structure</button>
                         <button class="cody-option" onclick="askCodyQuestion()">Ask Cody a question</button>
                         <button class="cody-option" onclick="codyMotivation()">I need motivation!</button>
                     `;
                     break;
                 default:
-                    options = `
+                    options = currentLanguage === 'pt-BR' ? `
+                        <button class="cody-option" onclick="codyHelp('course')">Me fale sobre o curso</button>
+                        <button class="cody-option" onclick="codyHelp('progress')">Como acompanho meu progresso?</button>
+                        <button class="cody-option" onclick="codyHelp('tips')">Me dê dicas de estudo</button>
+                    ` : `
                         <button class="cody-option" onclick="codyHelp('course')">Tell me about the course</button>
                         <button class="cody-option" onclick="codyHelp('progress')">How do I track progress?</button>
                         <button class="cody-option" onclick="codyHelp('tips')">Give me learning tips</button>
@@ -1857,6 +1873,15 @@
             document.querySelector('[onclick="showDashboard()"]').textContent = t('courseDashboard');
             document.querySelector('[onclick="showProgress()"]').textContent = t('myProgress');
             document.querySelector('[onclick="showAchievements()"]').textContent = t('achievementsRewards');
+            
+            // Update Cody's initial welcome message
+            const codyMessageEl = document.getElementById('codyMessage');
+            if (codyMessageEl) {
+                codyMessageEl.innerHTML = getCodyResponse('welcome');
+            }
+            
+            // Update Cody's chat options
+            updateCodyOptions('default');
             
             // Re-render course modules with new language
             renderCourseModules();
