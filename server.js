@@ -42,10 +42,8 @@ class CodyVerseServer {
       // Configurar rotas
       this.setupRoutes();
       
-      // Inicializar dados base
-      if (config.server.nodeEnv === 'development') {
-        await dataInitializer.initializeDatabase();
-      }
+      // Dados já foram inicializados via SQL
+      console.log('Dados base carregados do banco PostgreSQL');
       
       console.log('Servidor inicializado com sucesso');
     } catch (error) {
