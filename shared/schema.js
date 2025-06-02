@@ -32,11 +32,12 @@ const lessons = pgTable('lessons', {
   title: text('title').notNull(),
   type: text('type').notNull(),
   content: jsonb('content'),
-  duration: text('duration').notNull(),
-  xpValue: integer('xp_value').notNull(),
+  duration: text('duration'),
+  xpReward: integer('xp_reward'),
+  estimatedDurationMinutes: integer('estimated_duration_minutes'),
   orderIndex: integer('order_index').notNull(),
-  isActive: boolean('is_active').default(true),
-  createdAt: timestamp('created_at').defaultNow()
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow()
 });
 
 // Progresso do usuário por módulo

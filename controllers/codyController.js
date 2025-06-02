@@ -33,27 +33,38 @@ class CodyController {
     };
   }
 
-  // Lidar com interação do usuário
+  // Handle user interaction
   async handleInteraction(req, res) {
     try {
       const { userId, interactionType, context, userMessage } = req.body;
 
-      // Gerar resposta do Cody baseada no tipo de interação
-      const response = this.generateResponse(interactionType, context, userMessage);
-
-      // Salvar interação no banco de dados se userId fornecido
-      if (userId) {
-        await db.insert(codyInteractions).values({
-          userId: parseInt(userId),
-          interactionType,
-          context: context || null,
-          userMessage: userMessage || null,
-          codyResponse: response,
-          timestamp: new Date()
+      if (!interactionType) {
+        return res.status(400).json({
+          success: false,
+          error: 'interactionType is required'
         });
       }
 
-      // Simular delay de "pensamento" do Cody
+      // Generate Cody response based on interaction type
+      const response = this.generateResponse(interactionType, context, userMessage);
+
+      // Save interaction to database if userId provided
+      if (userId) {
+        try {
+          await db.insert(codyInteractions).values({
+            userId: parseInt(userId),
+            interactionType,
+            context: context || null,
+            userMessage: userMessage || null,
+            codyResponse: response,
+            timestamp: new Date()
+          });
+        } catch (dbError) {
+          console.warn('Could not save interaction to database:', dbError.message);
+        }
+      }
+
+      // Simulate Cody "thinking" delay
       await new Promise(resolve => setTimeout(resolve, 1200));
 
       res.json({
@@ -65,10 +76,10 @@ class CodyController {
         }
       });
     } catch (error) {
-      console.error('Erro na interação com Cody:', error);
+      console.error('Error in Cody interaction:', error);
       res.status(500).json({
         success: false,
-        error: 'Erro interno na interação com Cody'
+        error: 'Internal server error in Cody interaction'
       });
     }
   }

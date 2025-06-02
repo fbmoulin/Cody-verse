@@ -56,28 +56,54 @@ class CourseController {
     try {
       const { id } = req.params;
       
-      const course = await db
-        .select()
-        .from(courseModules)
-        .where(eq(courseModules.id, parseInt(id)))
-        .limit(1);
+      try {
+        const course = await db
+          .select()
+          .from(courseModules)
+          .where(eq(courseModules.id, parseInt(id)))
+          .limit(1);
 
-      if (course.length === 0) {
-        return res.status(404).json({
-          success: false,
-          error: 'Curso não encontrado'
+        if (course.length === 0) {
+          // Try static data
+          const staticCourse = courseModulesData.find(c => c.id === parseInt(id));
+          if (!staticCourse) {
+            return res.status(404).json({
+              success: false,
+              error: 'Course not found'
+            });
+          }
+          return res.json({
+            success: true,
+            data: staticCourse,
+            source: 'static'
+          });
+        }
+
+        res.json({
+          success: true,
+          data: course[0],
+          source: 'database'
+        });
+      } catch (dbError) {
+        console.warn('Database error, using static data:', dbError.message);
+        const staticCourse = courseModulesData.find(c => c.id === parseInt(id));
+        if (!staticCourse) {
+          return res.status(404).json({
+            success: false,
+            error: 'Course not found'
+          });
+        }
+        res.json({
+          success: true,
+          data: staticCourse,
+          source: 'static'
         });
       }
-
-      res.json({
-        success: true,
-        data: course[0]
-      });
     } catch (error) {
-      console.error('Erro ao buscar curso:', error);
+      console.error('Error fetching course:', error);
       res.status(500).json({
         success: false,
-        error: 'Erro interno ao buscar curso'
+        error: 'Internal server error'
       });
     }
   }
@@ -87,22 +113,35 @@ class CourseController {
     try {
       const { id } = req.params;
       
-      const courseLessons = await db
-        .select()
-        .from(lessons)
-        .where(eq(lessons.moduleId, parseInt(id)))
-        .orderBy(asc(lessons.orderIndex));
+      try {
+        const courseLessons = await db
+          .select()
+          .from(lessons)
+          .where(eq(lessons.moduleId, parseInt(id)))
+          .orderBy(asc(lessons.orderIndex));
 
-      res.json({
-        success: true,
-        data: courseLessons,
-        count: courseLessons.length
-      });
+        res.json({
+          success: true,
+          data: courseLessons,
+          count: courseLessons.length,
+          source: 'database'
+        });
+      } catch (dbError) {
+        console.warn('Database error, using static data:', dbError.message);
+        // Fallback to static data
+        const staticLessons = lessonsData.filter(l => l.moduleId === parseInt(id));
+        res.json({
+          success: true,
+          data: staticLessons,
+          count: staticLessons.length,
+          source: 'static'
+        });
+      }
     } catch (error) {
-      console.error('Erro ao buscar lições:', error);
+      console.error('Error fetching lessons:', error);
       res.status(500).json({
         success: false,
-        error: 'Erro interno ao buscar lições'
+        error: 'Internal server error'
       });
     }
   }
