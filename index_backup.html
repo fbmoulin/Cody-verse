@@ -1,0 +1,2633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cody Verse - Educational Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .course-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            .header {
+                padding: 20px 15px;
+                margin-bottom: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .header p {
+                font-size: 1em;
+            }
+            
+            .module-card {
+                padding: 20px 15px;
+            }
+            
+            .module-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2em;
+                margin-right: 15px;
+            }
+            
+            .module-title {
+                font-size: 1.2em;
+            }
+            
+            .module-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .module-stats {
+                font-size: 0.85em;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .btn {
+                padding: 15px 25px;
+                font-size: 1em;
+            }
+        }
+        
+        .module-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+        }
+        
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--accent-color);
+        }
+        
+        .module-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .module-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-right: 20px;
+        }
+        
+        .module-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #333;
+            margin: 0;
+        }
+        
+        .module-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .module-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .difficulty-badge {
+            background: var(--accent-color);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .module-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .beginner { --accent-color: #4caf50; }
+        .intermediate { --accent-color: #ff9800; }
+        .advanced { --accent-color: #f44336; }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: #2196F3;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #2196F3;
+            border: 2px solid #2196F3;
+        }
+        
+        .btn-secondary:hover {
+            background: #2196F3;
+            color: white;
+        }
+        
+        .status-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4caf50;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 30px;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .close:hover {
+            color: #333;
+        }
+        
+        .lessons-list {
+            margin-top: 20px;
+        }
+        
+        .lesson-item {
+            padding: 12px;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .lesson-type {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .type-theory { background: #e3f2fd; color: #1976d2; }
+        .type-interactive { background: #f3e5f5; color: #7b1fa2; }
+        .type-lab { background: #e8f5e8; color: #388e3c; }
+        .type-quiz { background: #fff3e0; color: #f57c00; }
+        
+        /* Cody Avatar Styles */
+        .cody-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .cody-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            border: 3px solid white;
+        }
+        
+        .cody-avatar:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+        
+        .cody-face {
+            font-size: 30px;
+            color: white;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .cody-chat {
+            position: absolute;
+            bottom: 100px;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 320px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: scale(0);
+            transform-origin: bottom right;
+            transition: all 0.3s ease;
+        }
+        
+        .cody-chat.active {
+            transform: scale(1);
+        }
+        
+        .cody-chat::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 30px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid white;
+        }
+        
+        .cody-message {
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .cody-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .cody-option {
+            background: #f0f0f0;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.2s ease;
+        }
+        
+        .cody-option:hover {
+            background: #e0e0e0;
+        }
+        
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: #666;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typing {
+            0%, 60%, 100% { opacity: 0.3; }
+            30% { opacity: 1; }
+        }
+        
+        .cody-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1001;
+        }
+        
+        .cody-notification.show {
+            transform: translateX(0);
+        }
+        
+        .progress-ring {
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            width: 90px;
+            height: 90px;
+        }
+        
+        .progress-ring-circle {
+            stroke: #4caf50;
+            stroke-width: 3;
+            fill: transparent;
+            stroke-dasharray: 283;
+            stroke-dashoffset: 283;
+            transition: stroke-dashoffset 0.3s ease;
+        }
+        
+        /* Learning Interface Styles */
+        .learning-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #f5f5f5;
+            z-index: 999;
+            overflow-y: auto;
+        }
+        
+        .learning-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .learning-header h1 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+        
+        .learning-header p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+        }
+        
+        .lesson-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            background: white;
+            min-height: calc(100vh - 160px);
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .lesson-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .lesson-progress {
+            flex: 1;
+            margin: 0 20px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50 0%, #45a049 100%);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .lesson-type-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .interactive-content {
+            margin: 30px 0;
+        }
+        
+        .quiz-container {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        
+        .quiz-question {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .quiz-option {
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .quiz-option:hover {
+            border-color: #667eea;
+            background: #f0f2ff;
+        }
+        
+        .quiz-option.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        
+        .quiz-option.correct {
+            border-color: #4caf50;
+            background: #4caf50;
+            color: white;
+        }
+        
+        .quiz-option.incorrect {
+            border-color: #f44336;
+            background: #f44336;
+            color: white;
+        }
+        
+        .lesson-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .btn-nav {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-back {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-back:hover {
+            background: #5a6268;
+        }
+        
+        .btn-next {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-next:hover {
+            background: #218838;
+        }
+        
+        .btn-next:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .lesson-complete {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border-radius: 12px;
+            margin: 30px 0;
+        }
+        
+        .xp-earned {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        
+        .close-learning {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        
+        .close-learning:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        /* Mobile Learning Interface */
+        @media (max-width: 768px) {
+            .learning-header {
+                padding: 15px;
+            }
+            
+            .learning-header h1 {
+                font-size: 1.4em;
+            }
+            
+            .lesson-content {
+                margin: 15px;
+                padding: 20px 15px;
+            }
+            
+            .lesson-nav {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .lesson-progress {
+                margin: 0;
+                order: -1;
+            }
+            
+            .btn-nav {
+                padding: 12px 20px;
+                font-size: 0.9em;
+            }
+            
+            .quiz-container {
+                padding: 20px 15px;
+            }
+            
+            .quiz-question {
+                font-size: 1.1em;
+            }
+            
+            .quiz-option {
+                padding: 12px 15px;
+                font-size: 0.9em;
+            }
+            
+            .lesson-actions {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+        
+        /* Mobile Cody */
+        @media (max-width: 768px) {
+            .cody-container {
+                bottom: 15px;
+                right: 15px;
+            }
+            
+            .cody-avatar {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .cody-face {
+                font-size: 25px;
+            }
+            
+            .progress-ring {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .cody-chat {
+                max-width: calc(100vw - 40px);
+                right: -10px;
+                bottom: 90px;
+            }
+            
+            .cody-notification {
+                right: 15px;
+                left: 15px;
+                transform: translateY(-100px);
+                font-size: 0.9em;
+            }
+            
+            .cody-notification.show {
+                transform: translateY(0);
+            }
+        }
+        
+        /* Achievement System Styles */
+        .achievements-container {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .achievement-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #333;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin: 5px;
+            box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+        }
+        
+        .streak-counter {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .xp-display {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .study-method-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--method-color);
+            transition: transform 0.3s ease;
+        }
+        
+        .study-method-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .method-trending { --method-color: #ff6b6b; }
+        .method-proven { --method-color: #4ecdc4; }
+        .method-advanced { --method-color: #45b7d1; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div style="position: absolute; top: 15px; right: 15px;">
+                <select id="languageSelector" onchange="switchLanguage(this.value)" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #ddd; background: white; font-size: 0.9em;">
+                    <option value="pt-BR">🇧🇷 Português</option>
+                    <option value="en-US">🇺🇸 English</option>
+                </select>
+            </div>
+            <h1>🎓 Cody Verse</h1>
+            <p>Aprenda conceitos de IA e MCP através do nosso curso abrangente</p>
+        </div>
+        
+        <div class="nav-buttons">
+            <button class="btn btn-primary" onclick="showDashboard()">Dashboard do Curso</button>
+            <button class="btn btn-secondary" onclick="showProgress()">Meu Progresso</button>
+            <button class="btn btn-secondary" onclick="showAchievements()">Conquistas & Prêmios</button>
+        </div>
+        
+        <!-- User Stats Display -->
+        <div id="userStatsContainer" style="display: none;">
+            <div class="achievements-container">
+                <h3 style="margin-bottom: 20px;">📊 Suas Estatísticas</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div class="xp-display">
+                        <div>Total XP</div>
+                        <div id="totalXP">0</div>
+                    </div>
+                    <div class="streak-counter">
+                        <span>🔥</span>
+                        <div>
+                            <div>Sequência</div>
+                            <div id="streakCount">0 dias</div>
+                        </div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; padding: 15px 25px; border-radius: 12px; text-align: center; font-size: 1.2em; font-weight: bold;">
+                        <div>Nível</div>
+                        <div id="userLevel">Iniciante</div>
+                    </div>
+                </div>
+                
+                <div id="achievementsList" style="margin-top: 20px;">
+                    <h4>🏆 Conquistas Desbloqueadas</h4>
+                    <div id="achievementBadges" style="margin-top: 15px;">
+                        <!-- Achievement badges will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="course-grid" id="courseGrid">
+            <!-- Course modules will be populated by JavaScript -->
+        </div>
+    </div>
+    
+    <!-- Cody Avatar -->
+    <div class="cody-container">
+        <div class="cody-chat" id="codyChat">
+            <div id="codyMessage" class="cody-message">
+                Hi! I'm Cody, your AI learning companion! 🤖 Ready to explore the world of AI together?
+            </div>
+            <div class="cody-options" id="codyOptions">
+                <button class="cody-option" onclick="codyHelp('course')">Tell me about the course</button>
+                <button class="cody-option" onclick="codyHelp('progress')">How do I track progress?</button>
+                <button class="cody-option" onclick="codyHelp('tips')">Give me learning tips</button>
+            </div>
+        </div>
+        <div class="cody-avatar" onclick="toggleCody()">
+            <svg class="progress-ring">
+                <circle class="progress-ring-circle" cx="45" cy="45" r="40" id="progressRing"></circle>
+            </svg>
+            <div class="cody-face" id="codyFace">🤖</div>
+        </div>
+    </div>
+    
+    <!-- Cody Notification -->
+    <div class="cody-notification" id="codyNotification">
+        <div id="notificationText"></div>
+    </div>
+    
+    <!-- Learning Interface -->
+    <div class="learning-container" id="learningContainer">
+        <div class="learning-header">
+            <button class="close-learning" onclick="closeLearningInterface()">&times;</button>
+            <h1 id="learningTitle">Module Title</h1>
+            <p id="learningSubtitle">Lesson subtitle</p>
+        </div>
+        <div class="lesson-content">
+            <div class="lesson-nav">
+                <button class="btn-nav btn-back" id="prevBtn" onclick="previousLesson()">← Anterior</button>
+                <div class="lesson-progress">
+                    <div style="text-align: center; margin-bottom: 8px; font-size: 0.9em; color: #666;">
+                        Progresso: <span id="lessonCounter">1 de 5</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="lessonProgress" style="width: 20%"></div>
+                    </div>
+                </div>
+                <button class="btn-nav btn-next" id="nextBtn" onclick="nextLesson()">Próximo →</button>
+            </div>
+            
+            <div id="lessonContentArea">
+                <!-- Lesson content will be dynamically loaded here -->
+            </div>
+            
+            <div class="lesson-actions">
+                <button class="btn btn-secondary" onclick="closeLearningInterface()">Voltar ao Curso</button>
+                <div id="lessonXP" style="color: #666; font-weight: 600;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for lesson details -->
+    <div id="lessonModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modalContent">
+                <!-- Modal content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function getCourseModules() {
+            const moduleNames = [
+                t('aiBasics'),
+                t('promptEngineering'), 
+                t('aiAssistants'),
+                t('aiAgents'),
+                t('modelContextProtocol'),
+                t('advancedStudyMethods')
+            ];
+            
+            return [
+            {
+                id: 1,
+                title: moduleNames[0],
+                description: t('courseDescriptions')[1],
+                difficulty: t('beginner'),
+                duration: '45 min',
+                xp: '30 XP',
+                lessons: [
+                    { title: currentLanguage === 'pt-BR' ? 'O que é Inteligência Artificial?' : 'What is Artificial Intelligence?', type: t('theory'), duration: '12 min', xp: '5 XP' },
+                    { title: currentLanguage === 'pt-BR' ? 'Fundamentos de Machine Learning' : 'Machine Learning Fundamentals', type: t('interactive'), duration: '15 min', xp: '8 XP' },
+                    { title: currentLanguage === 'pt-BR' ? 'Redes Neurais Explicadas' : 'Neural Networks Explained', type: t('interactive'), duration: '18 min', xp: '8 XP' },
+                    { title: currentLanguage === 'pt-BR' ? 'Ética em IA e Desenvolvimento Responsável' : 'AI Ethics and Responsible Development', type: t('theory'), duration: '10 min', xp: '5 XP' },
+                    { title: currentLanguage === 'pt-BR' ? 'Avaliação: IA Básica' : 'AI Basics Assessment', type: t('quiz'), duration: '8 min', xp: '15 XP' }
+                ]
+            },
+            {
+                id: 2,
+                title: moduleNames[1],
+                description: t('courseDescriptions')[2],
+                difficulty: t('beginner'),
+                duration: '60 min',
+                xp: '35 XP',
+                lessons: [
+                    { title: currentLanguage === 'pt-BR' ? 'Introdução à Engenharia de Prompts' : 'Introduction to Prompt Engineering', type: t('interactive'), duration: '15 min', xp: '8 XP' },
+                    { title: currentLanguage === 'pt-BR' ? 'Estrutura e Técnicas de Prompts' : 'Prompt Structure and Techniques', type: t('interactive'), duration: '20 min', xp: '10 XP' },
+                    { title: currentLanguage === 'pt-BR' ? 'Estratégias Avançadas de Prompts' : 'Advanced Prompting Strategies', type: t('interactive'), duration: '25 min', xp: '12 XP' },
+                    { title: currentLanguage === 'pt-BR' ? 'Otimização e Teste de Prompts' : 'Prompt Optimization and Testing', type: t('lab'), duration: '30 min', xp: '15 XP' },
+                    { title: currentLanguage === 'pt-BR' ? 'Avaliação: Maestria em Prompts' : 'Prompt Engineering Mastery Assessment', type: t('quiz'), duration: '12 min', xp: '20 XP' }
+                ]
+            },
+            {
+                id: 3,
+                title: 'AI Assistants',
+                description: 'Understanding and building intelligent AI assistants for various applications. From design to deployment of production systems.',
+                difficulty: 'intermediate',
+                duration: '75 min',
+                xp: '40 XP',
+                lessons: [
+                    { title: 'Understanding AI Assistants', type: 'theory', duration: '18 min', xp: '8 XP' },
+                    { title: 'Designing Assistant Personalities', type: 'interactive', duration: '22 min', xp: '10 XP' },
+                    { title: 'Assistant Training and Fine-tuning', type: 'lab', duration: '35 min', xp: '15 XP' },
+                    { title: 'Building Production AI Assistants', type: 'lab', duration: '40 min', xp: '18 XP' },
+                    { title: 'AI Assistants Practical Project', type: 'lab', duration: '45 min', xp: '25 XP' }
+                ]
+            },
+            {
+                id: 4,
+                title: 'AI Agents',
+                description: 'Advanced autonomous AI agents with decision-making and goal-oriented behavior. Build sophisticated multi-agent systems.',
+                difficulty: 'intermediate',
+                duration: '90 min',
+                xp: '50 XP',
+                lessons: [
+                    { title: 'From Assistants to Autonomous Agents', type: 'theory', duration: '20 min', xp: '10 XP' },
+                    { title: 'Goal-Oriented Agent Behavior', type: 'interactive', duration: '25 min', xp: '12 XP' },
+                    { title: 'Multi-Agent Systems', type: 'interactive', duration: '30 min', xp: '15 XP' },
+                    { title: 'Agent Development Frameworks', type: 'lab', duration: '40 min', xp: '18 XP' },
+                    { title: 'Advanced Agent Deployment', type: 'lab', duration: '35 min', xp: '20 XP' },
+                    { title: 'AI Agents Capstone Project', type: 'lab', duration: '60 min', xp: '30 XP' }
+                ]
+            },
+            {
+                id: 5,
+                title: 'Model Context Protocol',
+                description: 'Professional implementation of MCP for enterprise AI system integration. Master the protocol that powers modern AI applications.',
+                difficulty: 'advanced',
+                duration: '120 min',
+                xp: '60 XP',
+                lessons: [
+                    { title: 'Introduction to Model Context Protocol', type: 'theory', duration: '25 min', xp: '12 XP' },
+                    { title: 'MCP Server Development', type: 'lab', duration: '45 min', xp: '18 XP' },
+                    { title: 'MCP Client Integration', type: 'lab', duration: '40 min', xp: '18 XP' },
+                    { title: 'Advanced MCP Patterns', type: 'lab', duration: '50 min', xp: '22 XP' },
+                    { title: 'MCP Production Deployment', type: 'lab', duration: '55 min', xp: '25 XP' },
+                    { title: 'MCP Professional Certification', type: 'quiz', duration: '90 min', xp: '40 XP' }
+                ]
+            },
+            {
+                id: 6,
+                title: currentLanguage === 'pt-BR' ? '🎁 Módulo Bônus: Métodos de Estudo' : '🎁 Bonus Module: Study Methods',
+                description: currentLanguage === 'pt-BR' ? 'Técnicas avançadas de aprendizagem, mapas mentais e métodos que viralizaram nas redes sociais. Desbloqueado com 50+ XP.' : 'Advanced learning techniques, mind maps and methods that went viral on social media. Unlocked with 50+ XP.',
+                difficulty: t('advanced'),
+                duration: '120 min',
+                xp: '60 XP',
+                trending: true,
+                bonus: true,
+                lessons: [
+                    { title: currentLanguage === 'pt-BR' ? 'Técnica Feynman: Ensine para Aprender' : 'Feynman Technique: Teach to Learn', type: t('interactive'), duration: '25 min', xp: '12 XP' },
+                    { title: currentLanguage === 'pt-BR' ? 'Active Recall e Spaced Repetition' : 'Active Recall and Spaced Repetition', type: t('interactive'), duration: '30 min', xp: '15 XP' },
+                    { title: currentLanguage === 'pt-BR' ? 'Mapas Mentais e Visualização' : 'Mind Maps and Visualization', type: t('interactive'), duration: '25 min', xp: '12 XP' },
+                    { title: currentLanguage === 'pt-BR' ? 'Método Cornell e Sistema Zettelkasten' : 'Cornell Method and Zettelkasten System', type: t('lab'), duration: '20 min', xp: '10 XP' },
+                    { title: currentLanguage === 'pt-BR' ? 'Flow State e Deep Work' : 'Flow State and Deep Work', type: t('theory'), duration: '20 min', xp: '11 XP' }
+                ]
+            }
+        ];
+        }
+        
+        function renderCourseModules() {
+            const grid = document.getElementById('courseGrid');
+            const courseModules = getCourseModules();
+            grid.innerHTML = courseModules.map(module => `
+                <div class="module-card ${module.difficulty}" onclick="showModuleDetails(${module.id})">
+                    <div class="status-indicator"></div>
+                    ${module.trending ? '<div style="position: absolute; top: 10px; left: 10px; background: #ff6b6b; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; font-weight: 600;">🔥 TRENDING</div>' : ''}
+                    ${module.bonus ? '<div style="position: absolute; top: 10px; right: 10px; background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #333; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; font-weight: 600;">🎁 BÔNUS</div>' : ''}
+                    <div class="module-header">
+                        <div class="module-icon">${module.id === 6 ? '🧠' : (module.id || '')}</div>
+                        <h3 class="module-title">${module.title}</h3>
+                    </div>
+                    <p class="module-description">${module.description}</p>
+                    <div class="module-meta">
+                        <span class="difficulty-badge">${module.difficulty}</span>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>⏱️</span>
+                                <span>${module.duration}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>⭐</span>
+                                <span>${module.xp}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>📚</span>
+                                <span>${module.lessons.length} ${t('lessons')}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function showModuleDetails(moduleId) {
+            const module = courseModules.find(m => m.id === moduleId);
+            const modalContent = document.getElementById('modalContent');
+            
+            modalContent.innerHTML = `
+                <h2>${module.title}</h2>
+                <p style="color: #666; margin: 15px 0;">${module.description}</p>
+                <div style="display: flex; gap: 15px; margin: 20px 0;">
+                    <span class="difficulty-badge ${module.difficulty}">${module.difficulty}</span>
+                    <span>⏱️ ${module.duration}</span>
+                    <span>⭐ ${module.xp}</span>
+                </div>
+                <div class="lessons-list">
+                    <h3>Course Lessons</h3>
+                    ${module.lessons.map(lesson => `
+                        <div class="lesson-item">
+                            <div>
+                                <strong>${lesson.title}</strong>
+                                <span class="lesson-type type-${lesson.type}">${lesson.type}</span>
+                            </div>
+                            <div style="text-align: right; font-size: 0.9em; color: #666;">
+                                <div>${lesson.duration}</div>
+                                <div>${lesson.xp}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="margin-top: 30px; text-align: center;">
+                    <button class="btn btn-primary" onclick="startModule(${moduleId})">Start Module</button>
+                </div>
+            `;
+            
+            document.getElementById('lessonModal').style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('lessonModal').style.display = 'none';
+        }
+        
+        function startModule(moduleId) {
+            closeModal();
+            showLearningInterface(moduleId, 0);
+        }
+        
+        function showDashboard() {
+            const container = document.getElementById('userStatsContainer');
+            const courseGrid = document.getElementById('courseGrid');
+            
+            if (container.style.display === 'none') {
+                container.style.display = 'block';
+                courseGrid.style.display = 'none';
+                updateUserStats();
+                displayAIRecommendations();
+            } else {
+                container.style.display = 'none';
+                courseGrid.style.display = 'grid';
+            }
+        }
+
+        function displayAIRecommendations() {
+            const recommendations = aiLearningEngine.getPersonalizedRecommendations();
+            let container = document.getElementById('userStatsContainer');
+            
+            // Remove any existing AI recommendations
+            const existingAI = container.querySelector('.ai-recommendations');
+            if (existingAI) {
+                existingAI.remove();
+            }
+            
+            const aiSection = document.createElement('div');
+            aiSection.className = 'ai-recommendations';
+            aiSection.innerHTML = `
+                <div class="achievements-container" style="margin-top: 20px;">
+                    <h3 style="margin-bottom: 20px;">🤖 ${currentLanguage === 'pt-BR' ? 'Recomendações Personalizadas da IA' : 'AI-Powered Personalized Recommendations'}</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
+                        ${recommendations.map(rec => `
+                            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px;">
+                                <h4>${rec.title}</h4>
+                                <p style="margin: 10px 0; opacity: 0.9;">${rec.reason || rec.description || ''}</p>
+                                ${rec.moduleId ? `<button class="btn btn-secondary" onclick="showModuleDetails(${rec.moduleId}); toggleDashboard();" style="margin-top: 10px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);">${currentLanguage === 'pt-BR' ? 'Ver Módulo' : 'View Module'}</button>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 12px;">
+                        <h4>${currentLanguage === 'pt-BR' ? 'Seu Perfil de Aprendizagem Adaptativo' : 'Your Adaptive Learning Profile'}</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                            <div style="padding: 10px; background: white; border-radius: 6px;"><strong>${currentLanguage === 'pt-BR' ? 'Ritmo:' : 'Pace:'}</strong> <span style="color: #667eea;">${learningProfile.pace}</span></div>
+                            <div style="padding: 10px; background: white; border-radius: 6px;"><strong>${currentLanguage === 'pt-BR' ? 'Dificuldade:' : 'Difficulty:'}</strong> <span style="color: #667eea;">${learningProfile.difficulty}</span></div>
+                            <div style="padding: 10px; background: white; border-radius: 6px;"><strong>${currentLanguage === 'pt-BR' ? 'Sessão ideal:' : 'Ideal session:'}</strong> <span style="color: #667eea;">${learningProfile.sessionDuration} min</span></div>
+                            <div style="padding: 10px; background: white; border-radius: 6px;"><strong>${currentLanguage === 'pt-BR' ? 'Áreas dominadas:' : 'Strong areas:'}</strong> <span style="color: #667eea;">${learningProfile.strongAreas.length}</span></div>
+                        </div>
+                        <div style="margin-top: 15px; padding: 15px; background: linear-gradient(135deg, #e8f4fd 0%, #f0f8ff 100%); border-radius: 8px; border-left: 4px solid #2196f3;">
+                            <p style="margin: 0; color: #1976d2;"><strong>${currentLanguage === 'pt-BR' ? '🎯 Sistema IA Ativo:' : '🎯 AI System Active:'}</strong> ${currentLanguage === 'pt-BR' ? 'Adaptando conteúdo baseado no seu progresso e estilo de aprendizagem' : 'Adapting content based on your progress and learning style'}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(aiSection);
+        }
+
+        function toggleDashboard() {
+            const container = document.getElementById('userStatsContainer');
+            const courseGrid = document.getElementById('courseGrid');
+            
+            container.style.display = 'none';
+            courseGrid.style.display = 'grid';
+        }
+        
+        function showProgress() {
+            showDashboard();
+        }
+        
+        function showAchievements() {
+            showDashboard();
+            updateAchievementDisplay();
+        }
+        
+        function updateUserStats() {
+            document.getElementById('totalXP').textContent = userProgress.totalXP;
+            document.getElementById('streakCount').textContent = `${userProgress.currentStreak} ${t('days')}`;
+            
+            // Calculate level based on XP
+            const level = Math.floor(userProgress.totalXP / 50) + 1;
+            const levelNames = t('levelNames');
+            document.getElementById('userLevel').textContent = levelNames[Math.min(level - 1, levelNames.length - 1)];
+            
+            // Update static labels
+            document.querySelector('.xp-display div:first-child').textContent = t('totalXP');
+            document.querySelector('.streak-counter div div:first-child').textContent = t('streak');
+            document.querySelector('[style*="9b59b6"] div:first-child').textContent = t('level');
+        }
+        
+        function updateAchievementDisplay() {
+            const container = document.getElementById('achievementBadges');
+            
+            if (userProgress.achievements.length === 0) {
+                container.innerHTML = `<p style="color: #666; font-style: italic;">${t('completeFirstLesson')}</p>`;
+                return;
+            }
+            
+            container.innerHTML = userProgress.achievements.map(achievementId => {
+                const achievement = achievements[achievementId];
+                return `
+                    <div class="achievement-badge">
+                        <span>${achievement.icon}</span>
+                        <div>
+                            <strong>${achievement.name}</strong>
+                            <br><small>${achievement.description}</small>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function checkAchievements(type, value = 1) {
+            const newAchievements = [];
+            
+            Object.keys(achievements).forEach(achievementId => {
+                if (userProgress.achievements.includes(achievementId)) return;
+                
+                const achievement = achievements[achievementId];
+                let earned = false;
+                
+                switch (achievement.requirement) {
+                    case 'complete_lesson':
+                        if (type === 'lesson_complete') earned = true;
+                        break;
+                    case 'complete_module':
+                        if (type === 'module_complete' && userProgress.completedModules.length >= achievement.threshold) earned = true;
+                        break;
+                    case 'streak':
+                        if (userProgress.currentStreak >= achievement.threshold) earned = true;
+                        break;
+                    case 'perfect_quiz':
+                        if (userProgress.perfectQuizzes >= achievement.threshold) earned = true;
+                        break;
+                    case 'total_xp':
+                        if (userProgress.totalXP >= achievement.threshold) earned = true;
+                        break;
+                    case 'complete_all':
+                        if (userProgress.completedModules.length >= achievement.threshold) earned = true;
+                        break;
+                }
+                
+                if (earned) {
+                    userProgress.achievements.push(achievementId);
+                    newAchievements.push(achievement);
+                }
+            });
+            
+            // Show achievement notifications
+            newAchievements.forEach((achievement, index) => {
+                setTimeout(() => {
+                    showNotification(`🏆 ${t('achievementUnlocked')}: ${achievement.name}!`);
+                    updateCodyFace('excited');
+                    setTimeout(() => updateCodyFace('happy'), 2000);
+                }, index * 2000);
+            });
+        }
+        
+        function awardXP(xpAmount) {
+            userProgress.totalXP += xpAmount;
+            
+            // Update streak
+            const today = new Date().toDateString();
+            if (userProgress.lastStudyDate !== today) {
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                
+                if (userProgress.lastStudyDate === yesterday.toDateString()) {
+                    userProgress.currentStreak++;
+                } else {
+                    userProgress.currentStreak = 1;
+                }
+                userProgress.lastStudyDate = today;
+            }
+            
+            checkAchievements('xp_gained', xpAmount);
+            updateProgressRing((userProgress.totalXP % 100));
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('lessonModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+        
+        // Cody AI Avatar System
+        let codyState = {
+            isOpen: false,
+            currentContext: 'welcome',
+            userProgress: 0,
+            lastInteraction: Date.now()
+        };
+        
+        const codyPersonality = {
+            'pt-BR': {
+                name: 'Cody',
+                personality: 'amigável, encorajador, brasileirão',
+                welcome: [
+                    "E aí, pessoal! Eu sou o Cody, seu parceiro de estudos em IA! 🤖 Vamos juntos nessa jornada incrível!",
+                    "Opa! Bem-vindos ao Cody Verse! Vou ajudar vocês a entender IA de um jeito divertido e descomplicado!",
+                    "Prontos para mergulhar no mundo fascinante da IA? Vou tornar esse aprendizado massa demais!"
+                ],
+                course: [
+                    "Nosso curso é tipo um RPG de conhecimento! Começamos no AI Basics para construir sua base, depois evoluímos através de Prompt Engineering, AI Assistants, AI Agents, e finalmente masterizamos o Model Context Protocol!",
+                    "É como aprender a dirigir, né? Primeiro o básico, depois as manobras avançadas, e por fim as técnicas profissionais. Cada módulo constrói em cima do anterior!",
+                    "Temos 27 lições no total, com mais de 390 minutos de conteúdo e 215 pontos de XP para conquistar! Você vai de iniciante a profissional!"
+                ],
+                progress: [
+                    "Seu progresso é acompanhado através de pontos de XP, lições concluídas e conquistas! Cada lição te dá experiência baseada na dificuldade.",
+                    "Vou mostrar um anel de progresso ao redor do meu avatar - ele se enche conforme você completa os módulos. Ainda por cima, você desbloqueará badges e certificados!",
+                    "Relaxa, sem pressa! Vou me adaptar ao seu ritmo de aprendizado e dar dicas quando precisar."
+                ],
+                tips: [
+                    "Minha dica gold: pratique o que aprender na hora! Cada lição interativa tem exercícios práticos.",
+                    "Tenta me explicar os conceitos de volta - ensinar é a melhor forma de aprender! Vou escutar e dar feedback!",
+                    "Faz pausas entre os módulos. Conceitos de IA precisam de tempo para sedimentar. Vou mandar lembretes gentis para continuar!"
+                ],
+                encouragement: [
+                    "Você tá mandando bem! Todo expert já foi iniciante um dia. Bora continuar!",
+                    "Aprender IA é como montar um LEGO gigante - cada conceito apoia o próximo. Você tá construindo algo incrível!",
+                    "Lembra: o objetivo não é decorar tudo, mas entender como as peças se encaixam!"
+                ],
+                emotions: {
+                    excited: ["Isso aí! 🚀", "Massa demais! 🎉", "Show de bola! ⭐"],
+                    encouraging: ["Vai que vai! 💪", "Você consegue! 👊", "Foco no objetivo! 🎯"],
+                    thinking: ["Deixa eu pensar aqui... 🤔", "Hmm, interessante... 🧠", "Analisando... ⚙️"],
+                    celebrating: ["PARABÉNS! 🎊", "Arrasou! 🏆", "Que orgulho! 🌟"]
+                },
+                module_specific: {
+                    1: "AI Basics é perfeito para iniciantes! Vamos explorar o que faz as máquinas 'inteligentes' e por que a IA está transformando nosso mundo!",
+                    2: "Prompt Engineering é como aprender uma nova língua - a linguagem da IA! Você vai dominar como se comunicar com sistemas de IA de forma eficaz!",
+                    3: "AI Assistants é onde a teoria encontra a prática! Você vai entender como projetar companheiros de IA úteis e confiáveis!",
+                    4: "AI Agents é o próximo nível - sistemas autônomos que podem tomar decisões e agir. Aqui a coisa fica emocionante!",
+                    5: "Model Context Protocol é conhecimento profissional! É isso que os melhores engenheiros de IA usam para construir sistemas empresariais!",
+                    6: "Métodos de Estudo Avançados é nosso módulo bônus especial! Técnicas que bombaram nas redes sociais para turbinar seu aprendizado!"
+                },
+                contextual: {
+                    morning: "Bom dia! Pronto para começar o dia estudando IA?",
+                    afternoon: "Boa tarde! Que tal continuarmos nossa jornada de aprendizado?",
+                    evening: "Boa noite! Estudar IA à noite pode ser muito produtivo!",
+                    late_night: "Ei, tá estudando tarde? Lembra de descansar também, viu!"
+                }
+            },
+            'en-US': {
+                name: 'Cody',
+                personality: 'friendly, encouraging, tech-savvy',
+                welcome: [
+                    "Hey there! I'm Cody, your AI learning buddy! 🤖 I'm here to guide you through this amazing journey!",
+                    "Welcome to Cody Verse! I'll help you understand AI concepts in a fun and engaging way!",
+                    "Ready to dive into the fascinating world of AI? I'm here to make learning awesome!"
+                ],
+                course: [
+                    "Our course is like a knowledge RPG! We start with AI Basics to build your foundation, then level up through Prompt Engineering, AI Assistants, AI Agents, and finally master the Model Context Protocol!",
+                    "Think of it like learning to drive - first the basics, then advanced maneuvers, and finally professional techniques. Each module builds on the previous one!",
+                    "We have 27 lessons total, with 390+ minutes of content and 215 XP points to earn! You'll go from beginner to pro!"
+                ],
+                progress: [
+                    "Your progress is tracked through XP points, completed lessons, and achievements! Each lesson gives you experience based on difficulty.",
+                    "I'll show you a progress ring around my avatar - it fills up as you complete modules. Plus you'll unlock badges and certificates!",
+                    "Don't worry about going too fast - I'll adapt to your learning pace and provide hints when you need them."
+                ],
+                tips: [
+                    "Here's my golden tip: practice what you learn immediately! Each interactive lesson has hands-on exercises.",
+                    "Try explaining concepts back to me - teaching is the best way to learn! I'll listen and give you feedback!",
+                    "Take breaks between modules. AI concepts need time to sink in. I'll send you gentle reminders to keep going!"
+                ],
+                encouragement: [
+                    "You're doing great! Every expert was once a beginner. Keep going!",
+                    "Learning AI is like building with blocks - each concept supports the next. You're building something amazing!",
+                    "Remember, the goal isn't to memorize everything, but to understand how the pieces fit together!"
+                ],
+                emotions: {
+                    excited: ["Awesome! 🚀", "That's amazing! 🎉", "Fantastic! ⭐"],
+                    encouraging: ["You've got this! 💪", "Keep going! 👊", "Stay focused! 🎯"],
+                    thinking: ["Let me think... 🤔", "Hmm, interesting... 🧠", "Processing... ⚙️"],
+                    celebrating: ["CONGRATULATIONS! 🎊", "You nailed it! 🏆", "So proud! 🌟"]
+                },
+                module_specific: {
+                    1: "AI Basics is perfect for beginners! We'll explore what makes machines 'intelligent' and why AI is transforming our world!",
+                    2: "Prompt Engineering is like learning a new language - the language of AI! You'll master how to communicate with AI systems effectively!",
+                    3: "AI Assistants is where theory meets practice! You'll understand how to design helpful, reliable AI companions!",
+                    4: "AI Agents is the next level - autonomous systems that can make decisions and take actions. This is where it gets really exciting!",
+                    5: "Model Context Protocol is professional-grade knowledge! This is what top AI engineers use to build enterprise systems!",
+                    6: "Advanced Study Methods is our special bonus module! Techniques that went viral on social media to supercharge your learning!"
+                },
+                contextual: {
+                    morning: "Good morning! Ready to start the day learning AI?",
+                    afternoon: "Good afternoon! Shall we continue our learning journey?",
+                    evening: "Good evening! Studying AI in the evening can be very productive!",
+                    late_night: "Hey, studying late? Remember to get some rest too!"
+                }
+            }
+        };
+
+        function getCodyResponse(category, context = {}) {
+            const personality = codyPersonality[currentLanguage];
+            let responses = personality[category];
+            
+            if (!responses) return "Hi there! I'm here to help you learn!";
+            
+            // Add contextual awareness
+            if (category === 'welcome') {
+                const hour = new Date().getHours();
+                if (hour < 12 && personality.contextual.morning) {
+                    responses = [personality.contextual.morning, ...responses];
+                } else if (hour < 18 && personality.contextual.afternoon) {
+                    responses = [personality.contextual.afternoon, ...responses];
+                } else if (hour < 22 && personality.contextual.evening) {
+                    responses = [personality.contextual.evening, ...responses];
+                } else if (personality.contextual.late_night) {
+                    responses = [personality.contextual.late_night, ...responses];
+                }
+            }
+            
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        function getCodyEmotion(emotion) {
+            const personality = codyPersonality[currentLanguage];
+            const emotions = personality.emotions[emotion];
+            return emotions ? emotions[Math.floor(Math.random() * emotions.length)] : "😊";
+        }
+        
+        function toggleCody() {
+            const chat = document.getElementById('codyChat');
+            codyState.isOpen = !codyState.isOpen;
+            
+            if (codyState.isOpen) {
+                chat.classList.add('active');
+                updateCodyFace('happy');
+                if (Date.now() - codyState.lastInteraction > 300000) { // 5 minutes
+                    showCodyMessage(getRandomResponse('encouragement'));
+                }
+            } else {
+                chat.classList.remove('active');
+                updateCodyFace('normal');
+            }
+            codyState.lastInteraction = Date.now();
+        }
+        
+        function codyHelp(topic) {
+            showTypingIndicator();
+            setTimeout(() => {
+                const response = getRandomResponse(topic);
+                showCodyMessage(response);
+                updateCodyOptions(topic);
+            }, 1500);
+        }
+        
+        function getRandomResponse(category) {
+            return getCodyResponse(category);
+        }
+        
+        function showCodyMessage(message) {
+            const messageEl = document.getElementById('codyMessage');
+            messageEl.innerHTML = message;
+            updateCodyFace('talking');
+            setTimeout(() => updateCodyFace('happy'), 2000);
+        }
+        
+        function showTypingIndicator() {
+            const messageEl = document.getElementById('codyMessage');
+            messageEl.innerHTML = `
+                <div class="typing-indicator">
+                    Cody is thinking
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            updateCodyFace('thinking');
+        }
+        
+        function updateCodyOptions(context) {
+            const optionsEl = document.getElementById('codyOptions');
+            let options = '';
+            
+            switch(context) {
+                case 'course':
+                    options = currentLanguage === 'pt-BR' ? `
+                        <button class="cody-option" onclick="codyHelp('progress')">Como é acompanhado o progresso?</button>
+                        <button class="cody-option" onclick="showModuleHelp()">Me fale sobre módulos específicos</button>
+                        <button class="cody-option" onclick="codyHelp('tips')">Alguma dica de aprendizado?</button>
+                    ` : `
+                        <button class="cody-option" onclick="codyHelp('progress')">How is progress tracked?</button>
+                        <button class="cody-option" onclick="showModuleHelp()">Tell me about specific modules</button>
+                        <button class="cody-option" onclick="codyHelp('tips')">Any learning tips?</button>
+                    `;
+                    break;
+                case 'progress':
+                    options = currentLanguage === 'pt-BR' ? `
+                        <button class="cody-option" onclick="showAchievements()">Que conquistas posso ganhar?</button>
+                        <button class="cody-option" onclick="codyHelp('tips')">Como aprender efetivamente?</button>
+                        <button class="cody-option" onclick="codyHelp('course')">Me fale sobre o curso</button>
+                    ` : `
+                        <button class="cody-option" onclick="showAchievements()">What achievements can I earn?</button>
+                        <button class="cody-option" onclick="codyHelp('tips')">How to learn effectively?</button>
+                        <button class="cody-option" onclick="codyHelp('course')">Tell me about the course</button>
+                    `;
+                    break;
+                case 'tips':
+                    options = currentLanguage === 'pt-BR' ? `
+                        <button class="cody-option" onclick="codyHelp('course')">Sobre a estrutura do curso</button>
+                        <button class="cody-option" onclick="askCodyQuestion()">Fazer uma pergunta ao Cody</button>
+                        <button class="cody-option" onclick="codyMotivation()">Preciso de motivação!</button>
+                    ` : `
+                        <button class="cody-option" onclick="codyHelp('course')">About the course structure</button>
+                        <button class="cody-option" onclick="askCodyQuestion()">Ask Cody a question</button>
+                        <button class="cody-option" onclick="codyMotivation()">I need motivation!</button>
+                    `;
+                    break;
+                default:
+                    options = currentLanguage === 'pt-BR' ? `
+                        <button class="cody-option" onclick="codyHelp('course')">Me fale sobre o curso</button>
+                        <button class="cody-option" onclick="codyHelp('progress')">Como acompanho meu progresso?</button>
+                        <button class="cody-option" onclick="codyHelp('tips')">Me dê dicas de estudo</button>
+                    ` : `
+                        <button class="cody-option" onclick="codyHelp('course')">Tell me about the course</button>
+                        <button class="cody-option" onclick="codyHelp('progress')">How do I track progress?</button>
+                        <button class="cody-option" onclick="codyHelp('tips')">Give me learning tips</button>
+                    `;
+            }
+            
+            optionsEl.innerHTML = options;
+        }
+        
+        function updateCodyFace(emotion) {
+            const faceEl = document.getElementById('codyFace');
+            const faces = {
+                normal: '🤖',
+                happy: '😊',
+                thinking: '🤔',
+                talking: '💬',
+                excited: '🎉',
+                encouraging: '👍'
+            };
+            faceEl.textContent = faces[emotion] || faces.normal;
+        }
+        
+        function showModuleHelp() {
+            showTypingIndicator();
+            setTimeout(() => {
+                const helpMsg = currentLanguage === 'pt-BR' ? 
+                    "Qual módulo você quer saber mais? Clica em qualquer card de módulo que eu explico o que você vai aprender!" :
+                    "Which module would you like to know more about? Click on any module card and I'll explain what you'll learn!";
+                showCodyMessage(helpMsg);
+                updateCodyOptions('course');
+                closeCodyChat();
+            }, 1500);
+        }
+        
+        function showAchievements() {
+            showTypingIndicator();
+            setTimeout(() => {
+                const achievementMsg = currentLanguage === 'pt-BR' ? 
+                    "Você pode ganhar badges como 'Explorador de IA', 'Mestre dos Prompts', 'Construtor de Agentes' e 'Profissional MCP'! Cada módulo completado desbloqueia conquistas especiais e certificados!" :
+                    "You can earn badges like 'AI Explorer', 'Prompt Master', 'Agent Builder', and 'MCP Professional'! Each module completion unlocks special achievements and certificates.";
+                showCodyMessage(achievementMsg);
+                updateCodyOptions('progress');
+            }, 2000);
+        }
+        
+        function askCodyQuestion() {
+            const questionMsg = currentLanguage === 'pt-BR' ? 
+                "Opa! Adoro perguntas! Pode me perguntar qualquer coisa sobre IA, conteúdo do curso ou estratégias de aprendizado. Estou aqui para te ajudar a arrasar!" :
+                "Great! I love questions! Feel free to ask me anything about AI, the course content, or learning strategies. I'm here to help you succeed!";
+            showCodyMessage(questionMsg);
+            updateCodyOptions('tips');
+        }
+        
+        function codyMotivation() {
+            showTypingIndicator();
+            setTimeout(() => {
+                const motivationalQuotes = currentLanguage === 'pt-BR' ? [
+                    "Lembra: todo expert em IA começou exatamente onde você está agora. Você consegue! 💪",
+                    "Aprender IA é como desbloquear superpoderes - cada lição te deixa mais capaz! ⚡",
+                    "Você não está só aprendendo sobre IA, está se preparando para o futuro. Isso é incrível! 🚀",
+                    "Progresso pequeno ainda é progresso. Cada minuto que você gasta aprendendo é um investimento em si mesmo! 📈",
+                    "Cada linha de código, cada conceito entendido te aproxima do seu objetivo. Bora que bora! 🎯"
+                ] : [
+                    "Remember: Every AI expert started exactly where you are now. You've got this! 💪",
+                    "Learning AI is like unlocking superpowers - each lesson makes you more capable! ⚡",
+                    "You're not just learning about AI, you're preparing for the future. That's amazing! 🚀",
+                    "Small progress is still progress. Every minute you spend learning is an investment in yourself! 📈",
+                    "Every concept understood brings you closer to your goal. Keep pushing forward! 🎯"
+                ];
+                
+                const quote = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
+                showCodyMessage(quote);
+                updateCodyFace('encouraging');
+                setTimeout(() => updateCodyFace('happy'), 3000);
+                updateCodyOptions('tips');
+            }, 1500);
+        }
+        
+        function closeCodyChat() {
+            setTimeout(() => {
+                if (codyState.isOpen) toggleCody();
+            }, 3000);
+        }
+        
+        function showNotification(message) {
+            const notification = document.getElementById('codyNotification');
+            const textEl = document.getElementById('notificationText');
+            textEl.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+        
+        function updateProgressRing(percentage) {
+            const circle = document.getElementById('progressRing');
+            const circumference = 2 * Math.PI * 40;
+            const offset = circumference - (percentage / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+        }
+        
+        // Enhanced module interaction
+        function showModuleDetails(moduleId) {
+            const module = courseModules.find(m => m.id === moduleId);
+            const modalContent = document.getElementById('modalContent');
+            
+            // Cody provides module-specific guidance
+            const personality = codyPersonality[currentLanguage];
+            if (personality.module_specific[moduleId]) {
+                setTimeout(() => {
+                    showNotification(`Cody: ${personality.module_specific[moduleId]}`);
+                }, 500);
+            }
+            
+            modalContent.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                    <div style="font-size: 2em;">🤖</div>
+                    <div>
+                        <h2>${module.title}</h2>
+                        <p style="color: #666; margin: 5px 0;">Cody's guided learning experience</p>
+                    </div>
+                </div>
+                <p style="color: #666; margin: 15px 0; line-height: 1.6;">${module.description}</p>
+                <div style="display: flex; gap: 15px; margin: 20px 0; flex-wrap: wrap;">
+                    <span class="difficulty-badge ${module.difficulty}">${module.difficulty}</span>
+                    <span style="display: flex; align-items: center; gap: 5px;">⏱️ ${module.duration}</span>
+                    <span style="display: flex; align-items: center; gap: 5px;">⭐ ${module.xp}</span>
+                    <span style="display: flex; align-items: center; gap: 5px;">🎯 ${module.lessons.length} lessons</span>
+                </div>
+                <div class="lessons-list">
+                    <h3>📚 Interactive Lessons with Cody</h3>
+                    ${module.lessons.map((lesson, index) => `
+                        <div class="lesson-item" style="cursor: pointer;" onclick="startLesson(${moduleId}, ${index})">
+                            <div>
+                                <strong>${lesson.title}</strong>
+                                <span class="lesson-type type-${lesson.type}">${lesson.type}</span>
+                                <div style="font-size: 0.85em; color: #888; margin-top: 4px;">
+                                    Cody will guide you through this ${lesson.type} lesson
+                                </div>
+                            </div>
+                            <div style="text-align: right; font-size: 0.9em; color: #666;">
+                                <div>${lesson.duration}</div>
+                                <div>${lesson.xp}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="margin-top: 30px; text-align: center;">
+                    <button class="btn btn-primary" onclick="startModule(${moduleId})">🚀 ${t('startLearning')}</button>
+                </div>
+            `;
+            
+            document.getElementById('lessonModal').style.display = 'block';
+        }
+        
+        function startLesson(moduleId, lessonIndex) {
+            closeModal();
+            showLearningInterface(moduleId, lessonIndex);
+        }
+        
+        // Periodic Cody interactions
+        setInterval(() => {
+            if (!codyState.isOpen && Date.now() - codyState.lastInteraction > 600000) { // 10 minutes
+                const encouragements = [
+                    "Cody here! Ready to continue your AI journey?",
+                    "I'm here when you're ready to learn something new!",
+                    "Your AI adventure awaits! Click me to continue."
+                ];
+                updateCodyFace('encouraging');
+                setTimeout(() => updateCodyFace('normal'), 3000);
+            }
+        }, 300000); // Check every 5 minutes
+        
+        // Internationalization System
+        let currentLanguage = 'pt-BR';
+        
+        const translations = {
+            'pt-BR': {
+                // Header
+                appTitle: '🎓 Cody Verse',
+                appSubtitle: 'Aprenda conceitos de IA e MCP através do nosso curso abrangente',
+                
+                // Navigation
+                courseDashboard: 'Dashboard do Curso',
+                myProgress: 'Meu Progresso',
+                achievementsRewards: 'Conquistas & Prêmios',
+                
+                // Course modules
+                aiBasics: 'IA Básica',
+                promptEngineering: 'Engenharia de Prompts',
+                aiAssistants: 'Assistentes de IA',
+                aiAgents: 'Agentes de IA',
+                modelContextProtocol: 'Protocolo de Contexto do Modelo',
+                advancedStudyMethods: 'Métodos de Estudo Avançados',
+                
+                // Difficulty levels
+                beginner: 'iniciante',
+                intermediate: 'intermediário',
+                advanced: 'avançado',
+                
+                // Lesson types
+                theory: 'teoria',
+                interactive: 'interativo',
+                lab: 'laboratório',
+                quiz: 'questionário',
+                
+                // UI Elements
+                lessons: 'lições',
+                duration: 'duração',
+                startLearning: 'Começar a Aprender com Cody',
+                previous: '← Anterior',
+                next: 'Próximo →',
+                complete: 'Concluir',
+                backToCourse: 'Voltar ao Curso',
+                close: 'Fechar',
+                progress: 'Progresso',
+                
+                // Stats
+                totalXP: 'XP Total',
+                streak: 'Sequência',
+                level: 'Nível',
+                days: 'dias',
+                
+                // Levels
+                levelNames: ['Iniciante', 'Explorador', 'Estudante', 'Especialista', 'Mestre', 'Expert'],
+                
+                // Achievements
+                achievementsUnlocked: 'Conquistas Desbloqueadas',
+                completeFirstLesson: 'Complete lições para desbloquear conquistas!',
+                achievementUnlocked: 'Conquista Desbloqueada',
+                
+                // Cody messages
+                codyWelcome: 'Olá! Sou o Cody, seu companheiro de aprendizagem em IA! Estou aqui para guiá-lo em sua jornada.',
+                codyStartLesson: 'Começando "{lesson}"! Estou aqui para ajudar.',
+                codyModuleComplete: 'Fantástico! Você dominou {module}! Pronto para o próximo desafio?',
+                codyWelcomeNotification: 'Bem-vindo! Sou o Cody, seu companheiro de aprendizagem. Clique em mim quando precisar de ajuda!',
+                
+                // Learning interface
+                moduleComplete: 'Módulo Concluído!',
+                congratulations: 'Parabéns! Você completou o módulo "{module}"',
+                continueJourney: 'Continue sua jornada com o próximo módulo!',
+                lessonComplete: 'Lição concluída!',
+                thisLessonXP: 'XP desta lição',
+                
+                // Course descriptions
+                courseDescriptions: {
+                    1: 'Conceitos fundamentais de inteligência artificial, aprendizado de máquina e redes neurais. Inicie sua jornada no mundo da IA com conceitos centrais e aplicações práticas.',
+                    2: 'Domine a arte de criar prompts eficazes para respostas e comportamentos ideais de IA. Aprenda técnicas avançadas usadas por profissionais.',
+                    3: 'Compreenda e construa assistentes de IA inteligentes para várias aplicações. Do design à implantação de sistemas de produção.',
+                    4: 'Agentes de IA autônomos avançados com tomada de decisão e comportamento orientado a objetivos. Construa sistemas multi-agentes sofisticados.',
+                    5: 'Implementação profissional do MCP para integração de sistemas de IA corporativos. Domine o protocolo que alimenta aplicações de IA modernas.',
+                    6: 'Técnicas de aprendizagem que viralizaram nas redes sociais. Método Feynman, Active Recall, Spaced Repetition e mais.'
+                }
+            },
+            'en-US': {
+                // Header
+                appTitle: '🎓 Cody Verse',
+                appSubtitle: 'Learn AI and MCP concepts through our comprehensive scaling course',
+                
+                // Navigation
+                courseDashboard: 'Course Dashboard',
+                myProgress: 'My Progress',
+                achievementsRewards: 'Achievements & Rewards',
+                
+                // Course modules
+                aiBasics: 'AI Basics',
+                promptEngineering: 'Prompt Engineering',
+                aiAssistants: 'AI Assistants',
+                aiAgents: 'AI Agents',
+                modelContextProtocol: 'Model Context Protocol',
+                advancedStudyMethods: 'Advanced Study Methods',
+                
+                // Difficulty levels
+                beginner: 'beginner',
+                intermediate: 'intermediate',
+                advanced: 'advanced',
+                
+                // Lesson types
+                theory: 'theory',
+                interactive: 'interactive',
+                lab: 'lab',
+                quiz: 'quiz',
+                
+                // UI Elements
+                lessons: 'lessons',
+                duration: 'duration',
+                startLearning: 'Start Learning with Cody',
+                previous: '← Previous',
+                next: 'Next →',
+                complete: 'Complete',
+                backToCourse: 'Back to Course',
+                close: 'Close',
+                progress: 'Progress',
+                
+                // Stats
+                totalXP: 'Total XP',
+                streak: 'Streak',
+                level: 'Level',
+                days: 'days',
+                
+                // Levels
+                levelNames: ['Beginner', 'Explorer', 'Student', 'Expert', 'Master', 'Elite'],
+                
+                // Achievements
+                achievementsUnlocked: 'Achievements Unlocked',
+                completeFirstLesson: 'Complete lessons to unlock achievements!',
+                achievementUnlocked: 'Achievement Unlocked',
+                
+                // Cody messages
+                codyWelcome: 'Hi there! I\'m Cody, your AI learning buddy! I\'m here to guide you through your AI journey.',
+                codyStartLesson: 'Starting "{lesson}"! I\'m here to help.',
+                codyModuleComplete: 'Fantastic! You mastered {module}! Ready for the next challenge?',
+                codyWelcomeNotification: 'Welcome! I\'m Cody, your learning companion. Click me anytime for help!',
+                
+                // Learning interface
+                moduleComplete: 'Module Complete!',
+                congratulations: 'Congratulations! You completed the "{module}" module',
+                continueJourney: 'Continue your journey with the next module!',
+                lessonComplete: 'Lesson complete!',
+                thisLessonXP: 'This lesson XP',
+                
+                // Course descriptions
+                courseDescriptions: {
+                    1: 'Fundamental concepts of artificial intelligence, machine learning, and neural networks. Start your journey into the world of AI with core concepts and practical applications.',
+                    2: 'Master the art of crafting effective prompts for optimal AI responses and behavior. Learn advanced techniques used by professionals.',
+                    3: 'Understanding and building intelligent AI assistants for various applications. From design to deployment of production systems.',
+                    4: 'Advanced autonomous AI agents with decision-making and goal-oriented behavior. Build sophisticated multi-agent systems.',
+                    5: 'Professional implementation of MCP for enterprise AI system integration. Master the protocol that powers modern AI applications.',
+                    6: 'Learning techniques that went viral on social networks. Feynman Method, Active Recall, Spaced Repetition and more.'
+                }
+            }
+        };
+        
+        function t(key, replacements = {}) {
+            let text = translations[currentLanguage][key] || key;
+            
+            // Replace placeholders
+            Object.keys(replacements).forEach(placeholder => {
+                text = text.replace(`{${placeholder}}`, replacements[placeholder]);
+            });
+            
+            return text;
+        }
+        
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            updateInterface();
+            localStorage.setItem('codyverse_language', lang);
+        }
+        
+        function updateInterface() {
+            // Update header
+            document.querySelector('.header h1').textContent = t('appTitle');
+            document.querySelector('.header p').textContent = t('appSubtitle');
+            
+            // Update navigation buttons
+            document.querySelector('[onclick="showDashboard()"]').textContent = t('courseDashboard');
+            document.querySelector('[onclick="showProgress()"]').textContent = t('myProgress');
+            document.querySelector('[onclick="showAchievements()"]').textContent = t('achievementsRewards');
+            
+            // Update Cody's initial welcome message
+            const codyMessageEl = document.getElementById('codyMessage');
+            if (codyMessageEl) {
+                codyMessageEl.innerHTML = getCodyResponse('welcome');
+            }
+            
+            // Update Cody's chat options
+            updateCodyOptions('default');
+            
+            // Re-render course modules with new language
+            renderCourseModules();
+            
+            // Update any visible stats
+            if (document.getElementById('userStatsContainer').style.display !== 'none') {
+                updateUserStats();
+            }
+        }
+
+        // Learning Interface System
+        let currentLearningState = {
+            moduleId: null,
+            lessonIndex: 0,
+            totalLessons: 0,
+            earnedXP: 0
+        };
+
+        // Achievement System
+        let userProgress = {
+            totalXP: 0,
+            currentStreak: 0,
+            lastStudyDate: null,
+            completedModules: [],
+            achievements: [],
+            studyTime: 0,
+            perfectQuizzes: 0,
+            level: 1
+        };
+
+        // AI-Powered Learning Path System
+        let learningProfile = {
+            learningStyle: 'adaptive', // visual, auditory, kinesthetic, adaptive
+            difficulty: 'auto', // easy, medium, hard, auto
+            pace: 'normal', // slow, normal, fast
+            interests: [],
+            weakAreas: [],
+            strongAreas: [],
+            preferredTimeSlots: [],
+            sessionDuration: 25, // minutes
+            learningGoals: [],
+            completionRate: 0,
+            averageScore: 0,
+            timeSpentPerLesson: {},
+            strugglingConcepts: [],
+            masteredConcepts: []
+        };
+
+        const aiLearningEngine = {
+            analyzePerformance: function(userStats) {
+                const analysis = {
+                    strengths: [],
+                    improvements: [],
+                    recommendations: [],
+                    nextBestModule: null,
+                    adaptiveContent: []
+                };
+
+                // Analyze completion rate
+                if (userStats.completionRate > 80) {
+                    analysis.strengths.push('high_completion');
+                    analysis.recommendations.push('advanced_content');
+                } else if (userStats.completionRate < 50) {
+                    analysis.improvements.push('completion_rate');
+                    analysis.recommendations.push('shorter_sessions');
+                }
+
+                // Analyze learning speed
+                const avgTime = Object.values(userStats.timeSpentPerLesson || {});
+                const averageTime = avgTime.length > 0 ? avgTime.reduce((a, b) => a + b, 0) / avgTime.length : 15;
+                
+                if (averageTime < 10) {
+                    learningProfile.pace = 'fast';
+                    analysis.recommendations.push('challenge_mode');
+                } else if (averageTime > 30) {
+                    learningProfile.pace = 'slow';
+                    analysis.recommendations.push('detailed_explanations');
+                }
+
+                // Determine next best module
+                analysis.nextBestModule = this.getRecommendedModule(userStats);
+                
+                return analysis;
+            },
+
+            getRecommendedModule: function(userStats) {
+                const completedModules = userStats.completedModules || [];
+                const courseModules = getCourseModules();
+                
+                // Find the next logical module
+                for (let i = 1; i <= courseModules.length; i++) {
+                    if (!completedModules.includes(i)) {
+                        return i;
+                    }
+                }
+                
+                // If all completed, suggest bonus or review
+                return 6; // Bonus module
+            },
+
+            generatePersonalizedContent: function(moduleId, lessonIndex) {
+                const baseContent = lessonContent[moduleId]?.[lessonIndex];
+                if (!baseContent) return null;
+
+                const personalizedContent = { ...baseContent };
+                
+                // Adapt based on learning style
+                if (learningProfile.learningStyle === 'visual') {
+                    personalizedContent.content = this.addVisualElements(personalizedContent.content);
+                } else if (learningProfile.learningStyle === 'kinesthetic') {
+                    personalizedContent.content = this.addInteractiveElements(personalizedContent.content);
+                }
+
+                // Adapt difficulty
+                if (learningProfile.difficulty === 'easy') {
+                    personalizedContent.content = this.simplifyContent(personalizedContent.content);
+                } else if (learningProfile.difficulty === 'hard') {
+                    personalizedContent.content = this.enhanceContent(personalizedContent.content);
+                }
+
+                return personalizedContent;
+            },
+
+            addVisualElements: function(content) {
+                // Add more visual indicators and diagrams
+                return content.replace(/<h3>/g, '<h3>📊 ').replace(/<h4>/g, '<h4>🔍 ');
+            },
+
+            addInteractiveElements: function(content) {
+                // Add interactive components
+                const interactiveNote = `
+                    <div style="background: #e8f4fd; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #2196f3;">
+                        <h4>🎯 Atividade Prática</h4>
+                        <p>Pause aqui e tente aplicar este conceito em um exemplo real antes de continuar.</p>
+                    </div>
+                `;
+                return content + interactiveNote;
+            },
+
+            simplifyContent: function(content) {
+                // Add more explanations and examples
+                const simplifiedNote = `
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                        <h4>💡 Explicação Simples</h4>
+                        <p>Este conceito pode parecer complexo, mas vamos quebrar em partes menores para facilitar o entendimento.</p>
+                    </div>
+                `;
+                return content + simplifiedNote;
+            },
+
+            enhanceContent: function(content) {
+                // Add advanced concepts and challenges
+                const advancedNote = `
+                    <div style="background: #f8d7da; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #dc3545;">
+                        <h4>🚀 Desafio Avançado</h4>
+                        <p>Para ir além: pesquise sobre implementações reais deste conceito em empresas como Google, Meta ou OpenAI.</p>
+                    </div>
+                `;
+                return content + advancedNote;
+            },
+
+            updateLearningProfile: function(moduleId, lessonIndex, timeSpent, score) {
+                // Update time tracking
+                const lessonKey = `${moduleId}_${lessonIndex}`;
+                learningProfile.timeSpentPerLesson[lessonKey] = timeSpent;
+
+                // Update performance metrics
+                if (score >= 90) {
+                    learningProfile.strongAreas.push(lessonKey);
+                } else if (score < 70) {
+                    learningProfile.weakAreas.push(lessonKey);
+                }
+
+                // Auto-adjust difficulty
+                if (learningProfile.difficulty === 'auto') {
+                    const recentScores = Object.values(learningProfile.timeSpentPerLesson || {}).slice(-5);
+                    const avgRecentScore = recentScores.length > 0 ? recentScores.reduce((a, b) => a + b, 0) / recentScores.length : 75;
+                    
+                    if (avgRecentScore > 85) {
+                        learningProfile.difficulty = 'hard';
+                    } else if (avgRecentScore < 60) {
+                        learningProfile.difficulty = 'easy';
+                    } else {
+                        learningProfile.difficulty = 'medium';
+                    }
+                }
+
+                // Save profile
+                this.saveLearningProfile();
+            },
+
+            saveLearningProfile: function() {
+                localStorage.setItem('codyverse_learning_profile', JSON.stringify(learningProfile));
+            },
+
+            loadLearningProfile: function() {
+                const saved = localStorage.getItem('codyverse_learning_profile');
+                if (saved) {
+                    learningProfile = { ...learningProfile, ...JSON.parse(saved) };
+                }
+            },
+
+            getPersonalizedRecommendations: function() {
+                const analysis = this.analyzePerformance(userProgress);
+                const recommendations = [];
+
+                recommendations.push({
+                    type: 'next_module',
+                    title: currentLanguage === 'pt-BR' ? 'Próximo Módulo Recomendado' : 'Next Recommended Module',
+                    moduleId: analysis.nextBestModule,
+                    reason: currentLanguage === 'pt-BR' ? 
+                        'Baseado no seu progresso e estilo de aprendizagem' : 
+                        'Based on your progress and learning style'
+                });
+
+                if (learningProfile.weakAreas.length > 0) {
+                    recommendations.push({
+                        type: 'review',
+                        title: currentLanguage === 'pt-BR' ? 'Revisão Recomendada' : 'Recommended Review',
+                        areas: learningProfile.weakAreas.slice(0, 3),
+                        reason: currentLanguage === 'pt-BR' ? 
+                            'Fortalecer conceitos que precisam de mais atenção' : 
+                            'Strengthen concepts that need more attention'
+                    });
+                }
+
+                if (analysis.recommendations.includes('challenge_mode')) {
+                    recommendations.push({
+                        type: 'challenge',
+                        title: currentLanguage === 'pt-BR' ? 'Modo Desafio' : 'Challenge Mode',
+                        description: currentLanguage === 'pt-BR' ? 
+                            'Você está progredindo rapidamente! Que tal um desafio extra?' : 
+                            'You\'re progressing quickly! How about an extra challenge?'
+                    });
+                }
+
+                return recommendations;
+            }
+        };
+
+        const achievements = {
+            first_steps: { name: "Primeiros Passos", icon: "👶", description: "Complete sua primeira lição", requirement: "complete_lesson", threshold: 1 },
+            ai_explorer: { name: "Explorador de IA", icon: "🔍", description: "Complete o módulo AI Basics", requirement: "complete_module", threshold: 1 },
+            prompt_master: { name: "Mestre dos Prompts", icon: "✏️", description: "Complete o módulo Prompt Engineering", requirement: "complete_module", threshold: 2 },
+            streak_warrior: { name: "Guerreiro da Sequência", icon: "🔥", description: "Estude por 7 dias consecutivos", requirement: "streak", threshold: 7 },
+            quiz_perfectionist: { name: "Perfeccionista", icon: "💯", description: "Acerte 5 quizzes perfeitos", requirement: "perfect_quiz", threshold: 5 },
+            speed_learner: { name: "Aprendiz Relâmpago", icon: "⚡", description: "Complete 3 lições em menos de 1 hora", requirement: "speed_learning", threshold: 3 },
+            method_master: { name: "Mestre dos Métodos", icon: "🧠", description: "Complete o módulo de Métodos Avançados", requirement: "complete_module", threshold: 6 },
+            xp_collector: { name: "Coletor de XP", icon: "⭐", description: "Colete 100 XP total", requirement: "total_xp", threshold: 100 },
+            dedication: { name: "Dedicação Total", icon: "🏆", description: "Complete todos os módulos", requirement: "complete_all", threshold: 6 }
+        };
+
+        const lessonContent = {
+            1: { // AI Basics
+                0: { // What is Artificial Intelligence?
+                    type: 'theory',
+                    title: 'O que é Inteligência Artificial?',
+                    content: `
+                        <h2>Bem-vindo ao mundo da IA!</h2>
+                        <p>A Inteligência Artificial (IA) é a capacidade de máquinas realizarem tarefas que normalmente requerem inteligência humana.</p>
+                        
+                        <h3>Conceitos Fundamentais:</h3>
+                        <ul>
+                            <li><strong>Aprendizado de Máquina:</strong> Algoritmos que melhoram automaticamente através da experiência</li>
+                            <li><strong>Redes Neurais:</strong> Modelos inspirados no cérebro humano</li>
+                            <li><strong>Processamento de Linguagem Natural:</strong> Compreensão e geração de texto humano</li>
+                        </ul>
+                        
+                        <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                            <h4>💡 Exemplo Prático</h4>
+                            <p>Quando você usa o Google Tradutor, a IA analisa padrões em milhões de textos para entender e traduzir idiomas instantaneamente.</p>
+                        </div>
+                    `
+                },
+                1: { // Machine Learning Fundamentals
+                    type: 'interactive',
+                    title: 'Fundamentos do Machine Learning',
+                    content: `
+                        <h2>Como as Máquinas Aprendem?</h2>
+                        <p>Machine Learning é como ensinar uma criança a reconhecer animais mostrando muitas fotos.</p>
+                        
+                        <div class="interactive-content">
+                            <h3>Tipos de Machine Learning:</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 20px 0;">
+                                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #4caf50;">
+                                    <h4>Supervisionado</h4>
+                                    <p>Aprende com exemplos rotulados</p>
+                                    <small>Ex: Reconhecimento de spam</small>
+                                </div>
+                                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #ff9800;">
+                                    <h4>Não Supervisionado</h4>
+                                    <p>Encontra padrões sem rótulos</p>
+                                    <small>Ex: Segmentação de clientes</small>
+                                </div>
+                                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #2196f3;">
+                                    <h4>Por Reforço</h4>
+                                    <p>Aprende através de tentativa e erro</p>
+                                    <small>Ex: Jogos de xadrez</small>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                4: { // AI Basics Assessment
+                    type: 'quiz',
+                    title: 'Avaliação: IA Básica',
+                    content: `
+                        <h2>Teste seus conhecimentos!</h2>
+                        <div class="quiz-container">
+                            <div class="quiz-question">O que diferencia a IA do software tradicional?</div>
+                            <div class="quiz-options">
+                                <div class="quiz-option" data-answer="incorrect">A IA é mais rápida que software normal</div>
+                                <div class="quiz-option" data-answer="correct">A IA pode aprender e melhorar sem programação explícita</div>
+                                <div class="quiz-option" data-answer="incorrect">A IA usa mais memória</div>
+                                <div class="quiz-option" data-answer="incorrect">A IA só funciona na internet</div>
+                            </div>
+                        </div>
+                    `
+                }
+            },
+            2: { // Prompt Engineering
+                0: {
+                    type: 'interactive',
+                    title: 'Introdução ao Prompt Engineering',
+                    content: `
+                        <h2>A Arte de Conversar com IA</h2>
+                        <p>Prompt Engineering é como aprender a fazer as perguntas certas para obter respostas melhores da IA.</p>
+                        
+                        <div class="interactive-content">
+                            <h3>Exemplo Prático:</h3>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+                                <div style="background: #ffebee; padding: 20px; border-radius: 8px;">
+                                    <h4>❌ Prompt Ruim</h4>
+                                    <p style="font-style: italic;">"Escreva sobre marketing"</p>
+                                    <small>Muito vago e genérico</small>
+                                </div>
+                                <div style="background: #e8f5e8; padding: 20px; border-radius: 8px;">
+                                    <h4>✅ Prompt Bom</h4>
+                                    <p style="font-style: italic;">"Crie um plano de marketing digital de 30 dias para uma startup de aplicativos, focando em redes sociais e orçamento de R$ 5.000"</p>
+                                    <small>Específico, com contexto e limitações claras</small>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                }
+            }
+        };
+
+        function showLearningInterface(moduleId, lessonIndex) {
+            const courseModules = getCourseModules();
+            const module = courseModules.find(m => m.id === moduleId);
+            if (!module) return;
+
+            currentLearningState = {
+                moduleId: moduleId,
+                lessonIndex: lessonIndex,
+                totalLessons: module.lessons.length,
+                earnedXP: 0
+            };
+
+            const lesson = module.lessons[lessonIndex];
+            const container = document.getElementById('learningContainer');
+            
+            // Update header
+            document.getElementById('learningTitle').textContent = module.title;
+            document.getElementById('learningSubtitle').textContent = lesson.title;
+            
+            // Update navigation
+            updateLessonNavigation();
+            
+            // Load lesson content
+            loadLessonContent(moduleId, lessonIndex);
+            
+            // Show learning interface
+            container.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            
+            // Cody interaction
+            setTimeout(() => {
+                showNotification(`Cody: ${t('codyStartLesson', {lesson: lesson.title})}`);
+            }, 1000);
+        }
+
+        function loadLessonContent(moduleId, lessonIndex) {
+            const courseModules = getCourseModules();
+            const module = courseModules.find(m => m.id === moduleId);
+            const lesson = module.lessons[lessonIndex];
+            const contentArea = document.getElementById('lessonContentArea');
+            
+            // Track lesson start time for AI analysis
+            const lessonStartTime = Date.now();
+            
+            // Get personalized content from AI engine
+            let content = aiLearningEngine.generatePersonalizedContent(moduleId, lessonIndex);
+            
+            // Fallback to default content if AI doesn't have specific content
+            if (!content) {
+                content = lessonContent[moduleId]?.[lessonIndex] || {
+                    type: lesson.type,
+                    title: lesson.title,
+                    content: createDefaultContent(lesson)
+                };
+            }
+            
+            // Add lesson type badge
+            const badge = `<span class="lesson-type-badge type-${content.type}">${content.type.toUpperCase()}</span>`;
+            
+            // Add AI-powered learning insights
+            const aiInsights = generateLearningInsights(moduleId, lessonIndex);
+            
+            contentArea.innerHTML = badge + content.content + aiInsights;
+            
+            // Update XP display
+            document.getElementById('lessonXP').textContent = `${t('thisLessonXP')}: ${lesson.xp}`;
+            
+            // Initialize quiz if needed
+            if (content.type === 'quiz') {
+                initializeQuiz();
+            }
+            
+            // Store lesson start time for analytics
+            window.currentLessonStartTime = lessonStartTime;
+        }
+
+        function generateLearningInsights(moduleId, lessonIndex) {
+            const recommendations = aiLearningEngine.getPersonalizedRecommendations();
+            const insights = [];
+            
+            // Add personalized tips based on learning profile
+            if (learningProfile.pace === 'fast') {
+                insights.push(`
+                    <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #2196f3;">
+                        <h4>🚀 ${currentLanguage === 'pt-BR' ? 'Dica Personalizada' : 'Personalized Tip'}</h4>
+                        <p>${currentLanguage === 'pt-BR' ? 
+                            'Você aprende rapidamente! Considere fazer anotações dos pontos principais para revisão futura.' : 
+                            'You learn quickly! Consider taking notes of key points for future review.'}</p>
+                    </div>
+                `);
+            } else if (learningProfile.pace === 'slow') {
+                insights.push(`
+                    <div style="background: #fff3e0; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ff9800;">
+                        <h4>⏱️ ${currentLanguage === 'pt-BR' ? 'Dica Personalizada' : 'Personalized Tip'}</h4>
+                        <p>${currentLanguage === 'pt-BR' ? 
+                            'Tome seu tempo para absorver cada conceito. A qualidade do aprendizado é mais importante que a velocidade.' : 
+                            'Take your time to absorb each concept. Quality of learning is more important than speed.'}</p>
+                    </div>
+                `);
+            }
+            
+            return insights.join('');
+        }
+
+        function createDefaultContent(lesson) {
+            switch (lesson.type) {
+                case 'theory':
+                    return `
+                        <h2>${lesson.title}</h2>
+                        <p>Este é um módulo teórico onde você aprenderá conceitos fundamentais sobre ${lesson.title.toLowerCase()}.</p>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                            <h3>Objetivos da Lição:</h3>
+                            <ul>
+                                <li>Compreender os conceitos principais</li>
+                                <li>Aplicar conhecimentos práticos</li>
+                                <li>Preparar-se para exercícios avançados</li>
+                            </ul>
+                        </div>
+                        <p>Continue para explorar estes conceitos em detalhes.</p>
+                    `;
+                case 'interactive':
+                    return `
+                        <h2>${lesson.title}</h2>
+                        <p>Este é um módulo interativo com exercícios práticos.</p>
+                        <div class="interactive-content">
+                            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                                <h3>🎯 Atividade Prática</h3>
+                                <p>Explore os conceitos através de exemplos interativos e exercícios práticos.</p>
+                            </div>
+                        </div>
+                    `;
+                case 'lab':
+                    return `
+                        <h2>${lesson.title}</h2>
+                        <p>Laboratório prático: aplique seus conhecimentos em um ambiente real.</p>
+                        <div style="background: #e8f5e8; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                            <h3>🧪 Laboratório</h3>
+                            <p>Neste laboratório, você implementará soluções práticas e testará seus conhecimentos.</p>
+                            <ul>
+                                <li>Ambiente de desenvolvimento configurado</li>
+                                <li>Exercícios práticos guiados</li>
+                                <li>Feedback em tempo real</li>
+                            </ul>
+                        </div>
+                    `;
+                case 'quiz':
+                    return `
+                        <h2>${lesson.title}</h2>
+                        <div class="quiz-container">
+                            <div class="quiz-question">Qual é a principal característica desta lição?</div>
+                            <div class="quiz-options">
+                                <div class="quiz-option" data-answer="correct">Avaliar o conhecimento adquirido</div>
+                                <div class="quiz-option" data-answer="incorrect">Apenas ler conteúdo</div>
+                                <div class="quiz-option" data-answer="incorrect">Assistir vídeos</div>
+                                <div class="quiz-option" data-answer="incorrect">Fazer anotações</div>
+                            </div>
+                        </div>
+                    `;
+                default:
+                    return `<h2>${lesson.title}</h2><p>Conteúdo da lição será carregado aqui.</p>`;
+            }
+        }
+
+        function updateLessonNavigation() {
+            const { lessonIndex, totalLessons } = currentLearningState;
+            
+            // Update counter
+            document.getElementById('lessonCounter').textContent = `${lessonIndex + 1} de ${totalLessons}`;
+            
+            // Update progress bar
+            const progress = ((lessonIndex + 1) / totalLessons) * 100;
+            document.getElementById('lessonProgress').style.width = `${progress}%`;
+            
+            // Update navigation buttons
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.style.display = lessonIndex === 0 ? 'none' : 'block';
+            nextBtn.textContent = lessonIndex === totalLessons - 1 ? 'Concluir' : 'Próximo →';
+        }
+
+        function initializeQuiz() {
+            const options = document.querySelectorAll('.quiz-option');
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove previous selections
+                    options.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // Select current option
+                    this.classList.add('selected');
+                    
+                    // Show result after 1 second
+                    setTimeout(() => {
+                        const isCorrect = this.getAttribute('data-answer') === 'correct';
+                        
+                        options.forEach(opt => {
+                            const answer = opt.getAttribute('data-answer');
+                            if (answer === 'correct') {
+                                opt.classList.add('correct');
+                            } else if (opt.classList.contains('selected') && answer === 'incorrect') {
+                                opt.classList.add('incorrect');
+                            }
+                        });
+                        
+                        // Cody feedback
+                        setTimeout(() => {
+                            if (isCorrect) {
+                                showNotification('Cody: Excelente! Resposta correta! 🎉');
+                            } else {
+                                showNotification('Cody: Quase lá! A resposta certa está destacada em verde.');
+                            }
+                        }, 1000);
+                        
+                    }, 1000);
+                });
+            });
+        }
+
+        function nextLesson() {
+            const { moduleId, lessonIndex, totalLessons } = currentLearningState;
+            
+            // Award XP for completing current lesson
+            const courseModules = getCourseModules();
+            const module = courseModules.find(m => m.id === moduleId);
+            const lesson = module.lessons[lessonIndex];
+            const lessonXP = parseInt(lesson.xp.replace(' XP', ''));
+            awardXP(lessonXP);
+            checkAchievements('lesson_complete');
+            
+            if (lessonIndex < totalLessons - 1) {
+                currentLearningState.lessonIndex++;
+                loadLessonContent(moduleId, currentLearningState.lessonIndex);
+                updateLessonNavigation();
+                
+                // Show XP notification
+                showNotification(`+${lessonXP} XP! Lição concluída!`);
+            } else {
+                // Complete module
+                completeModule();
+            }
+        }
+
+        function previousLesson() {
+            const { moduleId } = currentLearningState;
+            
+            if (currentLearningState.lessonIndex > 0) {
+                currentLearningState.lessonIndex--;
+                loadLessonContent(moduleId, currentLearningState.lessonIndex);
+                updateLessonNavigation();
+            }
+        }
+
+        function completeModule() {
+            const courseModules = getCourseModules();
+            const module = courseModules.find(m => m.id === currentLearningState.moduleId);
+            const totalXP = module.lessons.reduce((sum, lesson) => {
+                return sum + parseInt(lesson.xp.replace(' XP', ''));
+            }, 0);
+            
+            // Award XP and update progress
+            awardXP(totalXP);
+            
+            // Mark module as completed
+            if (!userProgress.completedModules.includes(currentLearningState.moduleId)) {
+                userProgress.completedModules.push(currentLearningState.moduleId);
+                checkAchievements('module_complete');
+            }
+            
+            const contentArea = document.getElementById('lessonContentArea');
+            contentArea.innerHTML = `
+                <div class="lesson-complete">
+                    <h2>🎉 Módulo Concluído!</h2>
+                    <p>Parabéns! Você completou o módulo "${module.title}"</p>
+                    <div class="xp-earned">+${totalXP} XP</div>
+                    <div style="margin: 20px 0;">
+                        <div class="streak-counter" style="display: inline-flex; margin: 10px;">
+                            🔥 Sequência: ${userProgress.currentStreak} dias
+                        </div>
+                        <div class="xp-display" style="display: inline-flex; margin: 10px;">
+                            Total XP: ${userProgress.totalXP}
+                        </div>
+                    </div>
+                    <p>Continue sua jornada com o próximo módulo!</p>
+                </div>
+            `;
+            
+            // Update navigation to show completion
+            document.getElementById('nextBtn').style.display = 'none';
+            
+            // Cody celebration with enhanced personality
+            setTimeout(() => {
+                const celebration = getCodyEmotion('celebrating');
+                const moduleCompleteMsg = currentLanguage === 'pt-BR' ? 
+                    `Cody: Fantástico! Você dominou ${module.title}! Pronto para o próximo desafio? ${celebration}` :
+                    `Cody: Fantastic! You mastered ${module.title}! Ready for the next challenge? ${celebration}`;
+                showNotification(moduleCompleteMsg);
+            }, 1000);
+        }
+
+        function closeLearningInterface() {
+            document.getElementById('learningContainer').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            
+            // Reset state
+            currentLearningState = {
+                moduleId: null,
+                lessonIndex: 0,
+                totalLessons: 0,
+                earnedXP: 0
+            };
+        }
+
+        // Initialize the page
+        function initializeApp() {
+            // Load saved language preference
+            const savedLanguage = localStorage.getItem('codyverse_language');
+            if (savedLanguage && translations[savedLanguage]) {
+                currentLanguage = savedLanguage;
+                document.getElementById('languageSelector').value = savedLanguage;
+            }
+            
+            // Load AI learning profile
+            aiLearningEngine.loadLearningProfile();
+            
+            updateInterface();
+            renderCourseModules();
+            
+            // Welcome message from Cody with personality and AI insights
+            setTimeout(() => {
+                const welcomeMsg = getCodyResponse('welcome');
+                showNotification(welcomeMsg);
+                
+                // Show AI-powered learning insights after welcome
+                setTimeout(() => {
+                    const insights = aiLearningEngine.getPersonalizedRecommendations();
+                    if (insights.length > 0) {
+                        const aiMsg = currentLanguage === 'pt-BR' ? 
+                            `Cody: Analisei seu perfil e tenho ${insights.length} recomendações personalizadas para você! Confira no Dashboard.` :
+                            `Cody: I analyzed your profile and have ${insights.length} personalized recommendations for you! Check the Dashboard.`;
+                        showNotification(aiMsg);
+                    }
+                }, 5000);
+            }, 2000);
+        }
+        
+        initializeApp();
+    </script>
+</body>
+</html>
