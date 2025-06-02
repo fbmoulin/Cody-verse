@@ -2351,22 +2351,6 @@
                 }
 
                 return recommendations;
-            },
-            
-            sanitizeUserInput: function(input) {
-                if (typeof input !== 'string') return '';
-                return input
-                    .replace(/[<>]/g, '')
-                    .replace(/javascript:/gi, '')
-                    .replace(/on\w+=/gi, '')
-                    .trim()
-                    .substring(0, 1000);
-            },
-            
-            validateModuleAccess: function(moduleId, userId = null) {
-                const modules = getCourseModules();
-                const module = modules.find(m => m.id === parseInt(moduleId));
-                return module ? { valid: true, module } : { valid: false, error: 'Module not found' };
             }
         };
 
