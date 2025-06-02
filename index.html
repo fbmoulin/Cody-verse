@@ -1154,10 +1154,43 @@
                 container.style.display = 'block';
                 courseGrid.style.display = 'none';
                 updateUserStats();
+                displayAIRecommendations();
             } else {
                 container.style.display = 'none';
                 courseGrid.style.display = 'grid';
             }
+        }
+
+        function displayAIRecommendations() {
+            const recommendations = aiLearningEngine.getPersonalizedRecommendations();
+            const container = document.getElementById('userStatsContainer');
+            
+            const aiSection = `
+                <div class="achievements-container" style="margin-top: 20px;">
+                    <h3 style="margin-bottom: 20px;">🤖 ${currentLanguage === 'pt-BR' ? 'Recomendações Personalizadas da IA' : 'AI-Powered Personalized Recommendations'}</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
+                        ${recommendations.map(rec => `
+                            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px;">
+                                <h4>${rec.title}</h4>
+                                <p style="margin: 10px 0; opacity: 0.9;">${rec.reason || rec.description || ''}</p>
+                                ${rec.moduleId ? `<button class="btn btn-secondary" onclick="showModuleDetails(${rec.moduleId})" style="margin-top: 10px;">${currentLanguage === 'pt-BR' ? 'Ver Módulo' : 'View Module'}</button>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 12px;">
+                        <h4>${currentLanguage === 'pt-BR' ? 'Seu Perfil de Aprendizagem' : 'Your Learning Profile'}</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                            <div><strong>${currentLanguage === 'pt-BR' ? 'Ritmo:' : 'Pace:'}</strong> ${learningProfile.pace}</div>
+                            <div><strong>${currentLanguage === 'pt-BR' ? 'Dificuldade:' : 'Difficulty:'}</strong> ${learningProfile.difficulty}</div>
+                            <div><strong>${currentLanguage === 'pt-BR' ? 'Sessão ideal:' : 'Ideal session:'}</strong> ${learningProfile.sessionDuration} min</div>
+                            <div><strong>${currentLanguage === 'pt-BR' ? 'Pontos fortes:' : 'Strong areas:'}</strong> ${learningProfile.strongAreas.length}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML += aiSection;
         }
         
         function showProgress() {
@@ -1912,6 +1945,216 @@
             level: 1
         };
 
+        // AI-Powered Learning Path System
+        let learningProfile = {
+            learningStyle: 'adaptive', // visual, auditory, kinesthetic, adaptive
+            difficulty: 'auto', // easy, medium, hard, auto
+            pace: 'normal', // slow, normal, fast
+            interests: [],
+            weakAreas: [],
+            strongAreas: [],
+            preferredTimeSlots: [],
+            sessionDuration: 25, // minutes
+            learningGoals: [],
+            completionRate: 0,
+            averageScore: 0,
+            timeSpentPerLesson: {},
+            strugglingConcepts: [],
+            masteredConcepts: []
+        };
+
+        const aiLearningEngine = {
+            analyzePerformance: function(userStats) {
+                const analysis = {
+                    strengths: [],
+                    improvements: [],
+                    recommendations: [],
+                    nextBestModule: null,
+                    adaptiveContent: []
+                };
+
+                // Analyze completion rate
+                if (userStats.completionRate > 80) {
+                    analysis.strengths.push('high_completion');
+                    analysis.recommendations.push('advanced_content');
+                } else if (userStats.completionRate < 50) {
+                    analysis.improvements.push('completion_rate');
+                    analysis.recommendations.push('shorter_sessions');
+                }
+
+                // Analyze learning speed
+                const avgTime = Object.values(userStats.timeSpentPerLesson);
+                const averageTime = avgTime.reduce((a, b) => a + b, 0) / avgTime.length || 15;
+                
+                if (averageTime < 10) {
+                    learningProfile.pace = 'fast';
+                    analysis.recommendations.push('challenge_mode');
+                } else if (averageTime > 30) {
+                    learningProfile.pace = 'slow';
+                    analysis.recommendations.push('detailed_explanations');
+                }
+
+                // Determine next best module
+                analysis.nextBestModule = this.getRecommendedModule(userStats);
+                
+                return analysis;
+            },
+
+            getRecommendedModule: function(userStats) {
+                const completedModules = userStats.completedModules || [];
+                const courseModules = getCourseModules();
+                
+                // Find the next logical module
+                for (let i = 1; i <= courseModules.length; i++) {
+                    if (!completedModules.includes(i)) {
+                        return i;
+                    }
+                }
+                
+                // If all completed, suggest bonus or review
+                return 6; // Bonus module
+            },
+
+            generatePersonalizedContent: function(moduleId, lessonIndex) {
+                const baseContent = lessonContent[moduleId]?.[lessonIndex];
+                if (!baseContent) return null;
+
+                const personalizedContent = { ...baseContent };
+                
+                // Adapt based on learning style
+                if (learningProfile.learningStyle === 'visual') {
+                    personalizedContent.content = this.addVisualElements(personalizedContent.content);
+                } else if (learningProfile.learningStyle === 'kinesthetic') {
+                    personalizedContent.content = this.addInteractiveElements(personalizedContent.content);
+                }
+
+                // Adapt difficulty
+                if (learningProfile.difficulty === 'easy') {
+                    personalizedContent.content = this.simplifyContent(personalizedContent.content);
+                } else if (learningProfile.difficulty === 'hard') {
+                    personalizedContent.content = this.enhanceContent(personalizedContent.content);
+                }
+
+                return personalizedContent;
+            },
+
+            addVisualElements: function(content) {
+                // Add more visual indicators and diagrams
+                return content.replace(/<h3>/g, '<h3>📊 ').replace(/<h4>/g, '<h4>🔍 ');
+            },
+
+            addInteractiveElements: function(content) {
+                // Add interactive components
+                const interactiveNote = `
+                    <div style="background: #e8f4fd; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #2196f3;">
+                        <h4>🎯 Atividade Prática</h4>
+                        <p>Pause aqui e tente aplicar este conceito em um exemplo real antes de continuar.</p>
+                    </div>
+                `;
+                return content + interactiveNote;
+            },
+
+            simplifyContent: function(content) {
+                // Add more explanations and examples
+                const simplifiedNote = `
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                        <h4>💡 Explicação Simples</h4>
+                        <p>Este conceito pode parecer complexo, mas vamos quebrar em partes menores para facilitar o entendimento.</p>
+                    </div>
+                `;
+                return content + simplifiedNote;
+            },
+
+            enhanceContent: function(content) {
+                // Add advanced concepts and challenges
+                const advancedNote = `
+                    <div style="background: #f8d7da; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #dc3545;">
+                        <h4>🚀 Desafio Avançado</h4>
+                        <p>Para ir além: pesquise sobre implementações reais deste conceito em empresas como Google, Meta ou OpenAI.</p>
+                    </div>
+                `;
+                return content + advancedNote;
+            },
+
+            updateLearningProfile: function(moduleId, lessonIndex, timeSpent, score) {
+                // Update time tracking
+                const lessonKey = `${moduleId}_${lessonIndex}`;
+                learningProfile.timeSpentPerLesson[lessonKey] = timeSpent;
+
+                // Update performance metrics
+                if (score >= 90) {
+                    learningProfile.strongAreas.push(lessonKey);
+                } else if (score < 70) {
+                    learningProfile.weakAreas.push(lessonKey);
+                }
+
+                // Auto-adjust difficulty
+                if (learningProfile.difficulty === 'auto') {
+                    const recentScores = Object.values(learningProfile.timeSpentPerLesson).slice(-5);
+                    const avgRecentScore = recentScores.reduce((a, b) => a + b, 0) / recentScores.length;
+                    
+                    if (avgRecentScore > 85) {
+                        learningProfile.difficulty = 'hard';
+                    } else if (avgRecentScore < 60) {
+                        learningProfile.difficulty = 'easy';
+                    } else {
+                        learningProfile.difficulty = 'medium';
+                    }
+                }
+
+                // Save profile
+                this.saveLearningProfile();
+            },
+
+            saveLearningProfile: function() {
+                localStorage.setItem('codyverse_learning_profile', JSON.stringify(learningProfile));
+            },
+
+            loadLearningProfile: function() {
+                const saved = localStorage.getItem('codyverse_learning_profile');
+                if (saved) {
+                    learningProfile = { ...learningProfile, ...JSON.parse(saved) };
+                }
+            },
+
+            getPersonalizedRecommendations: function() {
+                const analysis = this.analyzePerformance(userProgress);
+                const recommendations = [];
+
+                recommendations.push({
+                    type: 'next_module',
+                    title: currentLanguage === 'pt-BR' ? 'Próximo Módulo Recomendado' : 'Next Recommended Module',
+                    moduleId: analysis.nextBestModule,
+                    reason: currentLanguage === 'pt-BR' ? 
+                        'Baseado no seu progresso e estilo de aprendizagem' : 
+                        'Based on your progress and learning style'
+                });
+
+                if (learningProfile.weakAreas.length > 0) {
+                    recommendations.push({
+                        type: 'review',
+                        title: currentLanguage === 'pt-BR' ? 'Revisão Recomendada' : 'Recommended Review',
+                        areas: learningProfile.weakAreas.slice(0, 3),
+                        reason: currentLanguage === 'pt-BR' ? 
+                            'Fortalecer conceitos que precisam de mais atenção' : 
+                            'Strengthen concepts that need more attention'
+                    });
+                }
+
+                if (analysis.recommendations.includes('challenge_mode')) {
+                    recommendations.push({
+                        type: 'challenge',
+                        title: currentLanguage === 'pt-BR' ? 'Modo Desafio' : 'Challenge Mode',
+                        description: currentLanguage === 'pt-BR' ? 
+                            'Você está progredindo rapidamente! Que tal um desafio extra?' : 
+                            'You\'re progressing quickly! How about an extra challenge?'
+                    });
+                }
+
+                return recommendations;
+            }
+        };
+
         const achievements = {
             first_steps: { name: "Primeiros Passos", icon: "👶", description: "Complete sua primeira lição", requirement: "complete_lesson", threshold: 1 },
             ai_explorer: { name: "Explorador de IA", icon: "🔍", description: "Complete o módulo AI Basics", requirement: "complete_module", threshold: 1 },
@@ -2061,17 +2304,28 @@
             const lesson = module.lessons[lessonIndex];
             const contentArea = document.getElementById('lessonContentArea');
             
-            // Get lesson content or create default
-            const content = lessonContent[moduleId]?.[lessonIndex] || {
-                type: lesson.type,
-                title: lesson.title,
-                content: createDefaultContent(lesson)
-            };
+            // Track lesson start time for AI analysis
+            const lessonStartTime = Date.now();
+            
+            // Get personalized content from AI engine
+            let content = aiLearningEngine.generatePersonalizedContent(moduleId, lessonIndex);
+            
+            // Fallback to default content if AI doesn't have specific content
+            if (!content) {
+                content = lessonContent[moduleId]?.[lessonIndex] || {
+                    type: lesson.type,
+                    title: lesson.title,
+                    content: createDefaultContent(lesson)
+                };
+            }
             
             // Add lesson type badge
             const badge = `<span class="lesson-type-badge type-${content.type}">${content.type.toUpperCase()}</span>`;
             
-            contentArea.innerHTML = badge + content.content;
+            // Add AI-powered learning insights
+            const aiInsights = generateLearningInsights(moduleId, lessonIndex);
+            
+            contentArea.innerHTML = badge + content.content + aiInsights;
             
             // Update XP display
             document.getElementById('lessonXP').textContent = `${t('thisLessonXP')}: ${lesson.xp}`;
@@ -2080,6 +2334,37 @@
             if (content.type === 'quiz') {
                 initializeQuiz();
             }
+            
+            // Store lesson start time for analytics
+            window.currentLessonStartTime = lessonStartTime;
+        }
+
+        function generateLearningInsights(moduleId, lessonIndex) {
+            const recommendations = aiLearningEngine.getPersonalizedRecommendations();
+            const insights = [];
+            
+            // Add personalized tips based on learning profile
+            if (learningProfile.pace === 'fast') {
+                insights.push(`
+                    <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #2196f3;">
+                        <h4>🚀 ${currentLanguage === 'pt-BR' ? 'Dica Personalizada' : 'Personalized Tip'}</h4>
+                        <p>${currentLanguage === 'pt-BR' ? 
+                            'Você aprende rapidamente! Considere fazer anotações dos pontos principais para revisão futura.' : 
+                            'You learn quickly! Consider taking notes of key points for future review.'}</p>
+                    </div>
+                `);
+            } else if (learningProfile.pace === 'slow') {
+                insights.push(`
+                    <div style="background: #fff3e0; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ff9800;">
+                        <h4>⏱️ ${currentLanguage === 'pt-BR' ? 'Dica Personalizada' : 'Personalized Tip'}</h4>
+                        <p>${currentLanguage === 'pt-BR' ? 
+                            'Tome seu tempo para absorver cada conceito. A qualidade do aprendizado é mais importante que a velocidade.' : 
+                            'Take your time to absorb each concept. Quality of learning is more important than speed.'}</p>
+                    </div>
+                `);
+            }
+            
+            return insights.join('');
         }
 
         function createDefaultContent(lesson) {
@@ -2200,6 +2485,7 @@
             const { moduleId, lessonIndex, totalLessons } = currentLearningState;
             
             // Award XP for completing current lesson
+            const courseModules = getCourseModules();
             const module = courseModules.find(m => m.id === moduleId);
             const lesson = module.lessons[lessonIndex];
             const lessonXP = parseInt(lesson.xp.replace(' XP', ''));
@@ -2230,6 +2516,7 @@
         }
 
         function completeModule() {
+            const courseModules = getCourseModules();
             const module = courseModules.find(m => m.id === currentLearningState.moduleId);
             const totalXP = module.lessons.reduce((sum, lesson) => {
                 return sum + parseInt(lesson.xp.replace(' XP', ''));
@@ -2297,13 +2584,27 @@
                 document.getElementById('languageSelector').value = savedLanguage;
             }
             
+            // Load AI learning profile
+            aiLearningEngine.loadLearningProfile();
+            
             updateInterface();
             renderCourseModules();
             
-            // Welcome message from Cody with personality
+            // Welcome message from Cody with personality and AI insights
             setTimeout(() => {
                 const welcomeMsg = getCodyResponse('welcome');
                 showNotification(welcomeMsg);
+                
+                // Show AI-powered learning insights after welcome
+                setTimeout(() => {
+                    const insights = aiLearningEngine.getPersonalizedRecommendations();
+                    if (insights.length > 0) {
+                        const aiMsg = currentLanguage === 'pt-BR' ? 
+                            `Cody: Analisei seu perfil e tenho ${insights.length} recomendações personalizadas para você! Confira no Dashboard.` :
+                            `Cody: I analyzed your profile and have ${insights.length} personalized recommendations for you! Check the Dashboard.`;
+                        showNotification(aiMsg);
+                    }
+                }, 5000);
             }, 2000);
         }
         
