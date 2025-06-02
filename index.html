@@ -1643,20 +1643,29 @@
         }
         
         function toggleCody() {
-            const chat = document.getElementById('codyChat');
-            codyState.isOpen = !codyState.isOpen;
-            
-            if (codyState.isOpen) {
-                chat.classList.add('active');
-                updateCodyFace('happy');
-                if (Date.now() - codyState.lastInteraction > 300000) { // 5 minutes
-                    showCodyMessage(getRandomResponse('encouragement'));
+            try {
+                const chat = document.getElementById('codyChat');
+                if (!chat) {
+                    console.error('Cody chat element not found');
+                    return;
                 }
-            } else {
-                chat.classList.remove('active');
-                updateCodyFace('normal');
+                
+                codyState.isOpen = !codyState.isOpen;
+                
+                if (codyState.isOpen) {
+                    chat.classList.add('active');
+                    updateCodyFace('happy');
+                    if (Date.now() - codyState.lastInteraction > 300000) { // 5 minutes
+                        showCodyMessage(getRandomResponse('encouragement'));
+                    }
+                } else {
+                    chat.classList.remove('active');
+                    updateCodyFace('normal');
+                }
+                codyState.lastInteraction = Date.now();
+            } catch (error) {
+                console.error('Error toggling Cody:', error);
             }
-            codyState.lastInteraction = Date.now();
         }
         
         function codyHelp(topic) {
@@ -2341,15 +2350,23 @@
                     });
                 }
 
-                    return recommendations;
-                } catch (error) {
-                    console.error('Error generating recommendations:', error);
-                    return [{
-                        title: currentLanguage === 'pt-BR' ? 'Continue Aprendendo' : 'Continue Learning',
-                        reason: currentLanguage === 'pt-BR' ? 'Retome seus estudos onde parou' : 'Resume your studies where you left off',
-                        moduleId: 1
-                    }];
-                }
+                return recommendations;
+            },
+            
+            sanitizeUserInput: function(input) {
+                if (typeof input !== 'string') return '';
+                return input
+                    .replace(/[<>]/g, '')
+                    .replace(/javascript:/gi, '')
+                    .replace(/on\w+=/gi, '')
+                    .trim()
+                    .substring(0, 1000);
+            },
+            
+            validateModuleAccess: function(moduleId, userId = null) {
+                const modules = getCourseModules();
+                const module = modules.find(m => m.id === parseInt(moduleId));
+                return module ? { valid: true, module } : { valid: false, error: 'Module not found' };
             }
         };
 
