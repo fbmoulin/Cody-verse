@@ -1225,9 +1225,9 @@
         
         function renderCourseModules() {
             const grid = document.getElementById('courseGrid');
-            const courseModules = getCourseModules();
-            grid.innerHTML = courseModules.map(module => `
-                <div class="module-card ${module.difficulty}" onclick="showModuleDetails(${module.id})">
+            const modules = getCourseModules();
+            grid.innerHTML = modules.map(module => `
+                <div class="module-card ${module.difficulty}" data-module-id="${module.id}" onclick="showModuleDetails(${module.id})" ontouchstart="" style="cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: rgba(0,0,0,0.1);">
                     <div class="status-indicator"></div>
                     ${module.trending ? '<div style="position: absolute; top: 10px; left: 10px; background: #ff6b6b; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; font-weight: 600;">🔥 TRENDING</div>' : ''}
                     ${module.bonus ? '<div style="position: absolute; top: 10px; right: 10px; background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #333; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; font-weight: 600;">🎁 BÔNUS</div>' : ''}
@@ -2337,7 +2337,7 @@
             
             init: function() {
                 this.checkARSupport();
-                this.setupARFeatures();
+                this.updateARStatus();
             },
             
             checkARSupport: function() {
@@ -2850,8 +2850,8 @@
         }
 
         function loadLessonContent(moduleId, lessonIndex) {
-            const courseModules = getCourseModules();
-            const module = courseModules.find(m => m.id === moduleId);
+            const modules = getCourseModules();
+            const module = modules.find(m => m.id === moduleId);
             const lesson = module.lessons[lessonIndex];
             const contentArea = document.getElementById('lessonContentArea');
             
