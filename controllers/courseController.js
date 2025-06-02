@@ -1,28 +1,29 @@
 const { db } = require('../server/database');
 const { courseModules, lessons } = require('../shared/schema');
 const { eq, asc } = require('drizzle-orm');
+const { courseModulesData, lessonsData } = require('../server/staticData');
 
 class CourseController {
   // Obter todos os cursos
   async getAllCourses(req, res) {
     try {
+      // Tentar usar banco de dados primeiro
       const courses = await db
         .select()
         .from(courseModules)
         .where(eq(courseModules.isActive, true))
         .orderBy(asc(courseModules.orderIndex));
 
-      // Adicionar contagem de lições para cada curso
       const coursesWithLessons = await Promise.all(
         courses.map(async (course) => {
-          const lessonCount = await db
-            .select({ count: lessons.id })
+          const courselessons = await db
+            .select()
             .from(lessons)
             .where(eq(lessons.moduleId, course.id));
 
           return {
             ...course,
-            lessonCount: lessonCount.length
+            lessonCount: courselessons.length
           };
         })
       );
@@ -30,13 +31,22 @@ class CourseController {
       res.json({
         success: true,
         data: coursesWithLessons,
-        count: coursesWithLessons.length
+        count: coursesWithLessons.length,
+        source: 'database'
       });
     } catch (error) {
-      console.error('Erro ao buscar cursos:', error);
-      res.status(500).json({
-        success: false,
-        error: 'Erro interno ao buscar cursos'
+      console.warn('Usando dados estáticos:', error.message);
+      // Fallback para dados estáticos
+      const coursesWithLessons = courseModulesData.map(course => ({
+        ...course,
+        lessonCount: lessonsData.filter(l => l.moduleId === course.id).length
+      }));
+
+      res.json({
+        success: true,
+        data: coursesWithLessons,
+        count: coursesWithLessons.length,
+        source: 'static'
       });
     }
   }

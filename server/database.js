@@ -6,43 +6,52 @@ const schema = require('../shared/schema');
 const pool = new Pool({
   connectionString: config.database.url,
   ssl: config.database.ssl,
-  max: 10,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 10000,
-  acquireTimeoutMillis: 10000,
+  max: 5,
+  idleTimeoutMillis: 60000,
+  connectionTimeoutMillis: 20000,
+  acquireTimeoutMillis: 20000,
   keepAlive: true,
-  keepAliveInitialDelayMillis: 0
+  keepAliveInitialDelayMillis: 1000,
+  statement_timeout: 30000,
+  query_timeout: 30000
 });
 
 const db = drizzle(pool, { schema });
 
 async function testConnection() {
   let client;
-  try {
-    console.log('Testando conexão com PostgreSQL...');
-    client = await pool.connect();
-    console.log('Conectado ao PostgreSQL com sucesso');
-    
-    const result = await client.query('SELECT NOW() as current_time, version() as db_version');
-    console.log(`Hora do servidor: ${result.rows[0].current_time}`);
-    console.log(`Versão do PostgreSQL: ${result.rows[0].db_version.split(' ')[1]}`);
-    
-    return true;
-  } catch (error) {
-    console.error('Erro ao conectar com o banco de dados:', error.message);
-    console.error('Detalhes do erro:', {
-      code: error.code,
-      errno: error.errno,
-      syscall: error.syscall,
-      address: error.address,
-      port: error.port
-    });
-    return false;
-  } finally {
-    if (client) {
-      client.release();
+  let retries = 3;
+  
+  while (retries > 0) {
+    try {
+      console.log(`Testando conexão com PostgreSQL... (tentativa ${4 - retries})`);
+      client = await pool.connect();
+      console.log('Conectado ao PostgreSQL com sucesso');
+      
+      const result = await client.query('SELECT NOW() as current_time');
+      console.log(`Conexão ativa: ${result.rows[0].current_time}`);
+      
+      return true;
+    } catch (error) {
+      console.warn(`Tentativa ${4 - retries} falhou:`, error.message);
+      retries--;
+      
+      if (retries > 0) {
+        console.log('Aguardando 2 segundos antes de tentar novamente...');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      } else {
+        console.error('Todas as tentativas de conexão falharam');
+        return false;
+      }
+    } finally {
+      if (client) {
+        client.release();
+        client = null;
+      }
     }
   }
+  
+  return false;
 }
 
 async function closeConnections() {

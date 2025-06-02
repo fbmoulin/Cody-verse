@@ -30,10 +30,15 @@ class CodyVerseServer {
       // Validar configurações
       validateConfig();
       
-      // Testar conexão com banco
-      const dbConnected = await testConnection();
-      if (!dbConnected) {
-        throw new Error('Falha na conexão com banco de dados');
+      // Testar conexão com banco (não crítico)
+      try {
+        const dbConnected = await testConnection();
+        if (!dbConnected) {
+          console.warn('Banco de dados indisponível - servidor continuará sem persistência');
+        }
+      } catch (error) {
+        console.warn('Erro na conexão com banco:', error.message);
+        console.log('Servidor continuará funcionando com dados em memória');
       }
       
       // Configurar middleware
