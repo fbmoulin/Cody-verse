@@ -35,10 +35,13 @@ class CodyController {
 
   // Handle user interaction
   async handleInteraction(req, res) {
+    const logger = require('../server/logger');
+    
     try {
       const { userId, interactionType, context, userMessage } = req.body;
 
       if (!interactionType) {
+        logger.warn('Cody interaction missing interactionType', { body: req.body });
         return res.status(400).json({
           success: false,
           error: 'interactionType is required'
@@ -47,6 +50,12 @@ class CodyController {
 
       // Generate Cody response based on interaction type
       const response = this.generateResponse(interactionType, context, userMessage);
+      
+      logger.api('Cody interaction processed', { 
+        interactionType, 
+        context, 
+        responseLength: response?.length || 0 
+      });
 
       // Save interaction to database if userId provided  
       if (userId) {
@@ -59,10 +68,12 @@ class CodyController {
             context: context || null,
             userMessage: userMessage || null,
             codyResponse: response,
-            timestamp: new Date()
+            createdAt: new Date()
           });
+          
+          logger.database('Cody interaction saved', { userId, interactionType });
         } catch (dbError) {
-          console.warn('Could not save interaction to database:', dbError.message);
+          logger.warn('Could not save interaction to database', { error: dbError.message });
         }
       }
 
@@ -78,7 +89,11 @@ class CodyController {
         }
       });
     } catch (error) {
-      console.error('Error in Cody interaction:', error);
+      logger.error('Error in Cody interaction', { 
+        error: error.message,
+        stack: error.stack,
+        interactionType: req.body?.interactionType 
+      });
       res.status(500).json({
         success: false,
         error: 'Internal server error in Cody interaction'

@@ -22,10 +22,10 @@ router.post('/progress/lesson', authenticateUser, progressController.updateLesso
 router.post('/progress/module', authenticateUser, progressController.updateModuleProgress);
 router.get('/progress/:userId/achievements', authenticateUser, progressController.getUserAchievements);
 
-// Rotas do Cody (IA Assistant)
-router.post('/cody/interact', codyController.handleInteraction);
-router.get('/cody/context/:userId', authenticateUser, codyController.getUserContext);
-router.post('/cody/feedback', codyController.provideFeedback);
+// Rotas do Cody (IA Assistant) - bind methods to preserve context
+router.post('/cody/interact', codyController.handleInteraction.bind(codyController));
+router.get('/cody/context/:userId', authenticateUser, codyController.getUserContext.bind(codyController));
+router.post('/cody/feedback', codyController.provideFeedback.bind(codyController));
 
 // Rotas de usuário
 router.post('/users', userController.createUser);
