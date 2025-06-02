@@ -647,7 +647,48 @@
     <script>
         console.log("Cody Verse initialized successfully");
         
-        const courseModules = [
+        let courseModules = [];
+        
+        // Load course data from API
+        async function loadCourseData() {
+            try {
+                const response = await fetch('/api/courses');
+                const result = await response.json();
+                
+                if (result.success) {
+                    courseModules = await Promise.all(result.data.map(async (module) => {
+                        // Load lessons for each module
+                        const lessonsResponse = await fetch(`/api/courses/${module.id}/lessons`);
+                        const lessonsResult = await lessonsResponse.json();
+                        
+                        return {
+                            id: module.id,
+                            title: module.title,
+                            description: module.description,
+                            difficulty: module.difficulty,
+                            duration: module.duration,
+                            xp: module.totalXP + ' XP',
+                            lessons: lessonsResult.success ? lessonsResult.data.map(lesson => ({
+                                title: lesson.title,
+                                type: lesson.type,
+                                duration: lesson.duration,
+                                xp: lesson.xpReward + ' XP',
+                                content: lesson.content
+                            })) : []
+                        };
+                    }));
+                    
+                    renderCourseModules();
+                } else {
+                    console.error('Failed to load courses:', result.error);
+                }
+            } catch (error) {
+                console.error('Error loading course data:', error);
+            }
+        }
+        
+        // Static fallback data (will be replaced by API data)
+        const staticCourseModules = [
             {
                 id: 1,
                 title: 'IA Básica',
@@ -1092,10 +1133,34 @@
             codyState.lastInteraction = Date.now();
         }
         
-        function codyHelp(topic) {
-            const responses = codyResponses[topic];
-            const response = responses[Math.floor(Math.random() * responses.length)];
-            showCodyMessage(response);
+        async function codyHelp(topic) {
+            try {
+                updateCodyFace('thinking');
+                const response = await fetch('/api/cody/interact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        interactionType: topic,
+                        context: currentLearningState ? `module_${currentLearningState.moduleId}` : 'general',
+                        userMessage: null
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    showCodyMessage(result.data.response);
+                    if (result.data.emotion) {
+                        updateCodyFace(result.data.emotion);
+                    }
+                } else {
+                    showCodyMessage('Desculpe, estou com dificuldades no momento. Tente novamente!');
+                }
+            } catch (error) {
+                console.error('Error communicating with Cody:', error);
+                showCodyMessage('Ops! Algo deu errado. Vou tentar novamente em instantes.');
+            }
         }
         
         function showCodyMessage(message) {
@@ -1144,11 +1209,18 @@
         }
         
         // Initialize the page
-        renderCourseModules();
-        
-        setTimeout(() => {
-            showNotification("Bem-vindo! Sou o Cody, seu companheiro de aprendizagem. Clique em mim quando precisar de ajuda!");
-        }, 2000);
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadCourseData();
+            if (courseModules.length === 0) {
+                // Fallback to static data if API fails
+                courseModules = staticCourseModules;
+                renderCourseModules();
+            }
+            
+            setTimeout(() => {
+                showNotification("Bem-vindo! Sou o Cody, seu companheiro de aprendizagem. Clique em mim quando precisar de ajuda!");
+            }, 2000);
+        });
     </script>
 </body>
 </html>
