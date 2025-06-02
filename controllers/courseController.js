@@ -4,6 +4,8 @@ const { lessonsData } = require('../server/staticData');
 class CourseController {
   // Obter todos os cursos
   async getAllCourses(req, res) {
+    const logger = require('../server/logger');
+    
     try {
       const result = await dataService.getAllCourses();
       res.json({
@@ -11,10 +13,11 @@ class CourseController {
         count: result.data.length
       });
     } catch (error) {
-      console.error('Error in getAllCourses:', error);
-      res.status(500).json({
+      logger.error('Failed to retrieve courses from database', { error: error.message });
+      res.status(503).json({
         success: false,
-        error: 'Internal server error'
+        error: 'Database temporarily unavailable',
+        retryAfter: 30
       });
     }
   }

@@ -8,12 +8,15 @@ class DatabaseManager {
     this.pool = new Pool({
       connectionString: config.database.url,
       ssl: config.database.ssl,
-      max: 20,
-      idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 10000,
-      acquireTimeoutMillis: 10000,
+      max: 10,
+      min: 2,
+      idleTimeoutMillis: 20000,
+      connectionTimeoutMillis: 5000,
+      acquireTimeoutMillis: 5000,
       keepAlive: true,
-      keepAliveInitialDelayMillis: 1000
+      keepAliveInitialDelayMillis: 1000,
+      statement_timeout: 10000,
+      query_timeout: 8000
     });
 
     this.migrationState = {

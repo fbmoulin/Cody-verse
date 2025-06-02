@@ -4,24 +4,58 @@ const { courseModulesData, lessonsData } = require('../server/staticData');
 const { eq, asc } = require('drizzle-orm');
 
 class DataService {
-  // Get all courses with fallback
+  // Get all courses with proper error handling
   async getAllCourses() {
+    const logger = require('../server/logger');
+    const cacheService = require('../core/services/cache_service');
+    const cacheKey = 'all_courses';
+    
     try {
-      const courses = await db
+      // Check cache first
+      const cachedCourses = cacheService.get(cacheKey);
+      if (cachedCourses) {
+        logger.info('Courses retrieved from cache');
+        return {
+          success: true,
+          data: cachedCourses,
+          source: 'cache'
+        };
+      }
+
+      // Set a timeout for database operations
+      const queryPromise = db
         .select()
         .from(courseModules)
         .where(eq(courseModules.isActive, true))
         .orderBy(asc(courseModules.orderIndex));
+      
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Database query timeout')), 3000)
+      );
+
+      const courses = await Promise.race([queryPromise, timeoutPromise]);
 
       const coursesWithLessons = await Promise.all(
         courses.map(async (course) => {
-          const courseLessons = await this.getLessonsByModuleId(course.id);
-          return {
-            ...course,
-            lessonCount: courseLessons.length
-          };
+          try {
+            const courseLessons = await this.getLessonsByModuleId(course.id);
+            return {
+              ...course,
+              lessonCount: courseLessons.length
+            };
+          } catch (lessonError) {
+            logger.warn('Failed to get lesson count for course', { courseId: course.id });
+            return {
+              ...course,
+              lessonCount: 0
+            };
+          }
         })
       );
+
+      // Cache successful results for 15 minutes
+      cacheService.set(cacheKey, coursesWithLessons, 15 * 60 * 1000);
+      logger.database('Courses retrieved from database and cached');
 
       return {
         success: true,
@@ -29,17 +63,8 @@ class DataService {
         source: 'database'
       };
     } catch (error) {
-      console.warn('Using static data for courses:', error.message);
-      const coursesWithLessons = courseModulesData.map(course => ({
-        ...course,
-        lessonCount: lessonsData.filter(l => l.moduleId === course.id).length
-      }));
-
-      return {
-        success: true,
-        data: coursesWithLessons,
-        source: 'static'
-      };
+      logger.error('Database connection failed for courses', { error: error.message });
+      throw new Error('Unable to retrieve courses - database connection issue');
     }
   }
 
