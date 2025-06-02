@@ -45,67 +45,8 @@
         
         .course-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 15px;
-        }
-        
-        @media (max-width: 768px) {
-            .course-grid {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-            
-            .container {
-                padding: 15px;
-            }
-            
-            .header {
-                padding: 20px 15px;
-                margin-bottom: 20px;
-            }
-            
-            .header h1 {
-                font-size: 2em;
-            }
-            
-            .header p {
-                font-size: 1em;
-            }
-            
-            .module-card {
-                padding: 20px 15px;
-            }
-            
-            .module-icon {
-                width: 50px;
-                height: 50px;
-                font-size: 1.2em;
-                margin-right: 15px;
-            }
-            
-            .module-title {
-                font-size: 1.2em;
-            }
-            
-            .module-meta {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-            
-            .module-stats {
-                font-size: 0.85em;
-            }
-            
-            .nav-buttons {
-                flex-direction: column;
-                gap: 12px;
-            }
-            
-            .btn {
-                padding: 15px 25px;
-                font-size: 1em;
-            }
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
         }
         
         .module-card {
@@ -683,208 +624,18 @@
         .close-learning:hover {
             background: rgba(255,255,255,0.3);
         }
-        
-        /* Mobile Learning Interface */
-        @media (max-width: 768px) {
-            .learning-header {
-                padding: 15px;
-            }
-            
-            .learning-header h1 {
-                font-size: 1.4em;
-            }
-            
-            .lesson-content {
-                margin: 15px;
-                padding: 20px 15px;
-            }
-            
-            .lesson-nav {
-                flex-direction: column;
-                gap: 15px;
-                padding: 15px;
-            }
-            
-            .lesson-progress {
-                margin: 0;
-                order: -1;
-            }
-            
-            .btn-nav {
-                padding: 12px 20px;
-                font-size: 0.9em;
-            }
-            
-            .quiz-container {
-                padding: 20px 15px;
-            }
-            
-            .quiz-question {
-                font-size: 1.1em;
-            }
-            
-            .quiz-option {
-                padding: 12px 15px;
-                font-size: 0.9em;
-            }
-            
-            .lesson-actions {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-        }
-        
-        /* Mobile Cody */
-        @media (max-width: 768px) {
-            .cody-container {
-                bottom: 15px;
-                right: 15px;
-            }
-            
-            .cody-avatar {
-                width: 70px;
-                height: 70px;
-            }
-            
-            .cody-face {
-                font-size: 25px;
-            }
-            
-            .progress-ring {
-                width: 80px;
-                height: 80px;
-            }
-            
-            .cody-chat {
-                max-width: calc(100vw - 40px);
-                right: -10px;
-                bottom: 90px;
-            }
-            
-            .cody-notification {
-                right: 15px;
-                left: 15px;
-                transform: translateY(-100px);
-                font-size: 0.9em;
-            }
-            
-            .cody-notification.show {
-                transform: translateY(0);
-            }
-        }
-        
-        /* Achievement System Styles */
-        .achievements-container {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            margin: 20px 0;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-        
-        .achievement-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-            color: #333;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            font-weight: 600;
-            margin: 5px;
-            box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
-        }
-        
-        .streak-counter {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .xp-display {
-            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 12px;
-            text-align: center;
-            font-size: 1.2em;
-            font-weight: bold;
-        }
-        
-        .study-method-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin: 15px 0;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border-left: 4px solid var(--method-color);
-            transition: transform 0.3s ease;
-        }
-        
-        .study-method-card:hover {
-            transform: translateY(-3px);
-        }
-        
-        .method-trending { --method-color: #ff6b6b; }
-        .method-proven { --method-color: #4ecdc4; }
-        .method-advanced { --method-color: #45b7d1; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div style="position: absolute; top: 15px; right: 15px;">
-                <select id="languageSelector" onchange="switchLanguage(this.value)" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #ddd; background: white; font-size: 0.9em;">
-                    <option value="pt-BR">🇧🇷 Português</option>
-                    <option value="en-US">🇺🇸 English</option>
-                </select>
-            </div>
             <h1>🎓 Cody Verse</h1>
-            <p>Aprenda conceitos de IA e MCP através do nosso curso abrangente</p>
+            <p>Learn AI and MCP concepts through our comprehensive scaling course</p>
         </div>
         
         <div class="nav-buttons">
-            <button class="btn btn-primary" onclick="showDashboard()">Dashboard do Curso</button>
-            <button class="btn btn-secondary" onclick="showProgress()">Meu Progresso</button>
-            <button class="btn btn-secondary" onclick="showAchievements()">Conquistas & Prêmios</button>
-        </div>
-        
-        <!-- User Stats Display -->
-        <div id="userStatsContainer" style="display: none;">
-            <div class="achievements-container">
-                <h3 style="margin-bottom: 20px;">📊 Suas Estatísticas</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                    <div class="xp-display">
-                        <div>Total XP</div>
-                        <div id="totalXP">0</div>
-                    </div>
-                    <div class="streak-counter">
-                        <span>🔥</span>
-                        <div>
-                            <div>Sequência</div>
-                            <div id="streakCount">0 dias</div>
-                        </div>
-                    </div>
-                    <div style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; padding: 15px 25px; border-radius: 12px; text-align: center; font-size: 1.2em; font-weight: bold;">
-                        <div>Nível</div>
-                        <div id="userLevel">Iniciante</div>
-                    </div>
-                </div>
-                
-                <div id="achievementsList" style="margin-top: 20px;">
-                    <h4>🏆 Conquistas Desbloqueadas</h4>
-                    <div id="achievementBadges" style="margin-top: 15px;">
-                        <!-- Achievement badges will be populated here -->
-                    </div>
-                </div>
-            </div>
+            <button class="btn btn-primary" onclick="showDashboard()">Course Dashboard</button>
+            <button class="btn btn-secondary" onclick="showProgress()">My Progress</button>
         </div>
         
         <div class="course-grid" id="courseGrid">
@@ -960,45 +711,35 @@
     </div>
     
     <script>
-        function getCourseModules() {
-            const moduleNames = [
-                t('aiBasics'),
-                t('promptEngineering'), 
-                t('aiAssistants'),
-                t('aiAgents'),
-                t('modelContextProtocol'),
-                t('advancedStudyMethods')
-            ];
-            
-            return [
+        const courseModules = [
             {
                 id: 1,
-                title: moduleNames[0],
-                description: t('courseDescriptions')[1],
-                difficulty: t('beginner'),
+                title: 'AI Basics',
+                description: 'Fundamental concepts of artificial intelligence, machine learning, and neural networks. Start your journey into the world of AI with core concepts and practical applications.',
+                difficulty: 'beginner',
                 duration: '45 min',
                 xp: '30 XP',
                 lessons: [
-                    { title: currentLanguage === 'pt-BR' ? 'O que é Inteligência Artificial?' : 'What is Artificial Intelligence?', type: t('theory'), duration: '12 min', xp: '5 XP' },
-                    { title: currentLanguage === 'pt-BR' ? 'Fundamentos de Machine Learning' : 'Machine Learning Fundamentals', type: t('interactive'), duration: '15 min', xp: '8 XP' },
-                    { title: currentLanguage === 'pt-BR' ? 'Redes Neurais Explicadas' : 'Neural Networks Explained', type: t('interactive'), duration: '18 min', xp: '8 XP' },
-                    { title: currentLanguage === 'pt-BR' ? 'Ética em IA e Desenvolvimento Responsável' : 'AI Ethics and Responsible Development', type: t('theory'), duration: '10 min', xp: '5 XP' },
-                    { title: currentLanguage === 'pt-BR' ? 'Avaliação: IA Básica' : 'AI Basics Assessment', type: t('quiz'), duration: '8 min', xp: '15 XP' }
+                    { title: 'What is Artificial Intelligence?', type: 'theory', duration: '12 min', xp: '5 XP' },
+                    { title: 'Machine Learning Fundamentals', type: 'interactive', duration: '15 min', xp: '8 XP' },
+                    { title: 'Neural Networks Explained', type: 'interactive', duration: '18 min', xp: '8 XP' },
+                    { title: 'AI Ethics and Responsible Development', type: 'theory', duration: '10 min', xp: '5 XP' },
+                    { title: 'AI Basics Assessment', type: 'quiz', duration: '8 min', xp: '15 XP' }
                 ]
             },
             {
                 id: 2,
-                title: moduleNames[1],
-                description: t('courseDescriptions')[2],
-                difficulty: t('beginner'),
+                title: 'Prompt Engineering',
+                description: 'Master the art of crafting effective prompts for optimal AI responses and behavior. Learn advanced techniques used by professionals.',
+                difficulty: 'beginner',
                 duration: '60 min',
                 xp: '35 XP',
                 lessons: [
-                    { title: currentLanguage === 'pt-BR' ? 'Introdução à Engenharia de Prompts' : 'Introduction to Prompt Engineering', type: t('interactive'), duration: '15 min', xp: '8 XP' },
-                    { title: currentLanguage === 'pt-BR' ? 'Estrutura e Técnicas de Prompts' : 'Prompt Structure and Techniques', type: t('interactive'), duration: '20 min', xp: '10 XP' },
-                    { title: currentLanguage === 'pt-BR' ? 'Estratégias Avançadas de Prompts' : 'Advanced Prompting Strategies', type: t('interactive'), duration: '25 min', xp: '12 XP' },
-                    { title: currentLanguage === 'pt-BR' ? 'Otimização e Teste de Prompts' : 'Prompt Optimization and Testing', type: t('lab'), duration: '30 min', xp: '15 XP' },
-                    { title: currentLanguage === 'pt-BR' ? 'Avaliação: Maestria em Prompts' : 'Prompt Engineering Mastery Assessment', type: t('quiz'), duration: '12 min', xp: '20 XP' }
+                    { title: 'Introduction to Prompt Engineering', type: 'interactive', duration: '15 min', xp: '8 XP' },
+                    { title: 'Prompt Structure and Techniques', type: 'interactive', duration: '20 min', xp: '10 XP' },
+                    { title: 'Advanced Prompting Strategies', type: 'interactive', duration: '25 min', xp: '12 XP' },
+                    { title: 'Prompt Optimization and Testing', type: 'lab', duration: '30 min', xp: '15 XP' },
+                    { title: 'Prompt Engineering Mastery Assessment', type: 'quiz', duration: '12 min', xp: '20 XP' }
                 ]
             },
             {
@@ -1047,37 +788,16 @@
                     { title: 'MCP Production Deployment', type: 'lab', duration: '55 min', xp: '25 XP' },
                     { title: 'MCP Professional Certification', type: 'quiz', duration: '90 min', xp: '40 XP' }
                 ]
-            },
-            {
-                id: 6,
-                title: currentLanguage === 'pt-BR' ? '🎁 Módulo Bônus: Métodos de Estudo' : '🎁 Bonus Module: Study Methods',
-                description: currentLanguage === 'pt-BR' ? 'Técnicas avançadas de aprendizagem, mapas mentais e métodos que viralizaram nas redes sociais. Desbloqueado com 50+ XP.' : 'Advanced learning techniques, mind maps and methods that went viral on social media. Unlocked with 50+ XP.',
-                difficulty: t('advanced'),
-                duration: '120 min',
-                xp: '60 XP',
-                trending: true,
-                bonus: true,
-                lessons: [
-                    { title: currentLanguage === 'pt-BR' ? 'Técnica Feynman: Ensine para Aprender' : 'Feynman Technique: Teach to Learn', type: t('interactive'), duration: '25 min', xp: '12 XP' },
-                    { title: currentLanguage === 'pt-BR' ? 'Active Recall e Spaced Repetition' : 'Active Recall and Spaced Repetition', type: t('interactive'), duration: '30 min', xp: '15 XP' },
-                    { title: currentLanguage === 'pt-BR' ? 'Mapas Mentais e Visualização' : 'Mind Maps and Visualization', type: t('interactive'), duration: '25 min', xp: '12 XP' },
-                    { title: currentLanguage === 'pt-BR' ? 'Método Cornell e Sistema Zettelkasten' : 'Cornell Method and Zettelkasten System', type: t('lab'), duration: '20 min', xp: '10 XP' },
-                    { title: currentLanguage === 'pt-BR' ? 'Flow State e Deep Work' : 'Flow State and Deep Work', type: t('theory'), duration: '20 min', xp: '11 XP' }
-                ]
             }
         ];
-        }
         
         function renderCourseModules() {
             const grid = document.getElementById('courseGrid');
-            const courseModules = getCourseModules();
             grid.innerHTML = courseModules.map(module => `
                 <div class="module-card ${module.difficulty}" onclick="showModuleDetails(${module.id})">
                     <div class="status-indicator"></div>
-                    ${module.trending ? '<div style="position: absolute; top: 10px; left: 10px; background: #ff6b6b; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; font-weight: 600;">🔥 TRENDING</div>' : ''}
-                    ${module.bonus ? '<div style="position: absolute; top: 10px; right: 10px; background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #333; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; font-weight: 600;">🎁 BÔNUS</div>' : ''}
                     <div class="module-header">
-                        <div class="module-icon">${module.id === 6 ? '🧠' : module.id}</div>
+                        <div class="module-icon">${module.id}</div>
                         <h3 class="module-title">${module.title}</h3>
                     </div>
                     <p class="module-description">${module.description}</p>
@@ -1094,7 +814,7 @@
                             </div>
                             <div class="stat-item">
                                 <span>📚</span>
-                                <span>${module.lessons.length} ${t('lessons')}</span>
+                                <span>${module.lessons.length} lessons</span>
                             </div>
                         </div>
                     </div>
@@ -1147,130 +867,11 @@
         }
         
         function showDashboard() {
-            const container = document.getElementById('userStatsContainer');
-            const courseGrid = document.getElementById('courseGrid');
-            
-            if (container.style.display === 'none') {
-                container.style.display = 'block';
-                courseGrid.style.display = 'none';
-                updateUserStats();
-            } else {
-                container.style.display = 'none';
-                courseGrid.style.display = 'grid';
-            }
+            alert('Dashboard: Track your learning progress across all modules with detailed analytics.');
         }
         
         function showProgress() {
-            showDashboard();
-        }
-        
-        function showAchievements() {
-            showDashboard();
-            updateAchievementDisplay();
-        }
-        
-        function updateUserStats() {
-            document.getElementById('totalXP').textContent = userProgress.totalXP;
-            document.getElementById('streakCount').textContent = `${userProgress.currentStreak} ${t('days')}`;
-            
-            // Calculate level based on XP
-            const level = Math.floor(userProgress.totalXP / 50) + 1;
-            const levelNames = t('levelNames');
-            document.getElementById('userLevel').textContent = levelNames[Math.min(level - 1, levelNames.length - 1)];
-            
-            // Update static labels
-            document.querySelector('.xp-display div:first-child').textContent = t('totalXP');
-            document.querySelector('.streak-counter div div:first-child').textContent = t('streak');
-            document.querySelector('[style*="9b59b6"] div:first-child').textContent = t('level');
-        }
-        
-        function updateAchievementDisplay() {
-            const container = document.getElementById('achievementBadges');
-            
-            if (userProgress.achievements.length === 0) {
-                container.innerHTML = `<p style="color: #666; font-style: italic;">${t('completeFirstLesson')}</p>`;
-                return;
-            }
-            
-            container.innerHTML = userProgress.achievements.map(achievementId => {
-                const achievement = achievements[achievementId];
-                return `
-                    <div class="achievement-badge">
-                        <span>${achievement.icon}</span>
-                        <div>
-                            <strong>${achievement.name}</strong>
-                            <br><small>${achievement.description}</small>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-        
-        function checkAchievements(type, value = 1) {
-            const newAchievements = [];
-            
-            Object.keys(achievements).forEach(achievementId => {
-                if (userProgress.achievements.includes(achievementId)) return;
-                
-                const achievement = achievements[achievementId];
-                let earned = false;
-                
-                switch (achievement.requirement) {
-                    case 'complete_lesson':
-                        if (type === 'lesson_complete') earned = true;
-                        break;
-                    case 'complete_module':
-                        if (type === 'module_complete' && userProgress.completedModules.length >= achievement.threshold) earned = true;
-                        break;
-                    case 'streak':
-                        if (userProgress.currentStreak >= achievement.threshold) earned = true;
-                        break;
-                    case 'perfect_quiz':
-                        if (userProgress.perfectQuizzes >= achievement.threshold) earned = true;
-                        break;
-                    case 'total_xp':
-                        if (userProgress.totalXP >= achievement.threshold) earned = true;
-                        break;
-                    case 'complete_all':
-                        if (userProgress.completedModules.length >= achievement.threshold) earned = true;
-                        break;
-                }
-                
-                if (earned) {
-                    userProgress.achievements.push(achievementId);
-                    newAchievements.push(achievement);
-                }
-            });
-            
-            // Show achievement notifications
-            newAchievements.forEach((achievement, index) => {
-                setTimeout(() => {
-                    showNotification(`🏆 ${t('achievementUnlocked')}: ${achievement.name}!`);
-                    updateCodyFace('excited');
-                    setTimeout(() => updateCodyFace('happy'), 2000);
-                }, index * 2000);
-            });
-        }
-        
-        function awardXP(xpAmount) {
-            userProgress.totalXP += xpAmount;
-            
-            // Update streak
-            const today = new Date().toDateString();
-            if (userProgress.lastStudyDate !== today) {
-                const yesterday = new Date();
-                yesterday.setDate(yesterday.getDate() - 1);
-                
-                if (userProgress.lastStudyDate === yesterday.toDateString()) {
-                    userProgress.currentStreak++;
-                } else {
-                    userProgress.currentStreak = 1;
-                }
-                userProgress.lastStudyDate = today;
-            }
-            
-            checkAchievements('xp_gained', xpAmount);
-            updateProgressRing((userProgress.totalXP % 100));
+            alert('Progress: View your XP, completed lessons, achievements, and learning streaks.');
         }
         
         // Close modal when clicking outside
@@ -1289,135 +890,40 @@
             lastInteraction: Date.now()
         };
         
-        const codyPersonality = {
-            'pt-BR': {
-                name: 'Cody',
-                personality: 'amigável, encorajador, brasileirão',
-                welcome: [
-                    "E aí, pessoal! Eu sou o Cody, seu parceiro de estudos em IA! 🤖 Vamos juntos nessa jornada incrível!",
-                    "Opa! Bem-vindos ao Cody Verse! Vou ajudar vocês a entender IA de um jeito divertido e descomplicado!",
-                    "Prontos para mergulhar no mundo fascinante da IA? Vou tornar esse aprendizado massa demais!"
-                ],
-                course: [
-                    "Nosso curso é tipo um RPG de conhecimento! Começamos no AI Basics para construir sua base, depois evoluímos através de Prompt Engineering, AI Assistants, AI Agents, e finalmente masterizamos o Model Context Protocol!",
-                    "É como aprender a dirigir, né? Primeiro o básico, depois as manobras avançadas, e por fim as técnicas profissionais. Cada módulo constrói em cima do anterior!",
-                    "Temos 27 lições no total, com mais de 390 minutos de conteúdo e 215 pontos de XP para conquistar! Você vai de iniciante a profissional!"
-                ],
-                progress: [
-                    "Seu progresso é acompanhado através de pontos de XP, lições concluídas e conquistas! Cada lição te dá experiência baseada na dificuldade.",
-                    "Vou mostrar um anel de progresso ao redor do meu avatar - ele se enche conforme você completa os módulos. Ainda por cima, você desbloqueará badges e certificados!",
-                    "Relaxa, sem pressa! Vou me adaptar ao seu ritmo de aprendizado e dar dicas quando precisar."
-                ],
-                tips: [
-                    "Minha dica gold: pratique o que aprender na hora! Cada lição interativa tem exercícios práticos.",
-                    "Tenta me explicar os conceitos de volta - ensinar é a melhor forma de aprender! Vou escutar e dar feedback!",
-                    "Faz pausas entre os módulos. Conceitos de IA precisam de tempo para sedimentar. Vou mandar lembretes gentis para continuar!"
-                ],
-                encouragement: [
-                    "Você tá mandando bem! Todo expert já foi iniciante um dia. Bora continuar!",
-                    "Aprender IA é como montar um LEGO gigante - cada conceito apoia o próximo. Você tá construindo algo incrível!",
-                    "Lembra: o objetivo não é decorar tudo, mas entender como as peças se encaixam!"
-                ],
-                emotions: {
-                    excited: ["Isso aí! 🚀", "Massa demais! 🎉", "Show de bola! ⭐"],
-                    encouraging: ["Vai que vai! 💪", "Você consegue! 👊", "Foco no objetivo! 🎯"],
-                    thinking: ["Deixa eu pensar aqui... 🤔", "Hmm, interessante... 🧠", "Analisando... ⚙️"],
-                    celebrating: ["PARABÉNS! 🎊", "Arrasou! 🏆", "Que orgulho! 🌟"]
-                },
-                module_specific: {
-                    1: "AI Basics é perfeito para iniciantes! Vamos explorar o que faz as máquinas 'inteligentes' e por que a IA está transformando nosso mundo!",
-                    2: "Prompt Engineering é como aprender uma nova língua - a linguagem da IA! Você vai dominar como se comunicar com sistemas de IA de forma eficaz!",
-                    3: "AI Assistants é onde a teoria encontra a prática! Você vai entender como projetar companheiros de IA úteis e confiáveis!",
-                    4: "AI Agents é o próximo nível - sistemas autônomos que podem tomar decisões e agir. Aqui a coisa fica emocionante!",
-                    5: "Model Context Protocol é conhecimento profissional! É isso que os melhores engenheiros de IA usam para construir sistemas empresariais!",
-                    6: "Métodos de Estudo Avançados é nosso módulo bônus especial! Técnicas que bombaram nas redes sociais para turbinar seu aprendizado!"
-                },
-                contextual: {
-                    morning: "Bom dia! Pronto para começar o dia estudando IA?",
-                    afternoon: "Boa tarde! Que tal continuarmos nossa jornada de aprendizado?",
-                    evening: "Boa noite! Estudar IA à noite pode ser muito produtivo!",
-                    late_night: "Ei, tá estudando tarde? Lembra de descansar também, viu!"
-                }
-            },
-            'en-US': {
-                name: 'Cody',
-                personality: 'friendly, encouraging, tech-savvy',
-                welcome: [
-                    "Hey there! I'm Cody, your AI learning buddy! 🤖 I'm here to guide you through this amazing journey!",
-                    "Welcome to Cody Verse! I'll help you understand AI concepts in a fun and engaging way!",
-                    "Ready to dive into the fascinating world of AI? I'm here to make learning awesome!"
-                ],
-                course: [
-                    "Our course is like a knowledge RPG! We start with AI Basics to build your foundation, then level up through Prompt Engineering, AI Assistants, AI Agents, and finally master the Model Context Protocol!",
-                    "Think of it like learning to drive - first the basics, then advanced maneuvers, and finally professional techniques. Each module builds on the previous one!",
-                    "We have 27 lessons total, with 390+ minutes of content and 215 XP points to earn! You'll go from beginner to pro!"
-                ],
-                progress: [
-                    "Your progress is tracked through XP points, completed lessons, and achievements! Each lesson gives you experience based on difficulty.",
-                    "I'll show you a progress ring around my avatar - it fills up as you complete modules. Plus you'll unlock badges and certificates!",
-                    "Don't worry about going too fast - I'll adapt to your learning pace and provide hints when you need them."
-                ],
-                tips: [
-                    "Here's my golden tip: practice what you learn immediately! Each interactive lesson has hands-on exercises.",
-                    "Try explaining concepts back to me - teaching is the best way to learn! I'll listen and give you feedback!",
-                    "Take breaks between modules. AI concepts need time to sink in. I'll send you gentle reminders to keep going!"
-                ],
-                encouragement: [
-                    "You're doing great! Every expert was once a beginner. Keep going!",
-                    "Learning AI is like building with blocks - each concept supports the next. You're building something amazing!",
-                    "Remember, the goal isn't to memorize everything, but to understand how the pieces fit together!"
-                ],
-                emotions: {
-                    excited: ["Awesome! 🚀", "That's amazing! 🎉", "Fantastic! ⭐"],
-                    encouraging: ["You've got this! 💪", "Keep going! 👊", "Stay focused! 🎯"],
-                    thinking: ["Let me think... 🤔", "Hmm, interesting... 🧠", "Processing... ⚙️"],
-                    celebrating: ["CONGRATULATIONS! 🎊", "You nailed it! 🏆", "So proud! 🌟"]
-                },
-                module_specific: {
-                    1: "AI Basics is perfect for beginners! We'll explore what makes machines 'intelligent' and why AI is transforming our world!",
-                    2: "Prompt Engineering is like learning a new language - the language of AI! You'll master how to communicate with AI systems effectively!",
-                    3: "AI Assistants is where theory meets practice! You'll understand how to design helpful, reliable AI companions!",
-                    4: "AI Agents is the next level - autonomous systems that can make decisions and take actions. This is where it gets really exciting!",
-                    5: "Model Context Protocol is professional-grade knowledge! This is what top AI engineers use to build enterprise systems!",
-                    6: "Advanced Study Methods is our special bonus module! Techniques that went viral on social media to supercharge your learning!"
-                },
-                contextual: {
-                    morning: "Good morning! Ready to start the day learning AI?",
-                    afternoon: "Good afternoon! Shall we continue our learning journey?",
-                    evening: "Good evening! Studying AI in the evening can be very productive!",
-                    late_night: "Hey, studying late? Remember to get some rest too!"
-                }
+        const codyResponses = {
+            welcome: [
+                "Hi there! I'm Cody, your AI learning buddy! 🤖 I'm here to guide you through your AI journey.",
+                "Welcome to Cody Verse! I'll help you understand complex AI concepts step by step.",
+                "Ready to dive into the fascinating world of AI? I'm here to make learning fun and engaging!"
+            ],
+            course: [
+                "Our course is designed as a scaling journey! We start with AI Basics to build your foundation, then move through Prompt Engineering, AI Assistants, AI Agents, and finally master the Model Context Protocol.",
+                "Think of it like learning to drive - first you learn the basics, then advanced techniques, and finally professional skills. Each module builds on the previous one!",
+                "The course has 27 lessons total, with 390+ minutes of content and 215 XP points to earn. You'll go from beginner to professional level!"
+            ],
+            progress: [
+                "Your progress is tracked through XP points, completed lessons, and achievements! Each lesson gives you experience points based on difficulty.",
+                "I'll show you a progress ring around my avatar - it fills up as you complete modules. Plus you'll unlock badges and certificates!",
+                "Don't worry about going too fast - I'll adapt to your learning pace and provide hints when you need them."
+            ],
+            tips: [
+                "Here's my top learning tip: Practice what you learn immediately! Each interactive lesson has hands-on exercises.",
+                "Try explaining concepts back to me - teaching is the best way to learn. I'll listen and give you feedback!",
+                "Take breaks between modules. AI concepts need time to sink in. I'll send you gentle reminders to keep going!"
+            ],
+            encouragement: [
+                "You're doing great! Every expert was once a beginner. Keep going!",
+                "Learning AI is like building with blocks - each concept supports the next. You're building something amazing!",
+                "Remember, the goal isn't to memorize everything, but to understand how the pieces fit together."
+            ],
+            module_specific: {
+                1: "AI Basics is perfect for beginners! We'll explore what makes machines 'intelligent' and why AI is transforming our world.",
+                2: "Prompt Engineering is like learning a new language - the language of AI! You'll master how to communicate with AI systems effectively.",
+                3: "AI Assistants are where theory meets practice! You'll understand how to design helpful, reliable AI companions.",
+                4: "AI Agents are the next level - autonomous systems that can make decisions and take actions. This is where it gets really exciting!",
+                5: "Model Context Protocol is professional-grade knowledge! This is what top AI engineers use to build enterprise systems."
             }
         };
-
-        function getCodyResponse(category, context = {}) {
-            const personality = codyPersonality[currentLanguage];
-            let responses = personality[category];
-            
-            if (!responses) return "Hi there! I'm here to help you learn!";
-            
-            // Add contextual awareness
-            if (category === 'welcome') {
-                const hour = new Date().getHours();
-                if (hour < 12 && personality.contextual.morning) {
-                    responses = [personality.contextual.morning, ...responses];
-                } else if (hour < 18 && personality.contextual.afternoon) {
-                    responses = [personality.contextual.afternoon, ...responses];
-                } else if (hour < 22 && personality.contextual.evening) {
-                    responses = [personality.contextual.evening, ...responses];
-                } else if (personality.contextual.late_night) {
-                    responses = [personality.contextual.late_night, ...responses];
-                }
-            }
-            
-            return responses[Math.floor(Math.random() * responses.length)];
-        }
-
-        function getCodyEmotion(emotion) {
-            const personality = codyPersonality[currentLanguage];
-            const emotions = personality.emotions[emotion];
-            return emotions ? emotions[Math.floor(Math.random() * emotions.length)] : "😊";
-        }
         
         function toggleCody() {
             const chat = document.getElementById('codyChat');
@@ -1446,7 +952,8 @@
         }
         
         function getRandomResponse(category) {
-            return getCodyResponse(category);
+            const responses = codyResponses[category];
+            return responses[Math.floor(Math.random() * responses.length)];
         }
         
         function showCodyMessage(message) {
@@ -1475,44 +982,28 @@
             
             switch(context) {
                 case 'course':
-                    options = currentLanguage === 'pt-BR' ? `
-                        <button class="cody-option" onclick="codyHelp('progress')">Como é acompanhado o progresso?</button>
-                        <button class="cody-option" onclick="showModuleHelp()">Me fale sobre módulos específicos</button>
-                        <button class="cody-option" onclick="codyHelp('tips')">Alguma dica de aprendizado?</button>
-                    ` : `
+                    options = `
                         <button class="cody-option" onclick="codyHelp('progress')">How is progress tracked?</button>
                         <button class="cody-option" onclick="showModuleHelp()">Tell me about specific modules</button>
                         <button class="cody-option" onclick="codyHelp('tips')">Any learning tips?</button>
                     `;
                     break;
                 case 'progress':
-                    options = currentLanguage === 'pt-BR' ? `
-                        <button class="cody-option" onclick="showAchievements()">Que conquistas posso ganhar?</button>
-                        <button class="cody-option" onclick="codyHelp('tips')">Como aprender efetivamente?</button>
-                        <button class="cody-option" onclick="codyHelp('course')">Me fale sobre o curso</button>
-                    ` : `
+                    options = `
                         <button class="cody-option" onclick="showAchievements()">What achievements can I earn?</button>
                         <button class="cody-option" onclick="codyHelp('tips')">How to learn effectively?</button>
                         <button class="cody-option" onclick="codyHelp('course')">Tell me about the course</button>
                     `;
                     break;
                 case 'tips':
-                    options = currentLanguage === 'pt-BR' ? `
-                        <button class="cody-option" onclick="codyHelp('course')">Sobre a estrutura do curso</button>
-                        <button class="cody-option" onclick="askCodyQuestion()">Fazer uma pergunta ao Cody</button>
-                        <button class="cody-option" onclick="codyMotivation()">Preciso de motivação!</button>
-                    ` : `
+                    options = `
                         <button class="cody-option" onclick="codyHelp('course')">About the course structure</button>
                         <button class="cody-option" onclick="askCodyQuestion()">Ask Cody a question</button>
                         <button class="cody-option" onclick="codyMotivation()">I need motivation!</button>
                     `;
                     break;
                 default:
-                    options = currentLanguage === 'pt-BR' ? `
-                        <button class="cody-option" onclick="codyHelp('course')">Me fale sobre o curso</button>
-                        <button class="cody-option" onclick="codyHelp('progress')">Como acompanho meu progresso?</button>
-                        <button class="cody-option" onclick="codyHelp('tips')">Me dê dicas de estudo</button>
-                    ` : `
+                    options = `
                         <button class="cody-option" onclick="codyHelp('course')">Tell me about the course</button>
                         <button class="cody-option" onclick="codyHelp('progress')">How do I track progress?</button>
                         <button class="cody-option" onclick="codyHelp('tips')">Give me learning tips</button>
@@ -1538,10 +1029,7 @@
         function showModuleHelp() {
             showTypingIndicator();
             setTimeout(() => {
-                const helpMsg = currentLanguage === 'pt-BR' ? 
-                    "Qual módulo você quer saber mais? Clica em qualquer card de módulo que eu explico o que você vai aprender!" :
-                    "Which module would you like to know more about? Click on any module card and I'll explain what you'll learn!";
-                showCodyMessage(helpMsg);
+                showCodyMessage("Which module would you like to know more about? Click on any module card and I'll explain what you'll learn!");
                 updateCodyOptions('course');
                 closeCodyChat();
             }, 1500);
@@ -1550,39 +1038,25 @@
         function showAchievements() {
             showTypingIndicator();
             setTimeout(() => {
-                const achievementMsg = currentLanguage === 'pt-BR' ? 
-                    "Você pode ganhar badges como 'Explorador de IA', 'Mestre dos Prompts', 'Construtor de Agentes' e 'Profissional MCP'! Cada módulo completado desbloqueia conquistas especiais e certificados!" :
-                    "You can earn badges like 'AI Explorer', 'Prompt Master', 'Agent Builder', and 'MCP Professional'! Each module completion unlocks special achievements and certificates.";
-                showCodyMessage(achievementMsg);
+                showCodyMessage("You can earn badges like 'AI Explorer', 'Prompt Master', 'Agent Builder', and 'MCP Professional'! Each module completion unlocks special achievements and certificates.");
                 updateCodyOptions('progress');
             }, 2000);
         }
         
         function askCodyQuestion() {
-            const questionMsg = currentLanguage === 'pt-BR' ? 
-                "Opa! Adoro perguntas! Pode me perguntar qualquer coisa sobre IA, conteúdo do curso ou estratégias de aprendizado. Estou aqui para te ajudar a arrasar!" :
-                "Great! I love questions! Feel free to ask me anything about AI, the course content, or learning strategies. I'm here to help you succeed!";
-            showCodyMessage(questionMsg);
+            showCodyMessage("Great! I love questions! Feel free to ask me anything about AI, the course content, or learning strategies. I'm here to help you succeed!");
             updateCodyOptions('tips');
         }
         
         function codyMotivation() {
             showTypingIndicator();
             setTimeout(() => {
-                const motivationalQuotes = currentLanguage === 'pt-BR' ? [
-                    "Lembra: todo expert em IA começou exatamente onde você está agora. Você consegue! 💪",
-                    "Aprender IA é como desbloquear superpoderes - cada lição te deixa mais capaz! ⚡",
-                    "Você não está só aprendendo sobre IA, está se preparando para o futuro. Isso é incrível! 🚀",
-                    "Progresso pequeno ainda é progresso. Cada minuto que você gasta aprendendo é um investimento em si mesmo! 📈",
-                    "Cada linha de código, cada conceito entendido te aproxima do seu objetivo. Bora que bora! 🎯"
-                ] : [
+                const motivationalQuotes = [
                     "Remember: Every AI expert started exactly where you are now. You've got this! 💪",
                     "Learning AI is like unlocking superpowers - each lesson makes you more capable! ⚡",
                     "You're not just learning about AI, you're preparing for the future. That's amazing! 🚀",
-                    "Small progress is still progress. Every minute you spend learning is an investment in yourself! 📈",
-                    "Every concept understood brings you closer to your goal. Keep pushing forward! 🎯"
+                    "Small progress is still progress. Every minute you spend learning is an investment in yourself! 📈"
                 ];
-                
                 const quote = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
                 showCodyMessage(quote);
                 updateCodyFace('encouraging');
@@ -1621,10 +1095,9 @@
             const modalContent = document.getElementById('modalContent');
             
             // Cody provides module-specific guidance
-            const personality = codyPersonality[currentLanguage];
-            if (personality.module_specific[moduleId]) {
+            if (codyResponses.module_specific[moduleId]) {
                 setTimeout(() => {
-                    showNotification(`Cody: ${personality.module_specific[moduleId]}`);
+                    showNotification(`Cody says: ${codyResponses.module_specific[moduleId]}`);
                 }, 500);
             }
             
@@ -1662,7 +1135,7 @@
                     `).join('')}
                 </div>
                 <div style="margin-top: 30px; text-align: center;">
-                    <button class="btn btn-primary" onclick="startModule(${moduleId})">🚀 ${t('startLearning')}</button>
+                    <button class="btn btn-primary" onclick="startModule(${moduleId})">🚀 Start Learning with Cody</button>
                 </div>
             `;
             
@@ -1687,241 +1160,12 @@
             }
         }, 300000); // Check every 5 minutes
         
-        // Internationalization System
-        let currentLanguage = 'pt-BR';
-        
-        const translations = {
-            'pt-BR': {
-                // Header
-                appTitle: '🎓 Cody Verse',
-                appSubtitle: 'Aprenda conceitos de IA e MCP através do nosso curso abrangente',
-                
-                // Navigation
-                courseDashboard: 'Dashboard do Curso',
-                myProgress: 'Meu Progresso',
-                achievementsRewards: 'Conquistas & Prêmios',
-                
-                // Course modules
-                aiBasics: 'IA Básica',
-                promptEngineering: 'Engenharia de Prompts',
-                aiAssistants: 'Assistentes de IA',
-                aiAgents: 'Agentes de IA',
-                modelContextProtocol: 'Protocolo de Contexto do Modelo',
-                advancedStudyMethods: 'Métodos de Estudo Avançados',
-                
-                // Difficulty levels
-                beginner: 'iniciante',
-                intermediate: 'intermediário',
-                advanced: 'avançado',
-                
-                // Lesson types
-                theory: 'teoria',
-                interactive: 'interativo',
-                lab: 'laboratório',
-                quiz: 'questionário',
-                
-                // UI Elements
-                lessons: 'lições',
-                duration: 'duração',
-                startLearning: 'Começar a Aprender com Cody',
-                previous: '← Anterior',
-                next: 'Próximo →',
-                complete: 'Concluir',
-                backToCourse: 'Voltar ao Curso',
-                close: 'Fechar',
-                progress: 'Progresso',
-                
-                // Stats
-                totalXP: 'XP Total',
-                streak: 'Sequência',
-                level: 'Nível',
-                days: 'dias',
-                
-                // Levels
-                levelNames: ['Iniciante', 'Explorador', 'Estudante', 'Especialista', 'Mestre', 'Expert'],
-                
-                // Achievements
-                achievementsUnlocked: 'Conquistas Desbloqueadas',
-                completeFirstLesson: 'Complete lições para desbloquear conquistas!',
-                achievementUnlocked: 'Conquista Desbloqueada',
-                
-                // Cody messages
-                codyWelcome: 'Olá! Sou o Cody, seu companheiro de aprendizagem em IA! Estou aqui para guiá-lo em sua jornada.',
-                codyStartLesson: 'Começando "{lesson}"! Estou aqui para ajudar.',
-                codyModuleComplete: 'Fantástico! Você dominou {module}! Pronto para o próximo desafio?',
-                codyWelcomeNotification: 'Bem-vindo! Sou o Cody, seu companheiro de aprendizagem. Clique em mim quando precisar de ajuda!',
-                
-                // Learning interface
-                moduleComplete: 'Módulo Concluído!',
-                congratulations: 'Parabéns! Você completou o módulo "{module}"',
-                continueJourney: 'Continue sua jornada com o próximo módulo!',
-                lessonComplete: 'Lição concluída!',
-                thisLessonXP: 'XP desta lição',
-                
-                // Course descriptions
-                courseDescriptions: {
-                    1: 'Conceitos fundamentais de inteligência artificial, aprendizado de máquina e redes neurais. Inicie sua jornada no mundo da IA com conceitos centrais e aplicações práticas.',
-                    2: 'Domine a arte de criar prompts eficazes para respostas e comportamentos ideais de IA. Aprenda técnicas avançadas usadas por profissionais.',
-                    3: 'Compreenda e construa assistentes de IA inteligentes para várias aplicações. Do design à implantação de sistemas de produção.',
-                    4: 'Agentes de IA autônomos avançados com tomada de decisão e comportamento orientado a objetivos. Construa sistemas multi-agentes sofisticados.',
-                    5: 'Implementação profissional do MCP para integração de sistemas de IA corporativos. Domine o protocolo que alimenta aplicações de IA modernas.',
-                    6: 'Técnicas de aprendizagem que viralizaram nas redes sociais. Método Feynman, Active Recall, Spaced Repetition e mais.'
-                }
-            },
-            'en-US': {
-                // Header
-                appTitle: '🎓 Cody Verse',
-                appSubtitle: 'Learn AI and MCP concepts through our comprehensive scaling course',
-                
-                // Navigation
-                courseDashboard: 'Course Dashboard',
-                myProgress: 'My Progress',
-                achievementsRewards: 'Achievements & Rewards',
-                
-                // Course modules
-                aiBasics: 'AI Basics',
-                promptEngineering: 'Prompt Engineering',
-                aiAssistants: 'AI Assistants',
-                aiAgents: 'AI Agents',
-                modelContextProtocol: 'Model Context Protocol',
-                advancedStudyMethods: 'Advanced Study Methods',
-                
-                // Difficulty levels
-                beginner: 'beginner',
-                intermediate: 'intermediate',
-                advanced: 'advanced',
-                
-                // Lesson types
-                theory: 'theory',
-                interactive: 'interactive',
-                lab: 'lab',
-                quiz: 'quiz',
-                
-                // UI Elements
-                lessons: 'lessons',
-                duration: 'duration',
-                startLearning: 'Start Learning with Cody',
-                previous: '← Previous',
-                next: 'Next →',
-                complete: 'Complete',
-                backToCourse: 'Back to Course',
-                close: 'Close',
-                progress: 'Progress',
-                
-                // Stats
-                totalXP: 'Total XP',
-                streak: 'Streak',
-                level: 'Level',
-                days: 'days',
-                
-                // Levels
-                levelNames: ['Beginner', 'Explorer', 'Student', 'Expert', 'Master', 'Elite'],
-                
-                // Achievements
-                achievementsUnlocked: 'Achievements Unlocked',
-                completeFirstLesson: 'Complete lessons to unlock achievements!',
-                achievementUnlocked: 'Achievement Unlocked',
-                
-                // Cody messages
-                codyWelcome: 'Hi there! I\'m Cody, your AI learning buddy! I\'m here to guide you through your AI journey.',
-                codyStartLesson: 'Starting "{lesson}"! I\'m here to help.',
-                codyModuleComplete: 'Fantastic! You mastered {module}! Ready for the next challenge?',
-                codyWelcomeNotification: 'Welcome! I\'m Cody, your learning companion. Click me anytime for help!',
-                
-                // Learning interface
-                moduleComplete: 'Module Complete!',
-                congratulations: 'Congratulations! You completed the "{module}" module',
-                continueJourney: 'Continue your journey with the next module!',
-                lessonComplete: 'Lesson complete!',
-                thisLessonXP: 'This lesson XP',
-                
-                // Course descriptions
-                courseDescriptions: {
-                    1: 'Fundamental concepts of artificial intelligence, machine learning, and neural networks. Start your journey into the world of AI with core concepts and practical applications.',
-                    2: 'Master the art of crafting effective prompts for optimal AI responses and behavior. Learn advanced techniques used by professionals.',
-                    3: 'Understanding and building intelligent AI assistants for various applications. From design to deployment of production systems.',
-                    4: 'Advanced autonomous AI agents with decision-making and goal-oriented behavior. Build sophisticated multi-agent systems.',
-                    5: 'Professional implementation of MCP for enterprise AI system integration. Master the protocol that powers modern AI applications.',
-                    6: 'Learning techniques that went viral on social networks. Feynman Method, Active Recall, Spaced Repetition and more.'
-                }
-            }
-        };
-        
-        function t(key, replacements = {}) {
-            let text = translations[currentLanguage][key] || key;
-            
-            // Replace placeholders
-            Object.keys(replacements).forEach(placeholder => {
-                text = text.replace(`{${placeholder}}`, replacements[placeholder]);
-            });
-            
-            return text;
-        }
-        
-        function switchLanguage(lang) {
-            currentLanguage = lang;
-            updateInterface();
-            localStorage.setItem('codyverse_language', lang);
-        }
-        
-        function updateInterface() {
-            // Update header
-            document.querySelector('.header h1').textContent = t('appTitle');
-            document.querySelector('.header p').textContent = t('appSubtitle');
-            
-            // Update navigation buttons
-            document.querySelector('[onclick="showDashboard()"]').textContent = t('courseDashboard');
-            document.querySelector('[onclick="showProgress()"]').textContent = t('myProgress');
-            document.querySelector('[onclick="showAchievements()"]').textContent = t('achievementsRewards');
-            
-            // Update Cody's initial welcome message
-            const codyMessageEl = document.getElementById('codyMessage');
-            if (codyMessageEl) {
-                codyMessageEl.innerHTML = getCodyResponse('welcome');
-            }
-            
-            // Update Cody's chat options
-            updateCodyOptions('default');
-            
-            // Re-render course modules with new language
-            renderCourseModules();
-            
-            // Update any visible stats
-            if (document.getElementById('userStatsContainer').style.display !== 'none') {
-                updateUserStats();
-            }
-        }
-
         // Learning Interface System
         let currentLearningState = {
             moduleId: null,
             lessonIndex: 0,
             totalLessons: 0,
             earnedXP: 0
-        };
-
-        // Achievement System
-        let userProgress = {
-            totalXP: 0,
-            currentStreak: 0,
-            lastStudyDate: null,
-            completedModules: [],
-            achievements: [],
-            studyTime: 0,
-            perfectQuizzes: 0,
-            level: 1
-        };
-
-        const achievements = {
-            first_steps: { name: "Primeiros Passos", icon: "👶", description: "Complete sua primeira lição", requirement: "complete_lesson", threshold: 1 },
-            ai_explorer: { name: "Explorador de IA", icon: "🔍", description: "Complete o módulo AI Basics", requirement: "complete_module", threshold: 1 },
-            prompt_master: { name: "Mestre dos Prompts", icon: "✏️", description: "Complete o módulo Prompt Engineering", requirement: "complete_module", threshold: 2 },
-            streak_warrior: { name: "Guerreiro da Sequência", icon: "🔥", description: "Estude por 7 dias consecutivos", requirement: "streak", threshold: 7 },
-            quiz_perfectionist: { name: "Perfeccionista", icon: "💯", description: "Acerte 5 quizzes perfeitos", requirement: "perfect_quiz", threshold: 5 },
-            speed_learner: { name: "Aprendiz Relâmpago", icon: "⚡", description: "Complete 3 lições em menos de 1 hora", requirement: "speed_learning", threshold: 3 },
-            method_master: { name: "Mestre dos Métodos", icon: "🧠", description: "Complete o módulo de Métodos Avançados", requirement: "complete_module", threshold: 6 },
-            xp_collector: { name: "Coletor de XP", icon: "⭐", description: "Colete 100 XP total", requirement: "total_xp", threshold: 100 },
-            dedication: { name: "Dedicação Total", icon: "🏆", description: "Complete todos os módulos", requirement: "complete_all", threshold: 6 }
         };
 
         const lessonContent = {
@@ -2021,7 +1265,6 @@
         };
 
         function showLearningInterface(moduleId, lessonIndex) {
-            const courseModules = getCourseModules();
             const module = courseModules.find(m => m.id === moduleId);
             if (!module) return;
 
@@ -2051,12 +1294,11 @@
             
             // Cody interaction
             setTimeout(() => {
-                showNotification(`Cody: ${t('codyStartLesson', {lesson: lesson.title})}`);
+                showNotification(`Cody: Começando "${lesson.title}"! Estou aqui para ajudar.`);
             }, 1000);
         }
 
         function loadLessonContent(moduleId, lessonIndex) {
-            const courseModules = getCourseModules();
             const module = courseModules.find(m => m.id === moduleId);
             const lesson = module.lessons[lessonIndex];
             const contentArea = document.getElementById('lessonContentArea');
@@ -2074,7 +1316,7 @@
             contentArea.innerHTML = badge + content.content;
             
             // Update XP display
-            document.getElementById('lessonXP').textContent = `${t('thisLessonXP')}: ${lesson.xp}`;
+            document.getElementById('lessonXP').textContent = `XP desta lição: ${lesson.xp}`;
             
             // Initialize quiz if needed
             if (content.type === 'quiz') {
@@ -2199,20 +1441,10 @@
         function nextLesson() {
             const { moduleId, lessonIndex, totalLessons } = currentLearningState;
             
-            // Award XP for completing current lesson
-            const module = courseModules.find(m => m.id === moduleId);
-            const lesson = module.lessons[lessonIndex];
-            const lessonXP = parseInt(lesson.xp.replace(' XP', ''));
-            awardXP(lessonXP);
-            checkAchievements('lesson_complete');
-            
             if (lessonIndex < totalLessons - 1) {
                 currentLearningState.lessonIndex++;
                 loadLessonContent(moduleId, currentLearningState.lessonIndex);
                 updateLessonNavigation();
-                
-                // Show XP notification
-                showNotification(`+${lessonXP} XP! Lição concluída!`);
             } else {
                 // Complete module
                 completeModule();
@@ -2235,29 +1467,12 @@
                 return sum + parseInt(lesson.xp.replace(' XP', ''));
             }, 0);
             
-            // Award XP and update progress
-            awardXP(totalXP);
-            
-            // Mark module as completed
-            if (!userProgress.completedModules.includes(currentLearningState.moduleId)) {
-                userProgress.completedModules.push(currentLearningState.moduleId);
-                checkAchievements('module_complete');
-            }
-            
             const contentArea = document.getElementById('lessonContentArea');
             contentArea.innerHTML = `
                 <div class="lesson-complete">
                     <h2>🎉 Módulo Concluído!</h2>
                     <p>Parabéns! Você completou o módulo "${module.title}"</p>
                     <div class="xp-earned">+${totalXP} XP</div>
-                    <div style="margin: 20px 0;">
-                        <div class="streak-counter" style="display: inline-flex; margin: 10px;">
-                            🔥 Sequência: ${userProgress.currentStreak} dias
-                        </div>
-                        <div class="xp-display" style="display: inline-flex; margin: 10px;">
-                            Total XP: ${userProgress.totalXP}
-                        </div>
-                    </div>
                     <p>Continue sua jornada com o próximo módulo!</p>
                 </div>
             `;
@@ -2265,13 +1480,9 @@
             // Update navigation to show completion
             document.getElementById('nextBtn').style.display = 'none';
             
-            // Cody celebration with enhanced personality
+            // Cody celebration
             setTimeout(() => {
-                const celebration = getCodyEmotion('celebrating');
-                const moduleCompleteMsg = currentLanguage === 'pt-BR' ? 
-                    `Cody: Fantástico! Você dominou ${module.title}! Pronto para o próximo desafio? ${celebration}` :
-                    `Cody: Fantastic! You mastered ${module.title}! Ready for the next challenge? ${celebration}`;
-                showNotification(moduleCompleteMsg);
+                showNotification(`Cody: Fantástico! Você dominou ${module.title}! Pronto para o próximo desafio? 🚀`);
             }, 1000);
         }
 
@@ -2289,25 +1500,12 @@
         }
 
         // Initialize the page
-        function initializeApp() {
-            // Load saved language preference
-            const savedLanguage = localStorage.getItem('codyverse_language');
-            if (savedLanguage && translations[savedLanguage]) {
-                currentLanguage = savedLanguage;
-                document.getElementById('languageSelector').value = savedLanguage;
-            }
-            
-            updateInterface();
-            renderCourseModules();
-            
-            // Welcome message from Cody with personality
-            setTimeout(() => {
-                const welcomeMsg = getCodyResponse('welcome');
-                showNotification(welcomeMsg);
-            }, 2000);
-        }
+        renderCourseModules();
         
-        initializeApp();
+        // Welcome message from Cody
+        setTimeout(() => {
+            showNotification("Bem-vindo! Sou o Cody, seu companheiro de aprendizagem. Clique em mim quando precisar de ajuda!");
+        }, 2000);
     </script>
 </body>
 </html>
