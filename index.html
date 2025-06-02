@@ -3176,26 +3176,36 @@
             // Initialize core systems with error handling
             try {
                 // Initialize AI learning engine
-                aiLearningEngine.init();
+                if (typeof aiLearningEngine !== 'undefined' && aiLearningEngine.init) {
+                    aiLearningEngine.init();
+                }
                 
                 // Initialize AR system
-                arLearningSystem.init();
+                if (typeof arLearningSystem !== 'undefined' && arLearningSystem.init) {
+                    arLearningSystem.init();
+                }
                 
                 // Initialize error tracking
                 window.addEventListener('error', function(e) {
                     console.error('Global error:', e.error);
-                    showNotification('Ocorreu um erro inesperado.', 'error');
+                    if (typeof showNotification !== 'undefined') {
+                        showNotification('Ocorreu um erro inesperado.', 'error');
+                    }
                 });
                 
                 window.addEventListener('unhandledrejection', function(e) {
                     console.error('Unhandled promise rejection:', e.reason);
-                    showNotification('Erro de conexão detectado.', 'warning');
+                    if (typeof showNotification !== 'undefined') {
+                        showNotification('Erro de conexão detectado.', 'warning');
+                    }
                 });
                 
                 console.log('All systems initialized successfully');
             } catch (error) {
                 console.error('Error during initialization:', error);
-                showNotification('Erro durante inicialização. Algumas funcionalidades podem não funcionar.', 'error');
+                if (typeof showNotification !== 'undefined') {
+                    showNotification('Erro durante inicialização. Algumas funcionalidades podem não funcionar.', 'error');
+                }
             }
             
             updateInterface();
