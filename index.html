@@ -1077,7 +1077,7 @@
                     ${module.trending ? '<div style="position: absolute; top: 10px; left: 10px; background: #ff6b6b; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; font-weight: 600;">🔥 TRENDING</div>' : ''}
                     ${module.bonus ? '<div style="position: absolute; top: 10px; right: 10px; background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #333; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; font-weight: 600;">🎁 BÔNUS</div>' : ''}
                     <div class="module-header">
-                        <div class="module-icon">${module.id === 6 ? '🧠' : module.id}</div>
+                        <div class="module-icon">${module.id === 6 ? '🧠' : (module.id || '')}</div>
                         <h3 class="module-title">${module.title}</h3>
                     </div>
                     <p class="module-description">${module.description}</p>
@@ -1163,9 +1163,17 @@
 
         function displayAIRecommendations() {
             const recommendations = aiLearningEngine.getPersonalizedRecommendations();
-            const container = document.getElementById('userStatsContainer');
+            let container = document.getElementById('userStatsContainer');
             
-            const aiSection = `
+            // Remove any existing AI recommendations
+            const existingAI = container.querySelector('.ai-recommendations');
+            if (existingAI) {
+                existingAI.remove();
+            }
+            
+            const aiSection = document.createElement('div');
+            aiSection.className = 'ai-recommendations';
+            aiSection.innerHTML = `
                 <div class="achievements-container" style="margin-top: 20px;">
                     <h3 style="margin-bottom: 20px;">🤖 ${currentLanguage === 'pt-BR' ? 'Recomendações Personalizadas da IA' : 'AI-Powered Personalized Recommendations'}</h3>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
@@ -1173,24 +1181,35 @@
                             <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px;">
                                 <h4>${rec.title}</h4>
                                 <p style="margin: 10px 0; opacity: 0.9;">${rec.reason || rec.description || ''}</p>
-                                ${rec.moduleId ? `<button class="btn btn-secondary" onclick="showModuleDetails(${rec.moduleId})" style="margin-top: 10px;">${currentLanguage === 'pt-BR' ? 'Ver Módulo' : 'View Module'}</button>` : ''}
+                                ${rec.moduleId ? `<button class="btn btn-secondary" onclick="showModuleDetails(${rec.moduleId}); toggleDashboard();" style="margin-top: 10px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);">${currentLanguage === 'pt-BR' ? 'Ver Módulo' : 'View Module'}</button>` : ''}
                             </div>
                         `).join('')}
                     </div>
                     
                     <div style="margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 12px;">
-                        <h4>${currentLanguage === 'pt-BR' ? 'Seu Perfil de Aprendizagem' : 'Your Learning Profile'}</h4>
+                        <h4>${currentLanguage === 'pt-BR' ? 'Seu Perfil de Aprendizagem Adaptativo' : 'Your Adaptive Learning Profile'}</h4>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
-                            <div><strong>${currentLanguage === 'pt-BR' ? 'Ritmo:' : 'Pace:'}</strong> ${learningProfile.pace}</div>
-                            <div><strong>${currentLanguage === 'pt-BR' ? 'Dificuldade:' : 'Difficulty:'}</strong> ${learningProfile.difficulty}</div>
-                            <div><strong>${currentLanguage === 'pt-BR' ? 'Sessão ideal:' : 'Ideal session:'}</strong> ${learningProfile.sessionDuration} min</div>
-                            <div><strong>${currentLanguage === 'pt-BR' ? 'Pontos fortes:' : 'Strong areas:'}</strong> ${learningProfile.strongAreas.length}</div>
+                            <div style="padding: 10px; background: white; border-radius: 6px;"><strong>${currentLanguage === 'pt-BR' ? 'Ritmo:' : 'Pace:'}</strong> <span style="color: #667eea;">${learningProfile.pace}</span></div>
+                            <div style="padding: 10px; background: white; border-radius: 6px;"><strong>${currentLanguage === 'pt-BR' ? 'Dificuldade:' : 'Difficulty:'}</strong> <span style="color: #667eea;">${learningProfile.difficulty}</span></div>
+                            <div style="padding: 10px; background: white; border-radius: 6px;"><strong>${currentLanguage === 'pt-BR' ? 'Sessão ideal:' : 'Ideal session:'}</strong> <span style="color: #667eea;">${learningProfile.sessionDuration} min</span></div>
+                            <div style="padding: 10px; background: white; border-radius: 6px;"><strong>${currentLanguage === 'pt-BR' ? 'Áreas dominadas:' : 'Strong areas:'}</strong> <span style="color: #667eea;">${learningProfile.strongAreas.length}</span></div>
+                        </div>
+                        <div style="margin-top: 15px; padding: 15px; background: linear-gradient(135deg, #e8f4fd 0%, #f0f8ff 100%); border-radius: 8px; border-left: 4px solid #2196f3;">
+                            <p style="margin: 0; color: #1976d2;"><strong>${currentLanguage === 'pt-BR' ? '🎯 Sistema IA Ativo:' : '🎯 AI System Active:'}</strong> ${currentLanguage === 'pt-BR' ? 'Adaptando conteúdo baseado no seu progresso e estilo de aprendizagem' : 'Adapting content based on your progress and learning style'}</p>
                         </div>
                     </div>
                 </div>
             `;
             
-            container.innerHTML += aiSection;
+            container.appendChild(aiSection);
+        }
+
+        function toggleDashboard() {
+            const container = document.getElementById('userStatsContainer');
+            const courseGrid = document.getElementById('courseGrid');
+            
+            container.style.display = 'none';
+            courseGrid.style.display = 'grid';
         }
         
         function showProgress() {
@@ -1983,8 +2002,8 @@
                 }
 
                 // Analyze learning speed
-                const avgTime = Object.values(userStats.timeSpentPerLesson);
-                const averageTime = avgTime.reduce((a, b) => a + b, 0) / avgTime.length || 15;
+                const avgTime = Object.values(userStats.timeSpentPerLesson || {});
+                const averageTime = avgTime.length > 0 ? avgTime.reduce((a, b) => a + b, 0) / avgTime.length : 15;
                 
                 if (averageTime < 10) {
                     learningProfile.pace = 'fast';
@@ -2090,8 +2109,8 @@
 
                 // Auto-adjust difficulty
                 if (learningProfile.difficulty === 'auto') {
-                    const recentScores = Object.values(learningProfile.timeSpentPerLesson).slice(-5);
-                    const avgRecentScore = recentScores.reduce((a, b) => a + b, 0) / recentScores.length;
+                    const recentScores = Object.values(learningProfile.timeSpentPerLesson || {}).slice(-5);
+                    const avgRecentScore = recentScores.length > 0 ? recentScores.reduce((a, b) => a + b, 0) / recentScores.length : 75;
                     
                     if (avgRecentScore > 85) {
                         learningProfile.difficulty = 'hard';
