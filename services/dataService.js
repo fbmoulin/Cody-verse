@@ -104,19 +104,41 @@ class DataService {
     };
   }
 
-  // Get lessons by module ID with fallback
+  // Get lessons by module ID with timeout and caching
   async getLessonsByModuleId(moduleId) {
+    const logger = require('../server/logger');
+    const cacheService = require('../core/services/cache_service');
+    const cacheKey = `lessons_module_${moduleId}`;
+    
     try {
-      const courseLessons = await db
+      // Check cache first
+      const cachedLessons = cacheService.get(cacheKey);
+      if (cachedLessons) {
+        logger.info('Lessons retrieved from cache', { moduleId });
+        return cachedLessons;
+      }
+
+      // Query database with timeout
+      const queryPromise = db
         .select()
         .from(lessons)
         .where(eq(lessons.moduleId, parseInt(moduleId)))
         .orderBy(asc(lessons.orderIndex));
+      
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Database query timeout')), 2000)
+      );
+
+      const courseLessons = await Promise.race([queryPromise, timeoutPromise]);
+
+      // Cache results for 20 minutes
+      cacheService.set(cacheKey, courseLessons, 20 * 60 * 1000);
+      logger.database('Lessons retrieved from database and cached', { moduleId, count: courseLessons.length });
 
       return courseLessons;
     } catch (error) {
-      console.warn('Using static data for lessons:', error.message);
-      return lessonsData.filter(l => l.moduleId === parseInt(moduleId));
+      logger.error('Database connection failed for lessons', { moduleId, error: error.message });
+      throw new Error(`Unable to retrieve lessons for module ${moduleId} - database connection issue`);
     }
   }
 

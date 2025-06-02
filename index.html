@@ -658,32 +658,54 @@
                 if (result.success) {
                     courseModules = await Promise.all(result.data.map(async (module) => {
                         // Load lessons for each module
-                        const lessonsResponse = await fetch(`/api/courses/${module.id}/lessons`);
-                        const lessonsResult = await lessonsResponse.json();
-                        
-                        return {
-                            id: module.id,
-                            title: module.title,
-                            description: module.description,
-                            difficulty: module.difficulty,
-                            duration: module.duration,
-                            xp: module.totalXP + ' XP',
-                            lessons: lessonsResult.success ? lessonsResult.data.map(lesson => ({
-                                title: lesson.title,
-                                type: lesson.type,
-                                duration: lesson.duration,
-                                xp: lesson.xpReward + ' XP',
-                                content: lesson.content
-                            })) : []
-                        };
+                        try {
+                            const lessonsResponse = await fetch(`/api/courses/${module.id}/lessons`);
+                            const lessonsResult = await lessonsResponse.json();
+                            
+                            return {
+                                id: module.id,
+                                title: module.title,
+                                description: module.description,
+                                difficulty: module.difficulty,
+                                duration: module.duration,
+                                xp: module.totalXP + ' XP',
+                                lessons: lessonsResult.success ? lessonsResult.data.map(lesson => ({
+                                    id: lesson.id,
+                                    title: lesson.title,
+                                    type: lesson.type,
+                                    duration: lesson.duration,
+                                    xp: lesson.xpReward + ' XP',
+                                    content: lesson.content
+                                })) : []
+                            };
+                        } catch (lessonError) {
+                            console.warn('Failed to load lessons for module', module.id);
+                            return {
+                                id: module.id,
+                                title: module.title,
+                                description: module.description,
+                                difficulty: module.difficulty,
+                                duration: module.duration,
+                                xp: module.totalXP + ' XP',
+                                lessons: []
+                            };
+                        }
                     }));
                     
                     renderCourseModules();
+                    console.log('Course data loaded successfully from database');
                 } else {
                     console.error('Failed to load courses:', result.error);
+                    throw new Error(result.error);
                 }
             } catch (error) {
                 console.error('Error loading course data:', error);
+                // Use static fallback data if database fails
+                if (courseModules.length === 0) {
+                    courseModules = staticCourseModules;
+                    renderCourseModules();
+                    console.warn('Using static fallback data due to API failure');
+                }
             }
         }
         
