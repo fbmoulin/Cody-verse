@@ -1,4 +1,5 @@
 const dataService = require('../services/dataService');
+const { lessonsData } = require('../server/staticData');
 
 class CourseController {
   // Obter todos os cursos

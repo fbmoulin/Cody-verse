@@ -48,9 +48,11 @@ class CodyController {
       // Generate Cody response based on interaction type
       const response = this.generateResponse(interactionType, context, userMessage);
 
-      // Save interaction to database if userId provided
+      // Save interaction to database if userId provided  
       if (userId) {
         try {
+          const { db } = require('../server/database');
+          const { codyInteractions } = require('../shared/schema');
           await db.insert(codyInteractions).values({
             userId: parseInt(userId),
             interactionType,
