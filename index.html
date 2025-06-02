@@ -1224,9 +1224,18 @@
         }
         
         function renderCourseModules() {
-            const grid = document.getElementById('courseGrid');
-            const modules = getCourseModules();
-            grid.innerHTML = modules.map(module => `
+            try {
+                const grid = document.getElementById('courseGrid');
+                if (!grid) {
+                    console.error('Course grid element not found');
+                    return;
+                }
+                const modules = getCourseModules();
+                if (!modules || modules.length === 0) {
+                    grid.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;">Nenhum módulo disponível no momento.</div>';
+                    return;
+                }
+                grid.innerHTML = modules.map(module => `
                 <div class="module-card ${module.difficulty}" data-module-id="${module.id}" onclick="showModuleDetails(${module.id})" ontouchstart="" style="cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: rgba(0,0,0,0.1);">
                     <div class="status-indicator"></div>
                     ${module.trending ? '<div style="position: absolute; top: 10px; left: 10px; background: #ff6b6b; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; font-weight: 600;">🔥 TRENDING</div>' : ''}
@@ -1254,7 +1263,14 @@
                         </div>
                     </div>
                 </div>
-            `).join('');
+                `).join('');
+            } catch (error) {
+                console.error('Error rendering course modules:', error);
+                const grid = document.getElementById('courseGrid');
+                if (grid) {
+                    grid.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;">Erro ao carregar módulos. Recarregue a página.</div>';
+                }
+            }
         }
         
         function showModuleDetails(moduleId) {
@@ -2843,15 +2859,24 @@
             container.style.display = 'block';
             document.body.style.overflow = 'hidden';
             
-            // Cody interaction
-            setTimeout(() => {
-                showNotification(`Cody: ${t('codyStartLesson', {lesson: lesson.title})}`);
-            }, 1000);
+                // Cody interaction
+                setTimeout(() => {
+                    showNotification(`Cody: ${t('codyStartLesson', {lesson: lesson.title})}`);
+                }, 1000);
+            } catch (error) {
+                console.error('Error starting lesson:', error);
+                showNotification('Erro ao iniciar lição. Tente novamente.');
+            }
         }
 
         function loadLessonContent(moduleId, lessonIndex) {
-            const modules = getCourseModules();
-            const module = modules.find(m => m.id === moduleId);
+            try {
+                const modules = getCourseModules();
+                const module = modules.find(m => m.id === moduleId);
+                if (!module || !module.lessons || !module.lessons[lessonIndex]) {
+                    console.error('Content not found:', moduleId, lessonIndex);
+                    return;
+                }
             const lesson = module.lessons[lessonIndex];
             const contentArea = document.getElementById('lessonContentArea');
             
