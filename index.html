@@ -2341,7 +2341,15 @@
                     });
                 }
 
-                return recommendations;
+                    return recommendations;
+                } catch (error) {
+                    console.error('Error generating recommendations:', error);
+                    return [{
+                        title: currentLanguage === 'pt-BR' ? 'Continue Aprendendo' : 'Continue Learning',
+                        reason: currentLanguage === 'pt-BR' ? 'Retome seus estudos onde parou' : 'Resume your studies where you left off',
+                        moduleId: 1
+                    }];
+                }
             }
         };
 
@@ -2877,8 +2885,12 @@
                     console.error('Content not found:', moduleId, lessonIndex);
                     return;
                 }
-            const lesson = module.lessons[lessonIndex];
-            const contentArea = document.getElementById('lessonContentArea');
+                const lesson = module.lessons[lessonIndex];
+                const contentArea = document.getElementById('lessonContentArea');
+                if (!contentArea) {
+                    console.error('Lesson content area not found');
+                    return;
+                }
             
             // Track lesson start time for AI analysis
             const lessonStartTime = Date.now();
@@ -3160,11 +3172,30 @@
                 document.getElementById('languageSelector').value = savedLanguage;
             }
             
-            // Load AI learning profile
-            aiLearningEngine.loadLearningProfile();
-            
-            // Initialize AR system
-            arLearningSystem.init();
+            // Initialize core systems with error handling
+            try {
+                // Initialize AI learning engine
+                aiLearningEngine.init();
+                
+                // Initialize AR system
+                arLearningSystem.init();
+                
+                // Initialize error tracking
+                window.addEventListener('error', function(e) {
+                    console.error('Global error:', e.error);
+                    showNotification('Ocorreu um erro inesperado.', 'error');
+                });
+                
+                window.addEventListener('unhandledrejection', function(e) {
+                    console.error('Unhandled promise rejection:', e.reason);
+                    showNotification('Erro de conexão detectado.', 'warning');
+                });
+                
+                console.log('All systems initialized successfully');
+            } catch (error) {
+                console.error('Error during initialization:', error);
+                showNotification('Erro durante inicialização. Algumas funcionalidades podem não funcionar.', 'error');
+            }
             
             updateInterface();
             renderCourseModules();
