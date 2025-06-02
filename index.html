@@ -356,62 +356,92 @@
             }
         };
 
-        // Course data
+        // Course data - Ordered correctly
         const CourseData = {
             modules: [
                 {
                     id: 1,
                     title: 'Introdução à IA e MCP',
-                    description: 'Fundamentos de Inteligência Artificial e Model Context Protocol',
+                    description: 'Fundamentos de Inteligência Artificial e Model Context Protocol - aprenda os conceitos básicos',
                     difficulty: 'beginner',
                     duration: '45 min',
                     xp: '30 XP',
-                    lessons: ['O que é IA?', 'História da IA', 'Tipos de IA', 'Quiz Básico']
+                    lessons: [
+                        { title: 'O que é Inteligência Artificial?', type: 'theory', duration: '15 min' },
+                        { title: 'História e Evolução da IA', type: 'theory', duration: '10 min' },
+                        { title: 'Tipos de IA: Fraca vs Forte', type: 'interactive', duration: '15 min' },
+                        { title: 'Quiz: Fundamentos de IA', type: 'quiz', duration: '5 min' }
+                    ]
                 },
                 {
                     id: 2,
                     title: 'Fundamentos de Machine Learning',
-                    description: 'Conceitos essenciais de aprendizado de máquina',
+                    description: 'Conceitos essenciais de aprendizado de máquina - algoritmos e aplicações práticas',
                     difficulty: 'beginner',
                     duration: '60 min',
                     xp: '40 XP',
-                    lessons: ['Tipos de Aprendizado', 'Algoritmos Básicos', 'Dados e Features', 'Exercício Prático']
+                    lessons: [
+                        { title: 'Tipos de Aprendizado: Supervisionado, Não-supervisionado', type: 'theory', duration: '20 min' },
+                        { title: 'Algoritmos Básicos: Regressão e Classificação', type: 'interactive', duration: '20 min' },
+                        { title: 'Dados e Features: Como preparar dados', type: 'practical', duration: '15 min' },
+                        { title: 'Exercício Prático: Primeiro Modelo ML', type: 'project', duration: '5 min' }
+                    ]
                 },
                 {
                     id: 3,
                     title: 'Redes Neurais e Deep Learning',
-                    description: 'Redes neurais artificiais e aprendizado profundo',
+                    description: 'Redes neurais artificiais e aprendizado profundo - construindo IAs mais complexas',
                     difficulty: 'intermediate',
                     duration: '90 min',
                     xp: '60 XP',
-                    lessons: ['Neurônios Artificiais', 'Arquiteturas de Redes', 'Backpropagation', 'Projeto Prático']
+                    lessons: [
+                        { title: 'Neurônios Artificiais: Como funcionam', type: 'theory', duration: '25 min' },
+                        { title: 'Arquiteturas de Redes: CNN, RNN, Transformers', type: 'interactive', duration: '30 min' },
+                        { title: 'Backpropagation: Treinando a rede', type: 'theory', duration: '20 min' },
+                        { title: 'Projeto Prático: Rede Neural Simples', type: 'project', duration: '15 min' }
+                    ]
                 },
                 {
                     id: 4,
                     title: 'Processamento de Linguagem Natural',
-                    description: 'IA para compreensão e geração de texto',
+                    description: 'IA para compreensão e geração de texto - chatbots e análise de sentimentos',
                     difficulty: 'intermediate',
                     duration: '75 min',
                     xp: '50 XP',
-                    lessons: ['Tokenização', 'Modelos de Linguagem', 'Transformers', 'Aplicações Práticas']
+                    lessons: [
+                        { title: 'Tokenização e Pré-processamento', type: 'theory', duration: '20 min' },
+                        { title: 'Modelos de Linguagem: N-gramas a GPT', type: 'interactive', duration: '25 min' },
+                        { title: 'Transformers: A revolução do NLP', type: 'theory', duration: '20 min' },
+                        { title: 'Aplicações Práticas: Chatbot simples', type: 'project', duration: '10 min' }
+                    ]
                 },
                 {
                     id: 5,
                     title: 'IA na Prática: Projetos Reais',
-                    description: 'Implementação de projetos com casos de uso reais',
+                    description: 'Implementação de projetos com casos de uso reais - do conceito ao deploy',
                     difficulty: 'advanced',
                     duration: '120 min',
                     xp: '80 XP',
-                    lessons: ['Planejamento de Projeto', 'Implementação', 'Testes e Validação', 'Deploy']
+                    lessons: [
+                        { title: 'Planejamento de Projeto de IA', type: 'theory', duration: '30 min' },
+                        { title: 'Implementação: Código e Arquitetura', type: 'practical', duration: '40 min' },
+                        { title: 'Testes e Validação de Modelos', type: 'practical', duration: '30 min' },
+                        { title: 'Deploy e Monitoramento', type: 'project', duration: '20 min' }
+                    ]
                 },
                 {
                     id: 6,
                     title: 'Métodos Avançados de Estudo',
-                    description: 'Técnicas de aprendizado eficiente e retenção',
+                    description: 'Técnicas de aprendizado eficiente e retenção - como estudar melhor e mais rápido',
                     difficulty: 'bonus',
                     duration: '30 min',
                     xp: '25 XP',
-                    lessons: ['Técnica Feynman', 'Active Recall', 'Spaced Repetition', 'Mind Mapping']
+                    lessons: [
+                        { title: 'Técnica Feynman: Ensine para Aprender', type: 'interactive', duration: '8 min' },
+                        { title: 'Active Recall: Teste-se Constantemente', type: 'interactive', duration: '7 min' },
+                        { title: 'Spaced Repetition: Revisão Inteligente', type: 'theory', duration: '10 min' },
+                        { title: 'Mind Mapping: Visualize o Conhecimento', type: 'practical', duration: '5 min' }
+                    ]
                 }
             ]
         };
@@ -562,9 +592,13 @@
                         <h3 style="color: #2d3748; margin: 20px 0 15px 0;">📚 Lições do Módulo</h3>
                         <div style="display: grid; gap: 10px;">
                             ${module.lessons.map((lesson, index) => `
-                                <div style="padding: 15px; background: #f7fafc; border-radius: 8px; border-left: 4px solid #667eea; display: flex; align-items: center; gap: 10px;">
-                                    <span style="background: #667eea; color: white; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8em; font-weight: bold;">${index + 1}</span>
-                                    <strong>${lesson}</strong>
+                                <div onclick="App.startLesson(${moduleId}, ${index})" style="padding: 15px; background: #f7fafc; border-radius: 8px; border-left: 4px solid #667eea; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='#edf2f7'" onmouseout="this.style.background='#f7fafc'">
+                                    <span style="background: #667eea; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8em; font-weight: bold;">${index + 1}</span>
+                                    <div style="flex: 1;">
+                                        <strong style="display: block; margin-bottom: 3px;">${lesson.title}</strong>
+                                        <small style="color: #666;">📖 ${lesson.type} • ⏱️ ${lesson.duration}</small>
+                                    </div>
+                                    <span style="color: #667eea; font-size: 1.2em;">▶️</span>
                                 </div>
                             `).join('')}
                         </div>
@@ -594,8 +628,135 @@
                 Utils.showNotification(`Iniciando: ${module.title}`, 'success');
                 
                 setTimeout(() => {
-                    Utils.showNotification('Abrindo primeira lição...', 'info');
+                    this.startLesson(moduleId, 0);
                 }, 1000);
+            },
+
+            startLesson: function(moduleId, lessonIndex) {
+                const module = CourseData.modules.find(m => m.id === moduleId);
+                if (!module || !module.lessons[lessonIndex]) return;
+
+                const lesson = module.lessons[lessonIndex];
+                
+                // Close any existing modals
+                const existingModal = document.querySelector('div[style*="position: fixed"]');
+                if (existingModal) existingModal.remove();
+
+                // Create lesson interface
+                const lessonContent = `
+                    <div style="background: white; border-radius: 15px; padding: 30px; max-width: 800px; width: 100%; max-height: 85vh; overflow-y: auto;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <div>
+                                <h2 style="margin: 0; color: #2d3748;">${lesson.title}</h2>
+                                <p style="margin: 5px 0 0 0; color: #666;">Módulo ${moduleId}: ${module.title}</p>
+                            </div>
+                            <button onclick="this.closest('div').remove()" style="background: #e53e3e; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 1.2em;">×</button>
+                        </div>
+
+                        <div style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); padding: 20px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #667eea;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                                <span style="background: #667eea; color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.8em; font-weight: bold;">${lesson.type.toUpperCase()}</span>
+                                <span style="color: #666;">⏱️ ${lesson.duration}</span>
+                            </div>
+                            ${this.getLessonContent(lesson, moduleId, lessonIndex)}
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px;">
+                            <button onclick="App.previousLesson(${moduleId}, ${lessonIndex})" style="background: #718096; color: white; border: none; padding: 12px 20px; border-radius: 20px; cursor: pointer; font-weight: 600; ${lessonIndex === 0 ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
+                                ← Anterior
+                            </button>
+                            
+                            <div style="text-align: center;">
+                                <div style="color: #666; font-size: 0.9em;">Lição ${lessonIndex + 1} de ${module.lessons.length}</div>
+                                <div style="background: #e2e8f0; height: 6px; width: 200px; border-radius: 3px; margin: 5px auto;">
+                                    <div style="background: #667eea; height: 100%; width: ${((lessonIndex + 1) / module.lessons.length) * 100}%; border-radius: 3px; transition: width 0.3s ease;"></div>
+                                </div>
+                            </div>
+
+                            <button onclick="App.nextLesson(${moduleId}, ${lessonIndex})" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 20px; border-radius: 20px; cursor: pointer; font-weight: 600;">
+                                ${lessonIndex === module.lessons.length - 1 ? 'Finalizar' : 'Próxima'} →
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                Utils.createModal(lessonContent);
+                Utils.showNotification(`Iniciando: ${lesson.title}`, 'success');
+            },
+
+            getLessonContent: function(lesson, moduleId, lessonIndex) {
+                const lessonContents = {
+                    1: {
+                        0: `
+                            <h3>🤖 O que é Inteligência Artificial?</h3>
+                            <p>A Inteligência Artificial (IA) é a capacidade de máquinas realizarem tarefas que normalmente requerem inteligência humana, como:</p>
+                            <ul style="margin: 15px 0; padding-left: 20px;">
+                                <li><strong>Reconhecimento de padrões</strong> - identificar objetos em imagens</li>
+                                <li><strong>Processamento de linguagem</strong> - entender e gerar texto</li>
+                                <li><strong>Tomada de decisões</strong> - escolher a melhor ação</li>
+                                <li><strong>Aprendizado</strong> - melhorar com experiência</li>
+                            </ul>
+                            <div style="background: #e6fffa; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                                💡 <strong>Exemplo prático:</strong> Quando você fala "Ok Google" e ele te responde, está usando IA para reconhecer sua voz e processar linguagem natural!
+                            </div>
+                        `,
+                        1: `
+                            <h3>📚 História e Evolução da IA</h3>
+                            <div style="display: grid; gap: 15px;">
+                                <div style="border-left: 3px solid #667eea; padding-left: 15px;">
+                                    <strong>1950s - As Origens</strong><br>
+                                    Alan Turing propõe o "Teste de Turing" para avaliar inteligência artificial
+                                </div>
+                                <div style="border-left: 3px solid #667eea; padding-left: 15px;">
+                                    <strong>1980s - Sistemas Especialistas</strong><br>
+                                    Primeiros sistemas de IA aplicados em medicina e diagnósticos
+                                </div>
+                                <div style="border-left: 3px solid #667eea; padding-left: 15px;">
+                                    <strong>2010s - Deep Learning</strong><br>
+                                    Redes neurais profundas revolucionam reconhecimento de imagem e voz
+                                </div>
+                                <div style="border-left: 3px solid #667eea; padding-left: 15px;">
+                                    <strong>2020s - Era dos LLMs</strong><br>
+                                    ChatGPT e modelos de linguagem transformam como interagimos com IA
+                                </div>
+                            </div>
+                        `
+                    }
+                };
+
+                return lessonContents[moduleId]?.[lessonIndex] || `
+                    <h3>${lesson.title}</h3>
+                    <p>Conteúdo da lição em desenvolvimento. Esta lição abordará conceitos importantes sobre ${lesson.title.toLowerCase()}.</p>
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #ffc107;">
+                        🚧 <strong>Em breve:</strong> Conteúdo interativo completo com exercícios práticos e exemplos reais.
+                    </div>
+                `;
+            },
+
+            nextLesson: function(moduleId, currentIndex) {
+                const module = CourseData.modules.find(m => m.id === moduleId);
+                if (!module) return;
+
+                if (currentIndex < module.lessons.length - 1) {
+                    this.startLesson(moduleId, currentIndex + 1);
+                } else {
+                    // Module completed
+                    const modal = document.querySelector('div[style*="position: fixed"]');
+                    if (modal) modal.remove();
+                    
+                    Utils.showNotification(`Parabéns! Módulo "${module.title}" concluído! 🎉`, 'success');
+                    AppState.userData.totalXP += parseInt(module.xp.replace(' XP', ''));
+                    
+                    setTimeout(() => {
+                        Utils.showNotification(`+${module.xp} conquistados! 💫`, 'success');
+                    }, 1500);
+                }
+            },
+
+            previousLesson: function(moduleId, currentIndex) {
+                if (currentIndex > 0) {
+                    this.startLesson(moduleId, currentIndex - 1);
+                }
             },
 
             showDashboard: function() {
@@ -700,34 +861,123 @@
             },
 
             toggleCody: function() {
-                const messages = [
-                    'Olá! Sou o Cody, seu assistente de aprendizado em IA! 🤖',
-                    'Precisa de ajuda com algum módulo? Estou aqui para te guiar!',
-                    'Vamos aprender IA juntos! Por onde você quer começar?',
-                    'Que tal dar uma olhada no dashboard para ver seu progresso?',
-                    'Os módulos estão organizados do básico ao avançado. Recomendo começar pelo primeiro!',
-                    'Parabéns pelo seu progresso! Continue assim que você vai longe!'
+                const codyMessages = [
+                    {
+                        text: '🤖 Oi! Sou o Cody, seu mentor pessoal de IA! Estou aqui para tornar seu aprendizado incrível!',
+                        tip: 'Clique nos módulos para ver o conteúdo detalhado'
+                    },
+                    {
+                        text: '🚀 Pronto para dominar a IA? Vou te guiar passo a passo nessa jornada épica!',
+                        tip: 'Comece pelo Módulo 1 se você é iniciante'
+                    },
+                    {
+                        text: '🎯 Vejo que você está progredindo bem! Que tal conferir seu dashboard para ver suas conquistas?',
+                        tip: 'Seu streak de estudos está aumentando!'
+                    },
+                    {
+                        text: '🧠 IA pode parecer complexa, mas vou quebrar tudo em pedacinhos fáceis de entender!',
+                        tip: 'Cada lição tem duração específica - você pode pausar quando quiser'
+                    },
+                    {
+                        text: '⭐ Cada XP que você ganha me deixa mais orgulhoso! Vamos buscar mais conquistas?',
+                        tip: 'Complete quizzes para ganhar XP extra'
+                    },
+                    {
+                        text: '🔥 Seu dedicação é inspiradora! Lembra: a IA do futuro está sendo construída hoje!',
+                        tip: 'Mantenha seu streak diário para maximizar o aprendizado'
+                    },
+                    {
+                        text: '💡 Dica especial: A melhor forma de aprender IA é praticando! Foque nos projetos práticos!',
+                        tip: 'Módulos avançados têm projetos hands-on'
+                    }
                 ];
-                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-                Utils.showNotification(randomMessage, 'info');
+
+                const randomMessage = codyMessages[Math.floor(Math.random() * codyMessages.length)];
+                
+                // Enhanced Cody message with tip
+                const codyModal = `
+                    <div style="background: white; border-radius: 15px; padding: 25px; max-width: 500px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2em; margin: 0 auto 15px auto; border: 4px solid white; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);">🤖</div>
+                            <h3 style="margin: 0; color: #2d3748;">Cody - Seu Mentor de IA</h3>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); padding: 20px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid #667eea;">
+                            <p style="margin: 0; line-height: 1.6; color: #2d3748; font-size: 1.1em;">${randomMessage.text}</p>
+                        </div>
+                        
+                        <div style="background: #e6fffa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #81e6d9;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 1.2em;">💡</span>
+                                <strong style="color: #2d3748;">Dica do Cody:</strong>
+                            </div>
+                            <p style="margin: 8px 0 0 0; color: #2d3748;">${randomMessage.tip}</p>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <button onclick="this.closest('div').remove()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 25px; border-radius: 20px; cursor: pointer; font-weight: 600;">
+                                Obrigado, Cody! 👍
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                Utils.createModal(codyModal);
             },
 
             switchLanguage: function(lang) {
                 AppState.currentLanguage = lang;
                 localStorage.setItem('codyverse_language', lang);
                 
-                // Update UI text based on language
-                const dashboardBtn = document.getElementById('dashboardBtn');
-                const achievementsBtn = document.getElementById('achievementsBtn');
+                // Update UI elements
+                this.updateLanguageContent(lang);
                 
                 if (lang === 'en') {
-                    dashboardBtn.textContent = 'Dashboard';
-                    achievementsBtn.textContent = 'Achievements';
-                    Utils.showNotification('Language switched to English!', 'success');
+                    Utils.showNotification('Language switched to English! 🇺🇸', 'success');
                 } else {
-                    dashboardBtn.textContent = 'Dashboard';
-                    achievementsBtn.textContent = 'Conquistas';
-                    Utils.showNotification('Idioma alterado para Português!', 'success');
+                    Utils.showNotification('Idioma alterado para Português! 🇧🇷', 'success');
+                }
+            },
+
+            updateLanguageContent: function(lang) {
+                const elements = {
+                    dashboardBtn: document.getElementById('dashboardBtn'),
+                    achievementsBtn: document.getElementById('achievementsBtn')
+                };
+
+                if (lang === 'en') {
+                    elements.dashboardBtn.textContent = 'Dashboard';
+                    elements.achievementsBtn.textContent = 'Achievements';
+                    
+                    // Update module data for English
+                    CourseData.modules.forEach(module => {
+                        if (module.id === 1) {
+                            module.title = 'Introduction to AI & MCP';
+                            module.description = 'Fundamentals of Artificial Intelligence and Model Context Protocol - learn the basics';
+                        } else if (module.id === 6) {
+                            module.title = 'Advanced Study Methods';
+                            module.description = 'Efficient learning and retention techniques - how to study better and faster';
+                        }
+                    });
+                } else {
+                    elements.dashboardBtn.textContent = 'Dashboard';
+                    elements.achievementsBtn.textContent = 'Conquistas';
+                    
+                    // Restore Portuguese module data
+                    CourseData.modules.forEach(module => {
+                        if (module.id === 1) {
+                            module.title = 'Introdução à IA e MCP';
+                            module.description = 'Fundamentos de Inteligência Artificial e Model Context Protocol - aprenda os conceitos básicos';
+                        } else if (module.id === 6) {
+                            module.title = 'Métodos Avançados de Estudo';
+                            module.description = 'Técnicas de aprendizado eficiente e retenção - como estudar melhor e mais rápido';
+                        }
+                    });
+                }
+
+                // Re-render course grid if currently showing
+                if (AppState.currentView === 'courses') {
+                    this.renderCourseGrid();
                 }
             }
         };
