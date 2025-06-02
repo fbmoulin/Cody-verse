@@ -30,14 +30,10 @@ class CodyVerseServer {
       // Validar configurações
       validateConfig();
       
-      // Testar conexão com banco (opcional em desenvolvimento)
-      if (config.database.url) {
-        const dbConnected = await testConnection();
-        if (!dbConnected) {
-          console.warn('⚠️ Banco de dados não disponível - continuando sem persistência');
-        }
-      } else {
-        console.warn('⚠️ DATABASE_URL não configurada - rodando sem banco de dados');
+      // Testar conexão com banco
+      const dbConnected = await testConnection();
+      if (!dbConnected) {
+        throw new Error('Falha na conexão com banco de dados');
       }
       
       // Configurar middleware
@@ -46,13 +42,9 @@ class CodyVerseServer {
       // Configurar rotas
       this.setupRoutes();
       
-      // Inicializar dados base (se banco disponível)
-      if (config.server.nodeEnv === 'development' && config.database.url) {
-        try {
-          await dataInitializer.initializeDatabase();
-        } catch (error) {
-          console.warn('Aviso: Não foi possível inicializar dados do banco:', error.message);
-        }
+      // Inicializar dados base
+      if (config.server.nodeEnv === 'development') {
+        await dataInitializer.initializeDatabase();
       }
       
       console.log('Servidor inicializado com sucesso');
@@ -109,8 +101,8 @@ class CodyVerseServer {
       });
     });
 
-    // Fallback para SPA
-    this.app.get('*', (req, res) => {
+    // Fallback para SPA (rotas específicas)
+    this.app.get('/', (req, res) => {
       res.sendFile(path.join(__dirname, 'index.html'));
     });
 

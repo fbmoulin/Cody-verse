@@ -1,21 +1,11 @@
 const { db } = require('../server/database');
 const { courseModules, lessons } = require('../shared/schema');
 const { eq, asc } = require('drizzle-orm');
-const {
-  getFallbackCourses,
-  getFallbackCourseById,
-  getFallbackLessons,
-  getFallbackLessonById
-} = require('../server/fallback');
 
 class CourseController {
   // Obter todos os cursos
   async getAllCourses(req, res) {
     try {
-      if (!db || !process.env.DATABASE_URL) {
-        return res.json(getFallbackCourses());
-      }
-
       const courses = await db
         .select()
         .from(courseModules)
@@ -40,12 +30,14 @@ class CourseController {
       res.json({
         success: true,
         data: coursesWithLessons,
-        count: coursesWithLessons.length,
-        source: 'database'
+        count: coursesWithLessons.length
       });
     } catch (error) {
-      console.warn('Usando dados fallback devido a erro no banco:', error.message);
-      res.json(getFallbackCourses());
+      console.error('Erro ao buscar cursos:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Erro interno ao buscar cursos'
+      });
     }
   }
 
