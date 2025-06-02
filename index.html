@@ -45,8 +45,67 @@
         
         .course-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .course-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            .header {
+                padding: 20px 15px;
+                margin-bottom: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .header p {
+                font-size: 1em;
+            }
+            
+            .module-card {
+                padding: 20px 15px;
+            }
+            
+            .module-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2em;
+                margin-right: 15px;
+            }
+            
+            .module-title {
+                font-size: 1.2em;
+            }
+            
+            .module-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .module-stats {
+                font-size: 0.85em;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .btn {
+                padding: 15px 25px;
+                font-size: 1em;
+            }
         }
         
         .module-card {
@@ -624,6 +683,158 @@
         .close-learning:hover {
             background: rgba(255,255,255,0.3);
         }
+        
+        /* Mobile Learning Interface */
+        @media (max-width: 768px) {
+            .learning-header {
+                padding: 15px;
+            }
+            
+            .learning-header h1 {
+                font-size: 1.4em;
+            }
+            
+            .lesson-content {
+                margin: 15px;
+                padding: 20px 15px;
+            }
+            
+            .lesson-nav {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .lesson-progress {
+                margin: 0;
+                order: -1;
+            }
+            
+            .btn-nav {
+                padding: 12px 20px;
+                font-size: 0.9em;
+            }
+            
+            .quiz-container {
+                padding: 20px 15px;
+            }
+            
+            .quiz-question {
+                font-size: 1.1em;
+            }
+            
+            .quiz-option {
+                padding: 12px 15px;
+                font-size: 0.9em;
+            }
+            
+            .lesson-actions {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+        
+        /* Mobile Cody */
+        @media (max-width: 768px) {
+            .cody-container {
+                bottom: 15px;
+                right: 15px;
+            }
+            
+            .cody-avatar {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .cody-face {
+                font-size: 25px;
+            }
+            
+            .progress-ring {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .cody-chat {
+                max-width: calc(100vw - 40px);
+                right: -10px;
+                bottom: 90px;
+            }
+            
+            .cody-notification {
+                right: 15px;
+                left: 15px;
+                transform: translateY(-100px);
+                font-size: 0.9em;
+            }
+            
+            .cody-notification.show {
+                transform: translateY(0);
+            }
+        }
+        
+        /* Achievement System Styles */
+        .achievements-container {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .achievement-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #333;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin: 5px;
+            box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+        }
+        
+        .streak-counter {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .xp-display {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .study-method-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--method-color);
+            transition: transform 0.3s ease;
+        }
+        
+        .study-method-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .method-trending { --method-color: #ff6b6b; }
+        .method-proven { --method-color: #4ecdc4; }
+        .method-advanced { --method-color: #45b7d1; }
     </style>
 </head>
 <body>
@@ -634,8 +845,40 @@
         </div>
         
         <div class="nav-buttons">
-            <button class="btn btn-primary" onclick="showDashboard()">Course Dashboard</button>
-            <button class="btn btn-secondary" onclick="showProgress()">My Progress</button>
+            <button class="btn btn-primary" onclick="showDashboard()">Dashboard do Curso</button>
+            <button class="btn btn-secondary" onclick="showProgress()">Meu Progresso</button>
+            <button class="btn btn-secondary" onclick="showAchievements()">Conquistas & Prêmios</button>
+        </div>
+        
+        <!-- User Stats Display -->
+        <div id="userStatsContainer" style="display: none;">
+            <div class="achievements-container">
+                <h3 style="margin-bottom: 20px;">📊 Suas Estatísticas</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div class="xp-display">
+                        <div>Total XP</div>
+                        <div id="totalXP">0</div>
+                    </div>
+                    <div class="streak-counter">
+                        <span>🔥</span>
+                        <div>
+                            <div>Sequência</div>
+                            <div id="streakCount">0 dias</div>
+                        </div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; padding: 15px 25px; border-radius: 12px; text-align: center; font-size: 1.2em; font-weight: bold;">
+                        <div>Nível</div>
+                        <div id="userLevel">Iniciante</div>
+                    </div>
+                </div>
+                
+                <div id="achievementsList" style="margin-top: 20px;">
+                    <h4>🏆 Conquistas Desbloqueadas</h4>
+                    <div id="achievementBadges" style="margin-top: 15px;">
+                        <!-- Achievement badges will be populated here -->
+                    </div>
+                </div>
+            </div>
         </div>
         
         <div class="course-grid" id="courseGrid">
@@ -788,6 +1031,23 @@
                     { title: 'MCP Production Deployment', type: 'lab', duration: '55 min', xp: '25 XP' },
                     { title: 'MCP Professional Certification', type: 'quiz', duration: '90 min', xp: '40 XP' }
                 ]
+            },
+            {
+                id: 6,
+                title: 'Métodos de Estudo Avançados',
+                description: 'Técnicas de aprendizagem que viralizaram nas redes sociais. Método Feynman, Active Recall, Spaced Repetition e mais.',
+                difficulty: 'intermediate',
+                duration: '90 min',
+                xp: '45 XP',
+                trending: true,
+                lessons: [
+                    { title: 'Técnica Feynman: Ensine para Aprender', type: 'interactive', duration: '20 min', xp: '10 XP' },
+                    { title: 'Active Recall: Testagem Ativa', type: 'interactive', duration: '18 min', xp: '8 XP' },
+                    { title: 'Spaced Repetition: Repetição Espaçada', type: 'interactive', duration: '22 min', xp: '10 XP' },
+                    { title: 'Método Pomodoro 2.0', type: 'interactive', duration: '15 min', xp: '7 XP' },
+                    { title: 'Flow State e Deep Work', type: 'theory', duration: '25 min', xp: '10 XP' },
+                    { title: 'Desafio dos Métodos Avançados', type: 'quiz', duration: '15 min', xp: '15 XP' }
+                ]
             }
         ];
         
@@ -796,8 +1056,9 @@
             grid.innerHTML = courseModules.map(module => `
                 <div class="module-card ${module.difficulty}" onclick="showModuleDetails(${module.id})">
                     <div class="status-indicator"></div>
+                    ${module.trending ? '<div style="position: absolute; top: 10px; left: 10px; background: #ff6b6b; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; font-weight: 600;">🔥 TRENDING</div>' : ''}
                     <div class="module-header">
-                        <div class="module-icon">${module.id}</div>
+                        <div class="module-icon">${module.id === 6 ? '🧠' : module.id}</div>
                         <h3 class="module-title">${module.title}</h3>
                     </div>
                     <p class="module-description">${module.description}</p>
@@ -867,11 +1128,125 @@
         }
         
         function showDashboard() {
-            alert('Dashboard: Track your learning progress across all modules with detailed analytics.');
+            const container = document.getElementById('userStatsContainer');
+            const courseGrid = document.getElementById('courseGrid');
+            
+            if (container.style.display === 'none') {
+                container.style.display = 'block';
+                courseGrid.style.display = 'none';
+                updateUserStats();
+            } else {
+                container.style.display = 'none';
+                courseGrid.style.display = 'grid';
+            }
         }
         
         function showProgress() {
-            alert('Progress: View your XP, completed lessons, achievements, and learning streaks.');
+            showDashboard();
+        }
+        
+        function showAchievements() {
+            showDashboard();
+            updateAchievementDisplay();
+        }
+        
+        function updateUserStats() {
+            document.getElementById('totalXP').textContent = userProgress.totalXP;
+            document.getElementById('streakCount').textContent = `${userProgress.currentStreak} dias`;
+            
+            // Calculate level based on XP
+            const level = Math.floor(userProgress.totalXP / 50) + 1;
+            const levelNames = ['Iniciante', 'Explorador', 'Estudante', 'Especialista', 'Mestre', 'Expert'];
+            document.getElementById('userLevel').textContent = levelNames[Math.min(level - 1, levelNames.length - 1)];
+        }
+        
+        function updateAchievementDisplay() {
+            const container = document.getElementById('achievementBadges');
+            
+            if (userProgress.achievements.length === 0) {
+                container.innerHTML = '<p style="color: #666; font-style: italic;">Complete lições para desbloquear conquistas!</p>';
+                return;
+            }
+            
+            container.innerHTML = userProgress.achievements.map(achievementId => {
+                const achievement = achievements[achievementId];
+                return `
+                    <div class="achievement-badge">
+                        <span>${achievement.icon}</span>
+                        <div>
+                            <strong>${achievement.name}</strong>
+                            <br><small>${achievement.description}</small>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function checkAchievements(type, value = 1) {
+            const newAchievements = [];
+            
+            Object.keys(achievements).forEach(achievementId => {
+                if (userProgress.achievements.includes(achievementId)) return;
+                
+                const achievement = achievements[achievementId];
+                let earned = false;
+                
+                switch (achievement.requirement) {
+                    case 'complete_lesson':
+                        if (type === 'lesson_complete') earned = true;
+                        break;
+                    case 'complete_module':
+                        if (type === 'module_complete' && userProgress.completedModules.length >= achievement.threshold) earned = true;
+                        break;
+                    case 'streak':
+                        if (userProgress.currentStreak >= achievement.threshold) earned = true;
+                        break;
+                    case 'perfect_quiz':
+                        if (userProgress.perfectQuizzes >= achievement.threshold) earned = true;
+                        break;
+                    case 'total_xp':
+                        if (userProgress.totalXP >= achievement.threshold) earned = true;
+                        break;
+                    case 'complete_all':
+                        if (userProgress.completedModules.length >= achievement.threshold) earned = true;
+                        break;
+                }
+                
+                if (earned) {
+                    userProgress.achievements.push(achievementId);
+                    newAchievements.push(achievement);
+                }
+            });
+            
+            // Show achievement notifications
+            newAchievements.forEach((achievement, index) => {
+                setTimeout(() => {
+                    showNotification(`🏆 Conquista Desbloqueada: ${achievement.name}!`);
+                    updateCodyFace('excited');
+                    setTimeout(() => updateCodyFace('happy'), 2000);
+                }, index * 2000);
+            });
+        }
+        
+        function awardXP(xpAmount) {
+            userProgress.totalXP += xpAmount;
+            
+            // Update streak
+            const today = new Date().toDateString();
+            if (userProgress.lastStudyDate !== today) {
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                
+                if (userProgress.lastStudyDate === yesterday.toDateString()) {
+                    userProgress.currentStreak++;
+                } else {
+                    userProgress.currentStreak = 1;
+                }
+                userProgress.lastStudyDate = today;
+            }
+            
+            checkAchievements('xp_gained', xpAmount);
+            updateProgressRing((userProgress.totalXP % 100));
         }
         
         // Close modal when clicking outside
@@ -1168,6 +1543,30 @@
             earnedXP: 0
         };
 
+        // Achievement System
+        let userProgress = {
+            totalXP: 0,
+            currentStreak: 0,
+            lastStudyDate: null,
+            completedModules: [],
+            achievements: [],
+            studyTime: 0,
+            perfectQuizzes: 0,
+            level: 1
+        };
+
+        const achievements = {
+            first_steps: { name: "Primeiros Passos", icon: "👶", description: "Complete sua primeira lição", requirement: "complete_lesson", threshold: 1 },
+            ai_explorer: { name: "Explorador de IA", icon: "🔍", description: "Complete o módulo AI Basics", requirement: "complete_module", threshold: 1 },
+            prompt_master: { name: "Mestre dos Prompts", icon: "✏️", description: "Complete o módulo Prompt Engineering", requirement: "complete_module", threshold: 2 },
+            streak_warrior: { name: "Guerreiro da Sequência", icon: "🔥", description: "Estude por 7 dias consecutivos", requirement: "streak", threshold: 7 },
+            quiz_perfectionist: { name: "Perfeccionista", icon: "💯", description: "Acerte 5 quizzes perfeitos", requirement: "perfect_quiz", threshold: 5 },
+            speed_learner: { name: "Aprendiz Relâmpago", icon: "⚡", description: "Complete 3 lições em menos de 1 hora", requirement: "speed_learning", threshold: 3 },
+            method_master: { name: "Mestre dos Métodos", icon: "🧠", description: "Complete o módulo de Métodos Avançados", requirement: "complete_module", threshold: 6 },
+            xp_collector: { name: "Coletor de XP", icon: "⭐", description: "Colete 100 XP total", requirement: "total_xp", threshold: 100 },
+            dedication: { name: "Dedicação Total", icon: "🏆", description: "Complete todos os módulos", requirement: "complete_all", threshold: 6 }
+        };
+
         const lessonContent = {
             1: { // AI Basics
                 0: { // What is Artificial Intelligence?
@@ -1441,10 +1840,20 @@
         function nextLesson() {
             const { moduleId, lessonIndex, totalLessons } = currentLearningState;
             
+            // Award XP for completing current lesson
+            const module = courseModules.find(m => m.id === moduleId);
+            const lesson = module.lessons[lessonIndex];
+            const lessonXP = parseInt(lesson.xp.replace(' XP', ''));
+            awardXP(lessonXP);
+            checkAchievements('lesson_complete');
+            
             if (lessonIndex < totalLessons - 1) {
                 currentLearningState.lessonIndex++;
                 loadLessonContent(moduleId, currentLearningState.lessonIndex);
                 updateLessonNavigation();
+                
+                // Show XP notification
+                showNotification(`+${lessonXP} XP! Lição concluída!`);
             } else {
                 // Complete module
                 completeModule();
@@ -1467,12 +1876,29 @@
                 return sum + parseInt(lesson.xp.replace(' XP', ''));
             }, 0);
             
+            // Award XP and update progress
+            awardXP(totalXP);
+            
+            // Mark module as completed
+            if (!userProgress.completedModules.includes(currentLearningState.moduleId)) {
+                userProgress.completedModules.push(currentLearningState.moduleId);
+                checkAchievements('module_complete');
+            }
+            
             const contentArea = document.getElementById('lessonContentArea');
             contentArea.innerHTML = `
                 <div class="lesson-complete">
                     <h2>🎉 Módulo Concluído!</h2>
                     <p>Parabéns! Você completou o módulo "${module.title}"</p>
                     <div class="xp-earned">+${totalXP} XP</div>
+                    <div style="margin: 20px 0;">
+                        <div class="streak-counter" style="display: inline-flex; margin: 10px;">
+                            🔥 Sequência: ${userProgress.currentStreak} dias
+                        </div>
+                        <div class="xp-display" style="display: inline-flex; margin: 10px;">
+                            Total XP: ${userProgress.totalXP}
+                        </div>
+                    </div>
                     <p>Continue sua jornada com o próximo módulo!</p>
                 </div>
             `;
@@ -1482,7 +1908,7 @@
             
             // Cody celebration
             setTimeout(() => {
-                showNotification(`Cody: Fantástico! Você dominou ${module.title}! Pronto para o próximo desafio? 🚀`);
+                showNotification(`Cody: Fantástico! Você dominou ${module.title}! Pronto para o próximo desafio?`);
             }, 1000);
         }
 
