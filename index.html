@@ -835,6 +835,161 @@
         .method-trending { --method-color: #ff6b6b; }
         .method-proven { --method-color: #4ecdc4; }
         .method-advanced { --method-color: #45b7d1; }
+        
+        /* AR Features Styles */
+        .ar-container {
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            color: white;
+            overflow: hidden;
+        }
+        
+        .ar-feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .ar-feature-card:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .ar-button {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+        
+        .ar-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+        }
+        
+        .ar-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        .ar-viewer {
+            width: 100%;
+            height: 400px;
+            background: #000;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1em;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ar-controls {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 25px;
+        }
+        
+        .ar-control-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .ar-control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .ar-model-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .ar-model {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 12px;
+        }
+        
+        .ar-info-panel {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            max-width: 250px;
+            font-size: 0.9em;
+        }
+        
+        .ar-tutorial {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #ffd700;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+        
+        .ar-compatible {
+            color: #4caf50;
+            font-weight: 600;
+        }
+        
+        .ar-incompatible {
+            color: #f44336;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .ar-viewer {
+                height: 300px;
+            }
+            
+            .ar-info-panel {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-top: 15px;
+                max-width: 100%;
+            }
+            
+            .ar-controls {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                transform: none;
+                justify-content: center;
+                margin-top: 15px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -2174,6 +2329,383 @@
             }
         };
 
+        // AR Learning System
+        const arLearningSystem = {
+            isSupported: false,
+            isEnabled: false,
+            currentModel: null,
+            
+            init: function() {
+                this.checkARSupport();
+                this.setupARFeatures();
+            },
+            
+            checkARSupport: function() {
+                // Check for WebXR support
+                if ('xr' in navigator) {
+                    navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
+                        this.isSupported = supported;
+                        this.updateARStatus();
+                    }).catch(() => {
+                        this.isSupported = false;
+                        this.updateARStatus();
+                    });
+                } else {
+                    this.isSupported = false;
+                    this.updateARStatus();
+                }
+            },
+            
+            updateARStatus: function() {
+                const arButtons = document.querySelectorAll('.ar-button');
+                arButtons.forEach(btn => {
+                    if (this.isSupported) {
+                        btn.disabled = false;
+                        btn.textContent = currentLanguage === 'pt-BR' ? 'Iniciar AR' : 'Start AR';
+                    } else {
+                        btn.disabled = false; // Keep enabled for 3D fallback
+                        btn.textContent = currentLanguage === 'pt-BR' ? 'Ver em 3D' : 'View in 3D';
+                    }
+                });
+            },
+            
+            createARExperience: function(topic) {
+                const experiences = {
+                    'neural_network': {
+                        title: currentLanguage === 'pt-BR' ? 'Rede Neural 3D' : '3D Neural Network',
+                        description: currentLanguage === 'pt-BR' ? 
+                            'Explore uma rede neural interativa em 3D' : 
+                            'Explore an interactive 3D neural network',
+                        modelUrl: this.generateNeuralNetworkModel()
+                    },
+                    'ai_brain': {
+                        title: currentLanguage === 'pt-BR' ? 'Cérebro de IA' : 'AI Brain',
+                        description: currentLanguage === 'pt-BR' ? 
+                            'Visualize como uma IA processa informações' : 
+                            'Visualize how AI processes information',
+                        modelUrl: this.generateAIBrainModel()
+                    },
+                    'data_flow': {
+                        title: currentLanguage === 'pt-BR' ? 'Fluxo de Dados' : 'Data Flow',
+                        description: currentLanguage === 'pt-BR' ? 
+                            'Acompanhe dados em tempo real através de sistemas de IA' : 
+                            'Follow real-time data through AI systems',
+                        modelUrl: this.generateDataFlowModel()
+                    },
+                    'ml_cycle': {
+                        title: currentLanguage === 'pt-BR' ? 'Ciclo de ML' : 'ML Cycle',
+                        description: currentLanguage === 'pt-BR' ? 
+                            'Veja o processo completo de Machine Learning' : 
+                            'See the complete Machine Learning process',
+                        modelUrl: this.generateMLCycleModel()
+                    }
+                };
+                
+                return experiences[topic] || experiences['neural_network'];
+            },
+            
+            generateNeuralNetworkModel: function() {
+                return `
+                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; align-items: center;">
+                            <!-- Input Layer -->
+                            <div style="display: flex; flex-direction: column; gap: 15px;">
+                                <div class="neuron" style="width: 40px; height: 40px; background: #4caf50; border-radius: 50%; position: relative; animation: pulse 2s infinite;">
+                                    <div style="position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 0.8em; color: white;">Input 1</div>
+                                </div>
+                                <div class="neuron" style="width: 40px; height: 40px; background: #4caf50; border-radius: 50%; position: relative; animation: pulse 2s infinite 0.5s;">
+                                    <div style="position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 0.8em; color: white;">Input 2</div>
+                                </div>
+                                <div class="neuron" style="width: 40px; height: 40px; background: #4caf50; border-radius: 50%; position: relative; animation: pulse 2s infinite 1s;">
+                                    <div style="position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 0.8em; color: white;">Input 3</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Hidden Layer -->
+                            <div style="display: flex; flex-direction: column; gap: 15px;">
+                                <div class="neuron" style="width: 40px; height: 40px; background: #ff9800; border-radius: 50%; position: relative; animation: pulse 2s infinite 0.3s;"></div>
+                                <div class="neuron" style="width: 40px; height: 40px; background: #ff9800; border-radius: 50%; position: relative; animation: pulse 2s infinite 0.8s;"></div>
+                                <div class="neuron" style="width: 40px; height: 40px; background: #ff9800; border-radius: 50%; position: relative; animation: pulse 2s infinite 1.3s;"></div>
+                                <div class="neuron" style="width: 40px; height: 40px; background: #ff9800; border-radius: 50%; position: relative; animation: pulse 2s infinite 1.8s;"></div>
+                            </div>
+                            
+                            <!-- Output Layer -->
+                            <div style="display: flex; flex-direction: column; gap: 15px; justify-content: center;">
+                                <div class="neuron" style="width: 40px; height: 40px; background: #2196f3; border-radius: 50%; position: relative; animation: pulse 2s infinite 1.5s;">
+                                    <div style="position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 0.8em; color: white;">Output</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 30px; text-align: center; color: white;">
+                            <h4>${currentLanguage === 'pt-BR' ? 'Rede Neural Artificial' : 'Artificial Neural Network'}</h4>
+                            <p style="font-size: 0.9em; opacity: 0.8;">${currentLanguage === 'pt-BR' ? 
+                                'Dados fluem da camada de entrada através da camada oculta para a saída' : 
+                                'Data flows from input layer through hidden layer to output'}</p>
+                        </div>
+                        
+                        <style>
+                            @keyframes pulse {
+                                0%, 100% { transform: scale(1); opacity: 0.7; }
+                                50% { transform: scale(1.2); opacity: 1; }
+                            }
+                        </style>
+                    </div>
+                `;
+            },
+            
+            generateAIBrainModel: function() {
+                return `
+                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                        <div style="position: relative; width: 200px; height: 200px;">
+                            <!-- Brain outline -->
+                            <div style="width: 200px; height: 200px; border: 3px solid #2196f3; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; position: relative; animation: brainPulse 3s infinite;">
+                                
+                                <!-- Synapses -->
+                                <div style="position: absolute; top: 30px; left: 50px; width: 4px; height: 4px; background: #ffd700; border-radius: 50%; animation: synapse 1s infinite;"></div>
+                                <div style="position: absolute; top: 80px; left: 30px; width: 4px; height: 4px; background: #ffd700; border-radius: 50%; animation: synapse 1s infinite 0.3s;"></div>
+                                <div style="position: absolute; top: 120px; left: 70px; width: 4px; height: 4px; background: #ffd700; border-radius: 50%; animation: synapse 1s infinite 0.6s;"></div>
+                                <div style="position: absolute; top: 60px; right: 40px; width: 4px; height: 4px; background: #ffd700; border-radius: 50%; animation: synapse 1s infinite 0.9s;"></div>
+                                <div style="position: absolute; top: 100px; right: 60px; width: 4px; height: 4px; background: #ffd700; border-radius: 50%; animation: synapse 1s infinite 1.2s;"></div>
+                                
+                                <!-- Neural pathways -->
+                                <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+                                    <path d="M50,80 Q100,60 150,100" stroke="#4caf50" stroke-width="2" fill="none" opacity="0.6">
+                                        <animate attributeName="stroke-dasharray" values="0,100;50,50;100,0" dur="2s" repeatCount="indefinite"/>
+                                    </path>
+                                    <path d="M70,120 Q120,100 170,80" stroke="#ff9800" stroke-width="2" fill="none" opacity="0.6">
+                                        <animate attributeName="stroke-dasharray" values="0,100;50,50;100,0" dur="2.5s" repeatCount="indefinite"/>
+                                    </path>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 30px; text-align: center; color: white;">
+                            <h4>${currentLanguage === 'pt-BR' ? 'Processamento de IA' : 'AI Processing'}</h4>
+                            <p style="font-size: 0.9em; opacity: 0.8;">${currentLanguage === 'pt-BR' ? 
+                                'Visualize como a IA processa e conecta informações' : 
+                                'Visualize how AI processes and connects information'}</p>
+                        </div>
+                        
+                        <style>
+                            @keyframes brainPulse {
+                                0%, 100% { transform: scale(1); border-color: #2196f3; }
+                                50% { transform: scale(1.05); border-color: #64b5f6; }
+                            }
+                            
+                            @keyframes synapse {
+                                0%, 100% { transform: scale(1); opacity: 0.5; }
+                                50% { transform: scale(1.5); opacity: 1; }
+                            }
+                        </style>
+                    </div>
+                `;
+            },
+            
+            generateDataFlowModel: function() {
+                return `
+                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                        <div style="position: relative; width: 300px; height: 200px;">
+                            <!-- Data sources -->
+                            <div style="position: absolute; left: 0; top: 50%; transform: translateY(-50%);">
+                                <div style="width: 60px; height: 60px; background: #4caf50; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">DATA</div>
+                            </div>
+                            
+                            <!-- Processing pipeline -->
+                            <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; gap: 10px;">
+                                <div style="width: 80px; height: 30px; background: #ff9800; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8em; animation: process 2s infinite;">Filter</div>
+                                <div style="width: 80px; height: 30px; background: #9c27b0; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8em; animation: process 2s infinite 0.5s;">Analyze</div>
+                                <div style="width: 80px; height: 30px; background: #f44336; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8em; animation: process 2s infinite 1s;">Learn</div>
+                            </div>
+                            
+                            <!-- Output -->
+                            <div style="position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
+                                <div style="width: 60px; height: 60px; background: #2196f3; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8em;">INSIGHT</div>
+                            </div>
+                            
+                            <!-- Flow lines -->
+                            <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;">
+                                <path d="M70,100 L120,100" stroke="#4caf50" stroke-width="3" marker-end="url(#arrowhead)">
+                                    <animate attributeName="stroke-dasharray" values="0,20;10,10;20,0" dur="1.5s" repeatCount="indefinite"/>
+                                </path>
+                                <path d="M180,100 L230,100" stroke="#2196f3" stroke-width="3" marker-end="url(#arrowhead)">
+                                    <animate attributeName="stroke-dasharray" values="0,20;10,10;20,0" dur="1.5s" repeatCount="indefinite"/>
+                                </path>
+                                <defs>
+                                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                        <polygon points="0 0, 10 3.5, 0 7" fill="#666"/>
+                                    </marker>
+                                </defs>
+                            </svg>
+                        </div>
+                        
+                        <div style="margin-top: 30px; text-align: center; color: white;">
+                            <h4>${currentLanguage === 'pt-BR' ? 'Pipeline de Dados de IA' : 'AI Data Pipeline'}</h4>
+                            <p style="font-size: 0.9em; opacity: 0.8;">${currentLanguage === 'pt-BR' ? 
+                                'Acompanhe como os dados são transformados em insights inteligentes' : 
+                                'Follow how data is transformed into intelligent insights'}</p>
+                        </div>
+                        
+                        <style>
+                            @keyframes process {
+                                0%, 100% { transform: scale(1); opacity: 0.7; }
+                                50% { transform: scale(1.1); opacity: 1; }
+                            }
+                        </style>
+                    </div>
+                `;
+            },
+            
+            generateMLCycleModel: function() {
+                return `
+                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                        <div style="position: relative; width: 250px; height: 250px;">
+                            <!-- ML Cycle -->
+                            <svg style="width: 100%; height: 100%;">
+                                <circle cx="125" cy="125" r="100" fill="none" stroke="#2196f3" stroke-width="4" stroke-dasharray="10,5" opacity="0.3">
+                                    <animateTransform attributeName="transform" type="rotate" values="0 125 125;360 125 125" dur="20s" repeatCount="indefinite"/>
+                                </circle>
+                                
+                                <!-- Data Collection -->
+                                <circle cx="125" cy="25" r="20" fill="#4caf50">
+                                    <animate attributeName="r" values="20;25;20" dur="2s" repeatCount="indefinite"/>
+                                </circle>
+                                <text x="125" y="30" text-anchor="middle" fill="white" font-size="8" font-weight="bold">DATA</text>
+                                
+                                <!-- Training -->
+                                <circle cx="217" cy="75" r="20" fill="#ff9800">
+                                    <animate attributeName="r" values="20;25;20" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+                                </circle>
+                                <text x="217" y="80" text-anchor="middle" fill="white" font-size="8" font-weight="bold">TRAIN</text>
+                                
+                                <!-- Model -->
+                                <circle cx="217" cy="175" r="20" fill="#9c27b0">
+                                    <animate attributeName="r" values="20;25;20" dur="2s" repeatCount="indefinite" begin="1s"/>
+                                </circle>
+                                <text x="217" y="180" text-anchor="middle" fill="white" font-size="8" font-weight="bold">MODEL</text>
+                                
+                                <!-- Predict -->
+                                <circle cx="125" cy="225" r="20" fill="#f44336">
+                                    <animate attributeName="r" values="20;25;20" dur="2s" repeatCount="indefinite" begin="1.5s"/>
+                                </circle>
+                                <text x="125" y="230" text-anchor="middle" fill="white" font-size="7" font-weight="bold">PREDICT</text>
+                                
+                                <!-- Evaluate -->
+                                <circle cx="33" cy="175" r="20" fill="#ff5722">
+                                    <animate attributeName="r" values="20;25;20" dur="2s" repeatCount="indefinite" begin="2s"/>
+                                </circle>
+                                <text x="33" y="180" text-anchor="middle" fill="white" font-size="7" font-weight="bold">EVALUATE</text>
+                                
+                                <!-- Improve -->
+                                <circle cx="33" cy="75" r="20" fill="#607d8b">
+                                    <animate attributeName="r" values="20;25;20" dur="2s" repeatCount="indefinite" begin="2.5s"/>
+                                </circle>
+                                <text x="33" y="80" text-anchor="middle" fill="white" font-size="7" font-weight="bold">IMPROVE</text>
+                                
+                                <!-- Arrows -->
+                                <defs>
+                                    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                                        <path d="M0,0 L0,6 L9,3 z" fill="#666"/>
+                                    </marker>
+                                </defs>
+                                
+                                <path d="M 145 45 Q 180 45 197 65" fill="none" stroke="#666" stroke-width="2" marker-end="url(#arrow)" opacity="0.7"/>
+                                <path d="M 217 95 L 217 155" fill="none" stroke="#666" stroke-width="2" marker-end="url(#arrow)" opacity="0.7"/>
+                                <path d="M 197 195 Q 180 205 145 205" fill="none" stroke="#666" stroke-width="2" marker-end="url(#arrow)" opacity="0.7"/>
+                                <path d="M 105 205 Q 70 205 53 185" fill="none" stroke="#666" stroke-width="2" marker-end="url(#arrow)" opacity="0.7"/>
+                                <path d="M 33 155 L 33 95" fill="none" stroke="#666" stroke-width="2" marker-end="url(#arrow)" opacity="0.7"/>
+                                <path d="M 53 65 Q 70 45 105 45" fill="none" stroke="#666" stroke-width="2" marker-end="url(#arrow)" opacity="0.7"/>
+                            </svg>
+                        </div>
+                        
+                        <div style="margin-top: 20px; text-align: center; color: white;">
+                            <h4>${currentLanguage === 'pt-BR' ? 'Ciclo de Machine Learning' : 'Machine Learning Cycle'}</h4>
+                            <p style="font-size: 0.9em; opacity: 0.8;">${currentLanguage === 'pt-BR' ? 
+                                'O processo contínuo de aprendizado e melhoria da IA' : 
+                                'The continuous process of AI learning and improvement'}</p>
+                        </div>
+                    </div>
+                `;
+            },
+            
+            launchAR: function(topic) {
+                const experience = this.createARExperience(topic);
+                this.showARViewer(experience);
+                
+                // Track AR usage in learning profile
+                if (learningProfile.interests.indexOf('ar_learning') === -1) {
+                    learningProfile.interests.push('ar_learning');
+                    aiLearningEngine.saveLearningProfile();
+                }
+            },
+            
+            showARViewer: function(experience) {
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.9);
+                    z-index: 10000;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                `;
+                
+                modal.innerHTML = `
+                    <div style="background: #1a1a1a; border-radius: 12px; padding: 20px; max-width: 90%; max-height: 90%; overflow: auto;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3 style="color: white; margin: 0;">${experience.title}</h3>
+                            <button onclick="this.closest('.ar-modal').remove()" style="background: #f44336; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
+                                ${currentLanguage === 'pt-BR' ? 'Fechar' : 'Close'}
+                            </button>
+                        </div>
+                        <div class="ar-viewer">
+                            ${experience.modelUrl}
+                        </div>
+                        <div style="margin-top: 15px; color: #ccc; text-align: center;">
+                            <p>${experience.description}</p>
+                            <div style="margin-top: 15px;">
+                                <button class="ar-control-btn" onclick="arLearningSystem.resetView()">
+                                    ${currentLanguage === 'pt-BR' ? 'Resetar' : 'Reset'}
+                                </button>
+                                <button class="ar-control-btn" onclick="arLearningSystem.toggleAnimation()">
+                                    ${currentLanguage === 'pt-BR' ? 'Pausar/Continuar' : 'Pause/Play'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                modal.className = 'ar-modal';
+                document.body.appendChild(modal);
+                
+                // Send notification about AR experience
+                setTimeout(() => {
+                    const arMsg = currentLanguage === 'pt-BR' ? 
+                        `Cody: Que experiência incrível! A visualização 3D ajuda muito no aprendizado, não é?` :
+                        `Cody: What an amazing experience! 3D visualization really helps with learning, doesn't it?`;
+                    showNotification(arMsg);
+                }, 2000);
+            },
+            
+            resetView: function() {
+                // Reset 3D view to initial state
+                console.log('Resetting AR view');
+            },
+            
+            toggleAnimation: function() {
+                // Toggle animation pause/play
+                const animations = document.querySelectorAll('[style*="animation"]');
+                animations.forEach(element => {
+                    const currentStyle = element.style.animationPlayState;
+                    element.style.animationPlayState = currentStyle === 'paused' ? 'running' : 'paused';
+                });
+            }
+        };
+
         const achievements = {
             first_steps: { name: "Primeiros Passos", icon: "👶", description: "Complete sua primeira lição", requirement: "complete_lesson", threshold: 1 },
             ai_explorer: { name: "Explorador de IA", icon: "🔍", description: "Complete o módulo AI Basics", requirement: "complete_module", threshold: 1 },
@@ -2605,6 +3137,9 @@
             
             // Load AI learning profile
             aiLearningEngine.loadLearningProfile();
+            
+            // Initialize AR system
+            arLearningSystem.init();
             
             updateInterface();
             renderCourseModules();
