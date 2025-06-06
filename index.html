@@ -587,12 +587,12 @@
                 Olá! Sou o Cody, seu companheiro de aprendizagem de IA! 🤖 Pronto para explorar o mundo da IA juntos?
             </div>
             <div class="cody-options" id="codyOptions">
-                <button class="cody-option" onclick="codyHelp('course')">Conte-me sobre o curso</button>
-                <button class="cody-option" onclick="codyHelp('progress')">Como acompanho o progresso?</button>
-                <button class="cody-option" onclick="codyHelp('tips')">Dê-me dicas de aprendizado</button>
+                <button class="cody-option" data-cody-topic="course">Conte-me sobre o curso</button>
+                <button class="cody-option" data-cody-topic="progress">Como acompanho o progresso?</button>
+                <button class="cody-option" data-cody-topic="tips">Dê-me dicas de aprendizado</button>
             </div>
         </div>
-        <div class="cody-avatar" onclick="toggleCody()">
+        <div class="cody-avatar" data-cody-toggle>
             <div class="cody-face" id="codyFace">🤖</div>
         </div>
     </div>
@@ -605,13 +605,13 @@
     <!-- Learning Interface -->
     <div class="learning-container" id="learningContainer">
         <div class="learning-header">
-            <button class="close-learning" onclick="closeLearningInterface()">&times;</button>
+            <button class="close-learning" data-close-learning>&times;</button>
             <h1 id="learningTitle">Título do Módulo</h1>
             <p id="learningSubtitle">Subtítulo da lição</p>
         </div>
         <div class="lesson-content">
             <div class="lesson-nav">
-                <button class="btn-nav btn-back" id="prevBtn" onclick="previousLesson()">← Anterior</button>
+                <button class="btn-nav btn-back" id="prevBtn" data-lesson-prev>← Anterior</button>
                 <div class="lesson-progress">
                     <div style="text-align: center; margin-bottom: 8px; font-size: 0.9em; color: #666;">
                         Progresso: <span id="lessonCounter">1 de 5</span>
@@ -620,7 +620,7 @@
                         <div class="progress-fill" id="lessonProgress" style="width: 20%"></div>
                     </div>
                 </div>
-                <button class="btn-nav btn-next" id="nextBtn" onclick="nextLesson()">Próximo →</button>
+                <button class="btn-nav btn-next" id="nextBtn" data-lesson-next>Próximo →</button>
             </div>
             
             <div id="lessonContentArea">
@@ -982,7 +982,15 @@
         
         function showLearningInterface(moduleId, lessonIndex) {
             const module = courseModules.find(m => m.id === moduleId);
-            if (!module || !module.lessons || module.lessons.length === 0) {
+            console.log('Starting learning interface for module:', moduleId, 'lesson:', lessonIndex);
+            
+            if (!module) {
+                console.error('Module not found:', moduleId);
+                showNotification('Módulo não encontrado.');
+                return;
+            }
+
+            if (!module.lessons || module.lessons.length === 0) {
                 showNotification('Este módulo ainda não possui lições disponíveis.');
                 return;
             }
@@ -996,6 +1004,7 @@
 
             const lesson = module.lessons[lessonIndex];
             const container = document.getElementById('learningContainer');
+            console.log('Current lesson:', lesson);
             
             document.getElementById('learningTitle').textContent = module.title;
             document.getElementById('learningSubtitle').textContent = lesson.title;
@@ -1275,9 +1284,38 @@
         document.addEventListener('DOMContentLoaded', async function() {
             await loadCourseData();
             if (courseModules.length === 0) {
-                // Fallback to static data if API fails
                 courseModules = staticCourseModules;
                 renderCourseModules();
+            }
+            
+            // Setup event listeners for Cody interactions
+            const codyToggle = document.querySelector('[data-cody-toggle]');
+            if (codyToggle) {
+                codyToggle.addEventListener('click', toggleCody);
+            }
+            
+            const codyOptions = document.querySelectorAll('[data-cody-topic]');
+            codyOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const topic = this.getAttribute('data-cody-topic');
+                    codyHelp(topic);
+                });
+            });
+            
+            // Setup learning interface event listeners
+            const closeLearning = document.querySelector('[data-close-learning]');
+            if (closeLearning) {
+                closeLearning.addEventListener('click', closeLearningInterface);
+            }
+            
+            const prevBtn = document.querySelector('[data-lesson-prev]');
+            if (prevBtn) {
+                prevBtn.addEventListener('click', previousLesson);
+            }
+            
+            const nextBtn = document.querySelector('[data-lesson-next]');
+            if (nextBtn) {
+                nextBtn.addEventListener('click', nextLesson);
             }
             
             setTimeout(() => {
