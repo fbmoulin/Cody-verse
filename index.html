@@ -561,6 +561,161 @@
         .lesson-item:hover {
             background: #f8f9fa;
         }
+        
+        /* Enhanced lesson content styles */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .info-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .interactive-demo {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .demo-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .demo-result {
+            margin-top: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            min-height: 50px;
+        }
+        
+        .ml-simulator {
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .ml-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .ml-tab {
+            padding: 10px 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .ml-tab.active {
+            border-bottom-color: #667eea;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .ml-content {
+            display: none;
+        }
+        
+        .ml-content.active {
+            display: block;
+        }
+        
+        .email-sample {
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        
+        .email-sample.spam {
+            background: #ffebee;
+            border-left: 3px solid #f44336;
+        }
+        
+        .email-sample.normal {
+            background: #e8f5e8;
+            border-left: 3px solid #4caf50;
+        }
+        
+        .ethics-principles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .principle-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background: #fafafa;
+        }
+        
+        .case-studies {
+            margin: 20px 0;
+        }
+        
+        .case-study {
+            background: #f0f0f0;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        
+        .ethical-solution {
+            background: #d4edda;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border-left: 3px solid #28a745;
+        }
+        
+        .quiz-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .question-counter {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .quiz-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .score-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px auto;
+        }
     </style>
 </head>
 <body>
@@ -828,19 +983,251 @@
                     type: 'theory',
                     title: 'O que é Inteligência Artificial?',
                     content: `
-                        <h2>Bem-vindo ao mundo da IA!</h2>
-                        <p>A Inteligência Artificial (IA) é a capacidade de máquinas realizarem tarefas que normalmente requerem inteligência humana.</p>
+                        <h2>Fundamentos da Inteligência Artificial</h2>
+                        <p>A Inteligência Artificial (IA) representa um dos avanços tecnológicos mais significativos da era moderna, transformando como interagimos com máquinas e processamos informações.</p>
                         
-                        <h3>Conceitos Fundamentais:</h3>
+                        <h3>Definição e Escopo</h3>
+                        <p>IA é a capacidade de sistemas computacionais executarem tarefas que tradicionalmente requerem inteligência humana, incluindo:</p>
                         <ul>
-                            <li><strong>Aprendizado de Máquina:</strong> Algoritmos que melhoram automaticamente através da experiência</li>
-                            <li><strong>Redes Neurais:</strong> Modelos inspirados no cérebro humano</li>
-                            <li><strong>Processamento de Linguagem Natural:</strong> Compreensão e geração de texto humano</li>
+                            <li><strong>Reconhecimento de Padrões:</strong> Identificar tendências em dados complexos</li>
+                            <li><strong>Tomada de Decisões:</strong> Avaliar opções e escolher ações otimizadas</li>
+                            <li><strong>Processamento de Linguagem:</strong> Compreender e gerar comunicação humana</li>
+                            <li><strong>Aprendizado Adaptativo:</strong> Melhorar performance através da experiência</li>
                         </ul>
                         
-                        <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                            <h4>💡 Exemplo Prático</h4>
-                            <p>Quando você usa o Google Tradutor, a IA analisa padrões em milhões de textos para entender e traduzir idiomas instantaneamente.</p>
+                        <h3>Categorias de IA</h3>
+                        <div class="info-grid">
+                            <div class="info-card">
+                                <h4>IA Estreita (ANI)</h4>
+                                <p>Especializada em tarefas específicas como recomendações de produtos ou diagnóstico médico.</p>
+                            </div>
+                            <div class="info-card">
+                                <h4>IA Geral (AGI)</h4>
+                                <p>Capacidade cognitiva equivalente ao ser humano em todas as áreas - ainda em desenvolvimento.</p>
+                            </div>
+                            <div class="info-card">
+                                <h4>Super IA (ASI)</h4>
+                                <p>Inteligência que supera capacidades humanas - conceito teórico futuro.</p>
+                            </div>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                            <h4>🚀 Aplicações Reais</h4>
+                            <p><strong>Netflix:</strong> Usa IA para recomendar conteúdo personalizado analisando seu histórico de visualização e padrões de comportamento.</p>
+                            <p><strong>Tesla:</strong> Sistemas de condução autônoma processam dados de sensores em tempo real para navegação segura.</p>
+                            <p><strong>ChatGPT:</strong> Modelos de linguagem geram respostas contextuais através de redes neurais treinadas em trilhões de palavras.</p>
+                        </div>
+                        
+                        <div class="interactive-demo">
+                            <h4>🔬 Demonstração Interativa</h4>
+                            <p>Clique nos botões abaixo para ver como diferentes tipos de IA funcionam:</p>
+                            <button onclick="showAIExample('classification')" class="demo-btn">Classificação de Imagens</button>
+                            <button onclick="showAIExample('prediction')" class="demo-btn">Predição de Dados</button>
+                            <button onclick="showAIExample('nlp')" class="demo-btn">Processamento de Texto</button>
+                            <div id="aiDemoResult" class="demo-result"></div>
+                        </div>
+                    `
+                },
+                1: {
+                    type: 'interactive',
+                    title: 'Fundamentos de Machine Learning',
+                    content: `
+                        <h2>Explorando Machine Learning na Prática</h2>
+                        <p>Machine Learning é o núcleo da IA moderna. Vamos explorar os três paradigmas principais através de simulações interativas.</p>
+                        
+                        <div class="ml-simulator">
+                            <h3>Simulador de Tipos de ML</h3>
+                            <div class="ml-tabs">
+                                <button class="ml-tab active" onclick="switchMLType('supervised')">Aprendizado Supervisionado</button>
+                                <button class="ml-tab" onclick="switchMLType('unsupervised')">Aprendizado Não-Supervisionado</button>
+                                <button class="ml-tab" onclick="switchMLType('reinforcement')">Aprendizado por Reforço</button>
+                            </div>
+                            
+                            <div id="supervised" class="ml-content active">
+                                <h4>Aprendizado Supervisionado</h4>
+                                <p>O algoritmo aprende com exemplos rotulados para fazer predições.</p>
+                                <div class="ml-example">
+                                    <h5>Exemplo: Classificação de E-mails</h5>
+                                    <div class="email-classifier">
+                                        <div class="training-data">
+                                            <p><strong>Dados de Treino:</strong></p>
+                                            <div class="email-sample spam">📧 "Ganhe dinheiro rápido!" → SPAM</div>
+                                            <div class="email-sample normal">📧 "Reunião às 14h" → NORMAL</div>
+                                            <div class="email-sample spam">📧 "Clique aqui para prêmio!" → SPAM</div>
+                                        </div>
+                                        <button onclick="classifyEmail()" class="test-btn">Testar Nova Classificação</button>
+                                        <div id="emailResult" class="classification-result"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="unsupervised" class="ml-content">
+                                <h4>Aprendizado Não-Supervisionado</h4>
+                                <p>O algoritmo encontra padrões ocultos em dados sem rótulos.</p>
+                                <div class="clustering-demo">
+                                    <h5>Exemplo: Segmentação de Clientes</h5>
+                                    <p>Agrupar clientes por comportamento de compra similar.</p>
+                                    <button onclick="runClustering()" class="cluster-btn">Executar Clustering</button>
+                                    <div id="clusterResult" class="cluster-visualization"></div>
+                                </div>
+                            </div>
+                            
+                            <div id="reinforcement" class="ml-content">
+                                <h4>Aprendizado por Reforço</h4>
+                                <p>O agente aprende através de tentativa e erro, recebendo recompensas.</p>
+                                <div class="rl-game">
+                                    <h5>Jogo: Navegação Inteligente</h5>
+                                    <p>Ajude o agente a encontrar o tesouro evitando obstáculos.</p>
+                                    <div class="game-grid" id="rlGrid"></div>
+                                    <button onclick="startRLTraining()" class="train-btn">Iniciar Treinamento</button>
+                                    <div id="rlProgress" class="training-progress"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                2: {
+                    type: 'interactive',
+                    title: 'Redes Neurais Explicadas',
+                    content: `
+                        <h2>Arquitetura de Redes Neurais</h2>
+                        <p>Redes neurais são inspiradas no funcionamento do cérebro humano. Vamos construir e treinar uma rede neural interativa.</p>
+                        
+                        <div class="neural-network-builder">
+                            <h3>Construtor de Rede Neural</h3>
+                            <div class="network-config">
+                                <div class="config-section">
+                                    <label>Neurônios na Camada de Entrada:</label>
+                                    <input type="range" id="inputNeurons" min="2" max="8" value="3" onchange="updateNetwork()">
+                                    <span id="inputCount">3</span>
+                                </div>
+                                <div class="config-section">
+                                    <label>Neurônios na Camada Oculta:</label>
+                                    <input type="range" id="hiddenNeurons" min="2" max="10" value="4" onchange="updateNetwork()">
+                                    <span id="hiddenCount">4</span>
+                                </div>
+                                <div class="config-section">
+                                    <label>Neurônios na Camada de Saída:</label>
+                                    <input type="range" id="outputNeurons" min="1" max="5" value="2" onchange="updateNetwork()">
+                                    <span id="outputCount">2</span>
+                                </div>
+                            </div>
+                            
+                            <div class="network-visualization" id="networkViz">
+                                <!-- Visualização da rede será gerada aqui -->
+                            </div>
+                            
+                            <div class="activation-functions">
+                                <h4>Funções de Ativação</h4>
+                                <select id="activationFunction" onchange="updateActivation()">
+                                    <option value="relu">ReLU (Rectified Linear Unit)</option>
+                                    <option value="sigmoid">Sigmoid</option>
+                                    <option value="tanh">Tanh</option>
+                                    <option value="softmax">Softmax</option>
+                                </select>
+                                <div id="activationGraph" class="function-graph"></div>
+                            </div>
+                            
+                            <div class="training-simulation">
+                                <h4>Simulação de Treinamento</h4>
+                                <div class="training-controls">
+                                    <button onclick="startTraining()" class="train-btn">Iniciar Treinamento</button>
+                                    <button onclick="stopTraining()" class="stop-btn">Parar</button>
+                                    <button onclick="resetNetwork()" class="reset-btn">Resetar</button>
+                                </div>
+                                <div class="training-metrics">
+                                    <div class="metric">
+                                        <label>Época:</label>
+                                        <span id="epoch">0</span>
+                                    </div>
+                                    <div class="metric">
+                                        <label>Perda:</label>
+                                        <span id="loss">--</span>
+                                    </div>
+                                    <div class="metric">
+                                        <label>Precisão:</label>
+                                        <span id="accuracy">--</span>
+                                    </div>
+                                </div>
+                                <div id="lossChart" class="chart"></div>
+                            </div>
+                        </div>
+                    `
+                },
+                3: {
+                    type: 'theory',
+                    title: 'Ética em IA e Desenvolvimento Responsável',
+                    content: `
+                        <h2>Ética e Responsabilidade na IA</h2>
+                        <p>Com o poder da IA vem a responsabilidade de desenvolver e implementar sistemas que beneficiem a humanidade de forma justa e segura.</p>
+                        
+                        <h3>Princípios Fundamentais da IA Ética</h3>
+                        <div class="ethics-principles">
+                            <div class="principle-card">
+                                <h4>🎯 Transparência</h4>
+                                <p>Sistemas de IA devem ser compreensíveis e auditáveis. Usuários têm direito de entender como decisões são tomadas.</p>
+                                <div class="example">
+                                    <strong>Exemplo:</strong> Bancos devem explicar por que um empréstimo foi negado por algoritmos de IA.
+                                </div>
+                            </div>
+                            
+                            <div class="principle-card">
+                                <h4>⚖️ Justiça e Não-Discriminação</h4>
+                                <p>IA deve tratar todos os grupos de forma equitativa, evitando vieses discriminatórios.</p>
+                                <div class="example">
+                                    <strong>Exemplo:</strong> Algoritmos de contratação não devem discriminar por gênero, raça ou idade.
+                                </div>
+                            </div>
+                            
+                            <div class="principle-card">
+                                <h4>🔒 Privacidade e Segurança</h4>
+                                <p>Dados pessoais devem ser protegidos e usados apenas para propósitos legítimos.</p>
+                                <div class="example">
+                                    <strong>Exemplo:</strong> Assistentes virtuais devem criptografar conversas e limitar acesso a dados sensíveis.
+                                </div>
+                            </div>
+                            
+                            <div class="principle-card">
+                                <h4>👥 Responsabilidade Humana</h4>
+                                <p>Humanos devem manter controle e responsabilidade final sobre sistemas de IA.</p>
+                                <div class="example">
+                                    <strong>Exemplo:</strong> Carros autônomos devem permitir intervenção humana em situações críticas.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h3>Casos de Estudo: Dilemas Éticos</h3>
+                        <div class="case-studies">
+                            <div class="case-study">
+                                <h4>Caso 1: IA em Recrutamento</h4>
+                                <p><strong>Situação:</strong> Uma empresa usa IA para filtrar currículos automaticamente.</p>
+                                <p><strong>Dilema:</strong> O algoritmo foi treinado com dados históricos que refletem vieses de contratação passados.</p>
+                                <button onclick="showEthicalSolution(1)" class="solution-btn">Ver Solução Ética</button>
+                                <div id="solution1" class="ethical-solution" style="display: none;">
+                                    <p><strong>Solução:</strong> Auditar regularmente o algoritmo, diversificar dados de treinamento, implementar métricas de justiça e manter supervisão humana nas decisões finais.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="case-study">
+                                <h4>Caso 2: IA em Saúde</h4>
+                                <p><strong>Situação:</strong> Sistema de IA diagnostica doenças com 95% de precisão.</p>
+                                <p><strong>Dilema:</strong> Como equilibrar eficiência da IA com responsabilidade médica humana?</p>
+                                <button onclick="showEthicalSolution(2)" class="solution-btn">Ver Solução Ética</button>
+                                <div id="solution2" class="ethical-solution" style="display: none;">
+                                    <p><strong>Solução:</strong> IA como ferramenta de apoio, não substituição. Médicos devem validar diagnósticos, pacientes devem ser informados sobre uso de IA, e sistemas devem ser transparentes sobre limitações.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="ethical-framework">
+                            <h3>Framework de Desenvolvimento Ético</h3>
+                            <ol>
+                                <li><strong>Avaliação de Impacto:</strong> Analisar possíveis consequências sociais</li>
+                                <li><strong>Design Inclusivo:</strong> Incluir perspectivas diversas no desenvolvimento</li>
+                                <li><strong>Teste de Viés:</strong> Verificar discriminação em diferentes grupos</li>
+                                <li><strong>Monitoramento Contínuo:</strong> Acompanhar performance e impacto pós-deployment</li>
+                                <li><strong>Transparência:</strong> Documentar decisões e limitações do sistema</li>
+                            </ol>
                         </div>
                     `
                 },
@@ -848,14 +1235,85 @@
                     type: 'quiz',
                     title: 'Avaliação: IA Básica',
                     content: `
-                        <h2>Teste seus conhecimentos!</h2>
+                        <h2>Avaliação Abrangente de IA Básica</h2>
+                        <p>Teste seus conhecimentos sobre os fundamentos da Inteligência Artificial.</p>
+                        
                         <div class="quiz-container">
-                            <div class="quiz-question">O que diferencia a IA do software tradicional?</div>
-                            <div class="quiz-options">
-                                <div class="quiz-option" data-answer="incorrect">A IA é mais rápida que software normal</div>
-                                <div class="quiz-option" data-answer="correct">A IA pode aprender e melhorar sem programação explícita</div>
-                                <div class="quiz-option" data-answer="incorrect">A IA usa mais memória</div>
-                                <div class="quiz-option" data-answer="incorrect">A IA só funciona na internet</div>
+                            <div class="question-counter">
+                                <span id="currentQuestion">1</span> de <span id="totalQuestions">5</span>
+                            </div>
+                            
+                            <div class="quiz-question" id="question1">
+                                <h3>Questão 1: Definição de IA</h3>
+                                <p>O que melhor define a Inteligência Artificial moderna?</p>
+                                <div class="quiz-options">
+                                    <div class="quiz-option" data-answer="incorrect">Programas que executam comandos pré-definidos rapidamente</div>
+                                    <div class="quiz-option" data-answer="correct">Sistemas que podem aprender, adaptar-se e realizar tarefas cognitivas</div>
+                                    <div class="quiz-option" data-answer="incorrect">Qualquer software que processa grandes volumes de dados</div>
+                                    <div class="quiz-option" data-answer="incorrect">Robôs físicos que imitam movimentos humanos</div>
+                                </div>
+                            </div>
+                            
+                            <div class="quiz-question" id="question2" style="display: none;">
+                                <h3>Questão 2: Machine Learning</h3>
+                                <p>No aprendizado supervisionado, qual é o papel dos dados rotulados?</p>
+                                <div class="quiz-options">
+                                    <div class="quiz-option" data-answer="incorrect">Acelerar o processamento dos algoritmos</div>
+                                    <div class="quiz-option" data-answer="correct">Ensinar o algoritmo a reconhecer padrões e fazer predições</div>
+                                    <div class="quiz-option" data-answer="incorrect">Reduzir o consumo de memória durante o treinamento</div>
+                                    <div class="quiz-option" data-answer="incorrect">Organizar os dados em categorias para armazenamento</div>
+                                </div>
+                            </div>
+                            
+                            <div class="quiz-question" id="question3" style="display: none;">
+                                <h3>Questão 3: Redes Neurais</h3>
+                                <p>Qual função das redes neurais artificiais é inspirada no cérebro humano?</p>
+                                <div class="quiz-options">
+                                    <div class="quiz-option" data-answer="incorrect">Armazenar dados em estruturas hierárquicas</div>
+                                    <div class="quiz-option" data-answer="correct">Processar informações através de conexões ponderadas entre neurônios</div>
+                                    <div class="quiz-option" data-answer="incorrect">Executar cálculos matemáticos em paralelo</div>
+                                    <div class="quiz-option" data-answer="incorrect">Comprimir informações para economizar espaço</div>
+                                </div>
+                            </div>
+                            
+                            <div class="quiz-question" id="question4" style="display: none;">
+                                <h3>Questão 4: Ética em IA</h3>
+                                <p>Por que a transparência é crucial em sistemas de IA?</p>
+                                <div class="quiz-options">
+                                    <div class="quiz-option" data-answer="incorrect">Para aumentar a velocidade de processamento</div>
+                                    <div class="quiz-option" data-answer="incorrect">Para reduzir custos de desenvolvimento</div>
+                                    <div class="quiz-option" data-answer="correct">Para permitir auditoria, accountability e confiança dos usuários</div>
+                                    <div class="quiz-option" data-answer="incorrect">Para facilitar a manutenção do código</div>
+                                </div>
+                            </div>
+                            
+                            <div class="quiz-question" id="question5" style="display: none;">
+                                <h3>Questão 5: Aplicações Práticas</h3>
+                                <p>Qual exemplo melhor demonstra IA Estreita (ANI) em uso atual?</p>
+                                <div class="quiz-options">
+                                    <div class="quiz-option" data-answer="incorrect">Um robô que pode realizar qualquer tarefa humana</div>
+                                    <div class="quiz-option" data-answer="correct">Sistema de recomendação do Netflix que sugere filmes</div>
+                                    <div class="quiz-option" data-answer="incorrect">IA que compreende todas as áreas do conhecimento humano</div>
+                                    <div class="quiz-option" data-answer="incorrect">Computador que passa no teste de Turing em todos os tópicos</div>
+                                </div>
+                            </div>
+                            
+                            <div class="quiz-results" id="quizResults" style="display: none;">
+                                <h3>Resultados da Avaliação</h3>
+                                <div class="score-display">
+                                    <div class="score-circle">
+                                        <span id="finalScore">0</span>%
+                                    </div>
+                                </div>
+                                <div id="scoreMessage"></div>
+                                <div class="quiz-breakdown" id="quizBreakdown"></div>
+                                <button onclick="restartQuiz()" class="restart-btn">Refazer Avaliação</button>
+                            </div>
+                            
+                            <div class="quiz-navigation">
+                                <button id="prevQuestion" onclick="previousQuestion()" style="display: none;">Anterior</button>
+                                <button id="nextQuestion" onclick="nextQuestion()">Próxima</button>
+                                <button id="submitQuiz" onclick="submitQuiz()" style="display: none;">Finalizar Avaliação</button>
                             </div>
                         </div>
                     `
@@ -1043,44 +1501,127 @@
         }
 
         function createDefaultContent(lesson) {
+            // Use real lesson content from database when available
+            if (lesson.content && typeof lesson.content === 'object') {
+                switch (lesson.type) {
+                    case 'theory':
+                        if (lesson.content.sections) {
+                            return `
+                                <h2>${lesson.title}</h2>
+                                ${lesson.content.sections.map(section => `
+                                    <h3>${section.title}</h3>
+                                    <p>${section.content}</p>
+                                    ${section.examples ? `
+                                        <h4>Exemplos:</h4>
+                                        <ul>${section.examples.map(ex => `<li>${ex}</li>`).join('')}</ul>
+                                    ` : ''}
+                                    ${section.key_concepts ? `
+                                        <h4>Conceitos-chave:</h4>
+                                        <ul>${section.key_concepts.map(concept => `<li>${concept}</li>`).join('')}</ul>
+                                    ` : ''}
+                                `).join('')}
+                            `;
+                        }
+                        break;
+                    case 'interactive':
+                        if (lesson.content.activities) {
+                            return `
+                                <h2>${lesson.title}</h2>
+                                ${lesson.content.activities.map(activity => `
+                                    <div class="interactive-activity">
+                                        <h3>${activity.title}</h3>
+                                        <p>${activity.content}</p>
+                                        <button onclick="startActivity('${activity.type}')" class="demo-btn">Iniciar Atividade</button>
+                                    </div>
+                                `).join('')}
+                            `;
+                        }
+                        break;
+                    case 'quiz':
+                        if (lesson.content.questions) {
+                            return `
+                                <h2>${lesson.title}</h2>
+                                <div class="quiz-container">
+                                    <div class="quiz-question">${lesson.content.questions[0].question}</div>
+                                    <div class="quiz-options">
+                                        ${lesson.content.questions[0].options.map((option, index) => `
+                                            <div class="quiz-option" data-answer="${index === lesson.content.questions[0].correct_answer ? 'correct' : 'incorrect'}">${option}</div>
+                                        `).join('')}
+                                    </div>
+                                    <div class="quiz-explanation" style="display: none; margin-top: 15px; padding: 10px; background: #f0f0f0; border-radius: 5px;">
+                                        <strong>Explicação:</strong> ${lesson.content.questions[0].explanation}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        break;
+                }
+            }
+            
+            // Fallback to enhanced default content
             switch (lesson.type) {
                 case 'theory':
                     return `
                         <h2>${lesson.title}</h2>
-                        <p>Este é um módulo teórico onde você aprenderá conceitos fundamentais sobre ${lesson.title.toLowerCase()}.</p>
-                        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                            <h3>Objetivos da Lição:</h3>
-                            <ul>
-                                <li>Compreender os conceitos principais</li>
-                                <li>Aplicar conhecimentos práticos</li>
-                                <li>Preparar-se para exercícios avançados</li>
-                            </ul>
+                        <p>Este módulo aborda conceitos fundamentais de ${lesson.title.toLowerCase()}, fornecendo uma base sólida para seu aprendizado em IA.</p>
+                        <div class="info-grid">
+                            <div class="info-card">
+                                <h4>Objetivos de Aprendizado</h4>
+                                <ul>
+                                    <li>Compreender conceitos teóricos fundamentais</li>
+                                    <li>Conectar teoria com aplicações práticas</li>
+                                    <li>Preparar base para módulos avançados</li>
+                                </ul>
+                            </div>
+                            <div class="info-card">
+                                <h4>Aplicações Práticas</h4>
+                                <p>Estes conceitos são amplamente utilizados em sistemas de IA modernos para resolver problemas do mundo real.</p>
+                            </div>
                         </div>
                     `;
                 case 'interactive':
                     return `
                         <h2>${lesson.title}</h2>
-                        <p>Este é um módulo interativo com exercícios práticos.</p>
-                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                            <h3>🎯 Atividade Prática</h3>
-                            <p>Explore os conceitos através de exemplos interativos e exercícios práticos.</p>
+                        <p>Explore conceitos de IA através de simulações e exercícios interativos.</p>
+                        <div class="interactive-demo">
+                            <h4>🎯 Atividades Interativas</h4>
+                            <p>Esta lição inclui simulações práticas para consolidar seu aprendizado.</p>
+                            <button onclick="showAIExample('classification')" class="demo-btn">Iniciar Demonstração</button>
                         </div>
                     `;
                 case 'quiz':
                     return `
                         <h2>${lesson.title}</h2>
+                        <p>Avalie seu conhecimento com questões cuidadosamente elaboradas.</p>
                         <div class="quiz-container">
-                            <div class="quiz-question">Qual é a principal característica desta lição?</div>
+                            <div class="quiz-question">Esta lição foca em:</div>
                             <div class="quiz-options">
-                                <div class="quiz-option" data-answer="correct">Avaliar o conhecimento adquirido</div>
-                                <div class="quiz-option" data-answer="incorrect">Apenas ler conteúdo</div>
-                                <div class="quiz-option" data-answer="incorrect">Assistir vídeos</div>
-                                <div class="quiz-option" data-answer="incorrect">Fazer anotações</div>
+                                <div class="quiz-option" data-answer="correct">Avaliar compreensão dos conceitos apresentados</div>
+                                <div class="quiz-option" data-answer="incorrect">Apenas testar memorização</div>
+                                <div class="quiz-option" data-answer="incorrect">Competição entre estudantes</div>
+                                <div class="quiz-option" data-answer="incorrect">Classificação de desempenho</div>
                             </div>
                         </div>
                     `;
                 default:
-                    return `<h2>${lesson.title}</h2><p>Conteúdo da lição será carregado aqui.</p>`;
+                    return `
+                        <h2>${lesson.title}</h2>
+                        <div class="info-card">
+                            <p>Esta lição aborda tópicos importantes de ${lesson.title.toLowerCase()}. O conteúdo detalhado será carregado em breve.</p>
+                            <p><strong>Duração estimada:</strong> ${lesson.duration}</p>
+                            <p><strong>XP a ganhar:</strong> ${lesson.xp}</p>
+                        </div>
+                    `;
+            }
+        }
+
+        function startActivity(activityType) {
+            switch(activityType) {
+                case 'classification_demo':
+                    showAIExample('classification');
+                    break;
+                default:
+                    showNotification('Atividade interativa iniciada! Explore os controles disponíveis.');
             }
         }
 
@@ -1100,36 +1641,233 @@
             nextBtn.textContent = lessonIndex === totalLessons - 1 ? 'Concluir' : 'Próximo →';
         }
 
+        // Interactive lesson functions
+        function showAIExample(type) {
+            const result = document.getElementById('aiDemoResult');
+            switch(type) {
+                case 'classification':
+                    result.innerHTML = `
+                        <h4>Classificação de Imagens</h4>
+                        <p>Uma rede neural convolucional analisa pixels da imagem:</p>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <div style="width: 60px; height: 60px; background: #ccc; border-radius: 5px;">🐱</div>
+                            <span>→ CNN →</span>
+                            <div style="background: #e8f5e8; padding: 5px; border-radius: 3px;">95% Gato</div>
+                        </div>
+                    `;
+                    break;
+                case 'prediction':
+                    result.innerHTML = `
+                        <h4>Predição de Dados</h4>
+                        <p>Algoritmo de regressão prevê valores futuros:</p>
+                        <div>Vendas histórica: 100, 120, 115, 140 → Predição próximo mês: <strong>138 unidades</strong></div>
+                    `;
+                    break;
+                case 'nlp':
+                    result.innerHTML = `
+                        <h4>Processamento de Linguagem Natural</h4>
+                        <p>Análise de sentimento em tempo real:</p>
+                        <div style="background: #d4edda; padding: 10px; border-radius: 5px;">
+                            "Este produto é incrível!" → <strong>Sentimento: Positivo (92%)</strong>
+                        </div>
+                    `;
+                    break;
+            }
+        }
+
+        function switchMLType(type) {
+            // Remove active class from all tabs and content
+            document.querySelectorAll('.ml-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.ml-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected tab and content
+            event.target.classList.add('active');
+            document.getElementById(type).classList.add('active');
+        }
+
+        function classifyEmail() {
+            const emails = [
+                { text: "Promoção especial! Clique agora!", result: "SPAM (89% confiança)" },
+                { text: "Relatório mensal em anexo", result: "NORMAL (94% confiança)" },
+                { text: "Você ganhou um prêmio!", result: "SPAM (76% confiança)" }
+            ];
+            const randomEmail = emails[Math.floor(Math.random() * emails.length)];
+            
+            document.getElementById('emailResult').innerHTML = `
+                <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                    <strong>Novo e-mail:</strong> "${randomEmail.text}"<br>
+                    <strong>Classificação:</strong> ${randomEmail.result}
+                </div>
+            `;
+        }
+
+        function runClustering() {
+            document.getElementById('clusterResult').innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px;">
+                    <div style="background: #e3f2fd; padding: 10px; border-radius: 5px;">
+                        <strong>Grupo 1: Compradores Frequentes</strong><br>
+                        Alta frequência, valor médio
+                    </div>
+                    <div style="background: #fff3e0; padding: 10px; border-radius: 5px;">
+                        <strong>Grupo 2: Premium</strong><br>
+                        Baixa frequência, alto valor
+                    </div>
+                    <div style="background: #f3e5f5; padding: 10px; border-radius: 5px;">
+                        <strong>Grupo 3: Ocasionais</strong><br>
+                        Baixa frequência e valor
+                    </div>
+                </div>
+            `;
+        }
+
+        let rlTraining = false;
+        function startRLTraining() {
+            if (rlTraining) return;
+            rlTraining = true;
+            
+            const grid = document.getElementById('rlGrid');
+            grid.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(5, 40px); gap: 2px;">
+                    <div style="background: #4caf50; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">🤖</div>
+                    <div style="background: #fff; width: 40px; height: 40px; border: 1px solid #ddd;"></div>
+                    <div style="background: #f44336; width: 40px; height: 40px;"></div>
+                    <div style="background: #fff; width: 40px; height: 40px; border: 1px solid #ddd;"></div>
+                    <div style="background: #fff; width: 40px; height: 40px; border: 1px solid #ddd;"></div>
+                    <div style="background: #fff; width: 40px; height: 40px; border: 1px solid #ddd;"></div>
+                    <div style="background: #f44336; width: 40px; height: 40px;"></div>
+                    <div style="background: #fff; width: 40px; height: 40px; border: 1px solid #ddd;"></div>
+                    <div style="background: #fff; width: 40px; height: 40px; border: 1px solid #ddd;"></div>
+                    <div style="background: #ffeb3b; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">💰</div>
+                </div>
+            `;
+            
+            let episode = 0;
+            const progress = document.getElementById('rlProgress');
+            const interval = setInterval(() => {
+                episode++;
+                progress.innerHTML = `Episódio ${episode}/50 - Recompensa acumulada: ${Math.floor(Math.random() * 100 + episode * 2)}`;
+                
+                if (episode >= 50) {
+                    clearInterval(interval);
+                    progress.innerHTML = `Treinamento concluído! Agente aprendeu a navegar com 94% de sucesso.`;
+                    rlTraining = false;
+                }
+            }, 100);
+        }
+
+        function showEthicalSolution(caseNumber) {
+            const solution = document.getElementById(`solution${caseNumber}`);
+            solution.style.display = solution.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Advanced quiz functionality
+        let currentQuestionIndex = 0;
+        let quizAnswers = [];
+        let totalQuizQuestions = 5;
+
         function initializeQuiz() {
+            currentQuestionIndex = 0;
+            quizAnswers = [];
+            document.getElementById('totalQuestions').textContent = totalQuizQuestions;
+            updateQuizNavigation();
+            
             const options = document.querySelectorAll('.quiz-option');
             options.forEach(option => {
                 option.addEventListener('click', function() {
-                    options.forEach(opt => opt.classList.remove('selected'));
+                    const questionDiv = this.closest('.quiz-question');
+                    const questionOptions = questionDiv.querySelectorAll('.quiz-option');
+                    
+                    questionOptions.forEach(opt => opt.classList.remove('selected'));
                     this.classList.add('selected');
                     
-                    setTimeout(() => {
-                        const isCorrect = this.getAttribute('data-answer') === 'correct';
-                        
-                        options.forEach(opt => {
-                            const answer = opt.getAttribute('data-answer');
-                            if (answer === 'correct') {
-                                opt.classList.add('correct');
-                            } else if (opt.classList.contains('selected') && answer === 'incorrect') {
-                                opt.classList.add('incorrect');
-                            }
-                        });
-                        
-                        setTimeout(() => {
-                            if (isCorrect) {
-                                showNotification('Cody: Excelente! Resposta correta! 🎉');
-                            } else {
-                                showNotification('Cody: Quase lá! A resposta certa está destacada em verde.');
-                            }
-                        }, 1000);
-                        
-                    }, 1000);
+                    // Store answer
+                    const isCorrect = this.getAttribute('data-answer') === 'correct';
+                    quizAnswers[currentQuestionIndex] = isCorrect;
                 });
             });
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < totalQuizQuestions - 1) {
+                document.getElementById(`question${currentQuestionIndex + 1}`).style.display = 'none';
+                currentQuestionIndex++;
+                document.getElementById(`question${currentQuestionIndex + 1}`).style.display = 'block';
+                updateQuizNavigation();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                document.getElementById(`question${currentQuestionIndex + 1}`).style.display = 'none';
+                currentQuestionIndex--;
+                document.getElementById(`question${currentQuestionIndex + 1}`).style.display = 'block';
+                updateQuizNavigation();
+            }
+        }
+
+        function updateQuizNavigation() {
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            
+            const prevBtn = document.getElementById('prevQuestion');
+            const nextBtn = document.getElementById('nextQuestion');
+            const submitBtn = document.getElementById('submitQuiz');
+            
+            prevBtn.style.display = currentQuestionIndex === 0 ? 'none' : 'block';
+            
+            if (currentQuestionIndex === totalQuizQuestions - 1) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'block';
+            } else {
+                nextBtn.style.display = 'block';
+                submitBtn.style.display = 'none';
+            }
+        }
+
+        function submitQuiz() {
+            const score = (quizAnswers.filter(answer => answer === true).length / totalQuizQuestions) * 100;
+            
+            // Hide all questions
+            for (let i = 1; i <= totalQuizQuestions; i++) {
+                document.getElementById(`question${i}`).style.display = 'none';
+            }
+            
+            // Show results
+            const resultsDiv = document.getElementById('quizResults');
+            resultsDiv.style.display = 'block';
+            
+            document.getElementById('finalScore').textContent = Math.round(score);
+            
+            const scoreMessage = document.getElementById('scoreMessage');
+            if (score >= 80) {
+                scoreMessage.innerHTML = `<h4 style="color: #28a745;">Excelente! Você dominou os conceitos de IA básica!</h4>`;
+                setTimeout(() => showNotification('Cody: Fantástico! Você está pronto para módulos avançados!'), 1000);
+            } else if (score >= 60) {
+                scoreMessage.innerHTML = `<h4 style="color: #ffc107;">Bom trabalho! Revise alguns conceitos e tente novamente.</h4>`;
+            } else {
+                scoreMessage.innerHTML = `<h4 style="color: #dc3545;">Continue estudando! A prática leva à perfeição.</h4>`;
+            }
+            
+            // Hide navigation
+            document.querySelector('.quiz-navigation').style.display = 'none';
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            quizAnswers = [];
+            
+            // Show first question, hide others and results
+            for (let i = 1; i <= totalQuizQuestions; i++) {
+                document.getElementById(`question${i}`).style.display = i === 1 ? 'block' : 'none';
+            }
+            document.getElementById('quizResults').style.display = 'none';
+            document.querySelector('.quiz-navigation').style.display = 'flex';
+            
+            // Clear selections
+            document.querySelectorAll('.quiz-option').forEach(option => {
+                option.classList.remove('selected', 'correct', 'incorrect');
+            });
+            
+            updateQuizNavigation();
         }
 
         function nextLesson() {
