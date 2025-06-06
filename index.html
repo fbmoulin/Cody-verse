@@ -870,7 +870,7 @@
                 return;
             }
             grid.innerHTML = courseModules.map(module => `
-                <div class="module-card ${module.difficulty}" onclick="showModuleDetails(${module.id})">
+                <div class="module-card ${module.difficulty}" data-module-id="${module.id}">
                     <div class="module-header">
                         <div class="module-icon">${module.id}</div>
                         <h3 class="module-title">${module.title}</h3>
@@ -895,6 +895,16 @@
                     </div>
                 </div>
             `).join('');
+            
+            // Add event listeners after rendering
+            const moduleCards = document.querySelectorAll('.module-card');
+            moduleCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const moduleId = parseInt(this.getAttribute('data-module-id'));
+                    console.log('Module clicked:', moduleId);
+                    showModuleDetails(moduleId);
+                });
+            });
         }
         
         function showModuleDetails(moduleId) {
@@ -916,7 +926,7 @@
                 <div class="lessons-list">
                     <h3>Lições do Curso</h3>
                     ${module.lessons && module.lessons.length > 0 ? module.lessons.map((lesson, index) => `
-                        <div class="lesson-item" onclick="startLesson(${moduleId}, ${index})">
+                        <div class="lesson-item" data-module-id="${moduleId}" data-lesson-index="${index}">
                             <div>
                                 <strong>${lesson.title}</strong>
                                 <span class="lesson-type-badge type-${lesson.type}">${lesson.type}</span>
@@ -929,11 +939,31 @@
                     `).join('') : '<p>Lições em breve...</p>'}
                 </div>
                 <div style="margin-top: 30px; text-align: center;">
-                    <button class="btn btn-primary" onclick="startModule(${moduleId})">Iniciar Módulo</button>
+                    <button class="btn btn-primary" data-module-start="${moduleId}">Iniciar Módulo</button>
                 </div>
             `;
             
             document.getElementById('lessonModal').style.display = 'block';
+            
+            // Add event listeners for lesson items and start button
+            const lessonItems = document.querySelectorAll('.lesson-item');
+            lessonItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const moduleId = parseInt(this.getAttribute('data-module-id'));
+                    const lessonIndex = parseInt(this.getAttribute('data-lesson-index'));
+                    console.log('Lesson clicked:', moduleId, lessonIndex);
+                    startLesson(moduleId, lessonIndex);
+                });
+            });
+            
+            const startButton = document.querySelector('[data-module-start]');
+            if (startButton) {
+                startButton.addEventListener('click', function() {
+                    const moduleId = parseInt(this.getAttribute('data-module-start'));
+                    console.log('Start module clicked:', moduleId);
+                    startModule(moduleId);
+                });
+            }
         }
         
         function closeModal() {
