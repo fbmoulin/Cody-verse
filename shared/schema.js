@@ -122,6 +122,161 @@ const learningSessions = pgTable('learning_sessions', {
   sessionData: jsonb('session_data').default({})
 });
 
+// Sistema de Níveis
+const userLevels = pgTable('user_levels', {
+  id: serial('id').primaryKey(),
+  level: integer('level').notNull().unique(),
+  levelName: text('level_name').notNull(),
+  xpRequired: integer('xp_required').notNull(),
+  description: text('description'),
+  rewards: jsonb('rewards').default({}),
+  icon: text('icon'),
+  color: text('color'),
+  isActive: boolean('is_active').default(true),
+  createdAt: timestamp('created_at').defaultNow()
+});
+
+// Badges do Sistema
+const badges = pgTable('badges', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(),
+  description: text('description').notNull(),
+  category: text('category').notNull(), // study, achievement, streak, social, special
+  icon: text('icon').notNull(),
+  rarity: text('rarity').notNull(), // common, rare, epic, legendary
+  color: text('color').default('#3498db'),
+  conditions: jsonb('conditions').notNull(),
+  xpReward: integer('xp_reward').default(0),
+  coinsReward: integer('coins_reward').default(0),
+  isActive: boolean('is_active').default(true),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow()
+});
+
+// Badges dos Usuários
+const userBadges = pgTable('user_badges', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id),
+  badgeId: integer('badge_id').references(() => badges.id),
+  earnedAt: timestamp('earned_at').defaultNow(),
+  progress: jsonb('progress').default({}),
+  isVisible: boolean('is_visible').default(true),
+  notificationSent: boolean('notification_sent').default(false)
+});
+
+// Sistema de Moedas/Pontos
+const userWallet = pgTable('user_wallet', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id).unique(),
+  coins: integer('coins').default(0),
+  gems: integer('gems').default(0),
+  totalCoinsEarned: integer('total_coins_earned').default(0),
+  totalCoinsSpent: integer('total_coins_spent').default(0),
+  lastUpdated: timestamp('last_updated').defaultNow()
+});
+
+// Transações de Moedas
+const coinTransactions = pgTable('coin_transactions', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id),
+  transactionType: text('transaction_type').notNull(), // earned, spent, bonus, penalty
+  amount: integer('amount').notNull(),
+  reason: text('reason').notNull(),
+  source: text('source'), // lesson_complete, badge_earned, daily_bonus, store_purchase
+  metadata: jsonb('metadata').default({}),
+  createdAt: timestamp('created_at').defaultNow()
+});
+
+// Streaks de Aprendizado
+const userStreaks = pgTable('user_streaks', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id),
+  streakType: text('streak_type').notNull(), // daily_login, daily_lesson, weekly_goal
+  currentStreak: integer('current_streak').default(0),
+  longestStreak: integer('longest_streak').default(0),
+  lastActivityDate: timestamp('last_activity_date'),
+  streakStartDate: timestamp('streak_start_date'),
+  freezesUsed: integer('freezes_used').default(0),
+  freezesAvailable: integer('freezes_available').default(2),
+  metadata: jsonb('metadata').default({})
+});
+
+// Objetivos Diários/Semanais
+const userGoals = pgTable('user_goals', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id),
+  goalType: text('goal_type').notNull(), // daily, weekly, monthly
+  goalCategory: text('goal_category').notNull(), // lessons, time, xp, streak
+  targetValue: integer('target_value').notNull(),
+  currentProgress: integer('current_progress').default(0),
+  isCompleted: boolean('is_completed').default(false),
+  goalDate: timestamp('goal_date').notNull(),
+  completedAt: timestamp('completed_at'),
+  rewards: jsonb('rewards').default({}),
+  createdAt: timestamp('created_at').defaultNow()
+});
+
+// Loja Virtual
+const storeItems = pgTable('store_items', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(),
+  description: text('description').notNull(),
+  category: text('category').notNull(), // themes, avatars, streak_freeze, power_ups
+  itemType: text('item_type').notNull(), // consumable, permanent, subscription
+  price: integer('price').notNull(),
+  currency: text('currency').default('coins'), // coins, gems, real_money
+  icon: text('icon'),
+  rarity: text('rarity').default('common'),
+  isActive: boolean('is_active').default(true),
+  limitPerUser: integer('limit_per_user'),
+  metadata: jsonb('metadata').default({}),
+  createdAt: timestamp('created_at').defaultNow()
+});
+
+// Itens Comprados pelos Usuários
+const userPurchases = pgTable('user_purchases', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id),
+  itemId: integer('item_id').references(() => storeItems.id),
+  quantity: integer('quantity').default(1),
+  totalPrice: integer('total_price').notNull(),
+  currency: text('currency').notNull(),
+  purchaseDate: timestamp('purchase_date').defaultNow(),
+  isActive: boolean('is_active').default(true),
+  expiresAt: timestamp('expires_at'),
+  metadata: jsonb('metadata').default({})
+});
+
+// Sistema de Ranking/Leaderboard
+const leaderboards = pgTable('leaderboards', {
+  id: serial('id').primaryKey(),
+  leaderboardType: text('leaderboard_type').notNull(), // weekly_xp, monthly_streak, all_time_points
+  timeframe: text('timeframe').notNull(), // daily, weekly, monthly, all_time
+  userId: integer('user_id').references(() => users.id),
+  score: integer('score').notNull(),
+  rank: integer('rank'),
+  previousRank: integer('previous_rank'),
+  periodStart: timestamp('period_start').notNull(),
+  periodEnd: timestamp('period_end').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow()
+});
+
+// Notifications do Sistema de Gamificação
+const gamificationNotifications = pgTable('gamification_notifications', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id),
+  notificationType: text('notification_type').notNull(), // badge_earned, level_up, streak_milestone, goal_completed
+  title: text('title').notNull(),
+  message: text('message').notNull(),
+  icon: text('icon'),
+  isRead: boolean('is_read').default(false),
+  actionRequired: boolean('action_required').default(false),
+  metadata: jsonb('metadata').default({}),
+  createdAt: timestamp('created_at').defaultNow(),
+  readAt: timestamp('read_at')
+});
+
 module.exports = {
   users,
   courseModules,
@@ -131,5 +286,16 @@ module.exports = {
   achievements,
   userAchievements,
   codyInteractions,
-  learningSessions
+  learningSessions,
+  userLevels,
+  badges,
+  userBadges,
+  userWallet,
+  coinTransactions,
+  userStreaks,
+  userGoals,
+  storeItems,
+  userPurchases,
+  leaderboards,
+  gamificationNotifications
 };

@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 Gamification Dashboard - Cody Verse</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .user-level-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .level-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .level-icon {
+            font-size: 4rem;
+        }
+
+        .level-details h2 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .level-details p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .xp-progress {
+            background: rgba(255,255,255,0.2);
+            border-radius: 25px;
+            height: 20px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .xp-fill {
+            background: linear-gradient(90deg, #00d4aa, #00d4ff);
+            height: 100%;
+            border-radius: 25px;
+            transition: width 0.8s ease;
+        }
+
+        .wallet-display {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .currency {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+        }
+
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #f8f9ff, #e9ecef);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .badge:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .badge.earned {
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255,215,0,0.3);
+        }
+
+        .badge.rare {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+        }
+
+        .badge.epic {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .badge.legendary {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 5px 15px rgba(243,156,18,0.3); }
+            to { box-shadow: 0 5px 25px rgba(243,156,18,0.6); }
+        }
+
+        .badge-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .badge-name {
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .badge-description {
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+
+        .badge-new {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .streak-display {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .streak-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ff6b35;
+            margin-bottom: 10px;
+        }
+
+        .streak-fire {
+            font-size: 1.5rem;
+            margin: 0 5px;
+            animation: flicker 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        .goals-list {
+            space-y: 15px;
+        }
+
+        .goal-item {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .goal-item.completed {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .goal-title {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .goal-status {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .goal-progress {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .goal-progress-fill {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .goal-progress-fill.completed {
+            background: linear-gradient(90deg, #28a745, #20c997);
+        }
+
+        .goal-reward {
+            font-size: 0.8rem;
+            color: #ffa500;
+            font-weight: bold;
+        }
+
+        .leaderboard-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 10px;
+            background: #f8f9ff;
+            transition: background 0.3s ease;
+        }
+
+        .leaderboard-item:hover {
+            background: #e9ecef;
+        }
+
+        .leaderboard-item.user {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .rank {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-right: 15px;
+            min-width: 30px;
+        }
+
+        .rank.top-3 {
+            color: #ffa500;
+        }
+
+        .user-info {
+            flex: 1;
+            margin-left: 10px;
+        }
+
+        .username {
+            font-weight: bold;
+        }
+
+        .user-level {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .score {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #667eea;
+        }
+
+        .leaderboard-item.user .score {
+            color: white;
+        }
+
+        .notifications-list {
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .notification {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .notification:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .notification.unread {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+
+        .notification.achievement {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+        }
+
+        .notification-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            margin-top: 2px;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .notification-message {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .notification-time {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .store-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .store-item {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .store-item:hover {
+            border-color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .store-item.affordable {
+            border-color: #28a745;
+        }
+
+        .store-item.owned {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .item-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .item-name {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .item-description {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .item-price {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .buy-button {
+            width: 100%;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .buy-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.3);
+        }
+
+        .buy-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: white;
+            border-radius: 25px;
+            padding: 5px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .level-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .wallet-display {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .badges-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 Gamification Dashboard</h1>
+            <p>Acompanhe seu progresso, conquistas e recompensas</p>
+        </div>
+
+        <!-- User Level Card -->
+        <div class="user-level-card">
+            <div class="level-info">
+                <div class="level-icon" id="level-icon">🌱</div>
+                <div class="level-details">
+                    <h2 id="level-name">Novice</h2>
+                    <p id="level-description">Welcome to your learning journey!</p>
+                </div>
+            </div>
+            <div class="xp-progress">
+                <div class="xp-fill" id="xp-fill" style="width: 65%"></div>
+            </div>
+            <p><span id="current-xp">650</span> / <span id="next-level-xp">1000</span> XP para o próximo nível</p>
+            
+            <div class="wallet-display">
+                <div class="currency">
+                    <span>🪙</span>
+                    <span id="coins-amount">1,250</span>
+                    <span>Moedas</span>
+                </div>
+                <div class="currency">
+                    <span>💎</span>
+                    <span id="gems-amount">45</span>
+                    <span>Gemas</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Badges Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🏆 Conquistas</div>
+                    <div class="card-icon">12/25</div>
+                </div>
+                
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('earned-badges')">Conquistadas</button>
+                    <button class="tab" onclick="switchTab('available-badges')">Disponíveis</button>
+                </div>
+
+                <div id="earned-badges" class="tab-content active">
+                    <div class="badges-grid">
+                        <div class="badge earned common">
+                            <div class="badge-icon">🎯</div>
+                            <div class="badge-name">First Steps</div>
+                            <div class="badge-description">Complete your first lesson</div>
+                        </div>
+                        <div class="badge earned rare">
+                            <div class="badge-icon">📚</div>
+                            <div class="badge-name">Knowledge Seeker</div>
+                            <div class="badge-description">Complete 10 lessons</div>
+                        </div>
+                        <div class="badge earned common">
+                            <div class="badge-icon">🔥</div>
+                            <div class="badge-name">Consistent Learner</div>
+                            <div class="badge-description">7-day learning streak</div>
+                        </div>
+                        <div class="badge earned epic">
+                            <div class="badge-icon">🚀</div>
+                            <div class="badge-name">Speed Demon</div>
+                            <div class="badge-description">5 lessons in one day</div>
+                            <div class="badge-new">!</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="available-badges" class="tab-content">
+                    <div class="badges-grid">
+                        <div class="badge rare">
+                            <div class="badge-icon">🎓</div>
+                            <div class="badge-name">Learning Master</div>
+                            <div class="badge-description">Complete 50 lessons</div>
+                        </div>
+                        <div class="badge legendary">
+                            <div class="badge-icon">⚡</div>
+                            <div class="badge-name">Unstoppable</div>
+                            <div class="badge-description">100-day learning streak</div>
+                        </div>
+                        <div class="badge epic">
+                            <div class="badge-icon">🦉</div>
+                            <div class="badge-name">Night Owl</div>
+                            <div class="badge-description">Complete lessons after 10 PM</div>
+                        </div>
+                        <div class="badge epic">
+                            <div class="badge-icon">⚔️</div>
+                            <div class="badge-name">Weekend Warrior</div>
+                            <div class="badge-description">10 weekend sessions</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Streaks Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🔥 Sequências</div>
+                    <div class="card-icon">Active</div>
+                </div>
+                
+                <div class="streak-display">
+                    <div class="streak-number">
+                        <span class="streak-fire">🔥</span>
+                        <span id="current-streak">23</span>
+                        <span class="streak-fire">🔥</span>
+                    </div>
+                    <p>Dias consecutivos de aprendizado</p>
+                    <p style="margin-top: 10px; color: #666; font-size: 0.9rem;">
+                        Maior sequência: <strong id="longest-streak">45</strong> dias
+                    </p>
+                </div>
+
+                <div style="background: #f8f9ff; border-radius: 10px; padding: 15px; margin-top: 20px;">
+                    <h4 style="color: #667eea; margin-bottom: 10px;">💫 Proteções Disponíveis</h4>
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 10px;">
+                        Use para proteger sua sequência em dias difíceis
+                    </p>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <span style="font-size: 1.2rem;">🛡️</span>
+                        <span><strong>2</strong> proteções restantes</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Goals Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🎯 Objetivos Diários</div>
+                    <div class="card-icon">2/3</div>
+                </div>
+                
+                <div class="goals-list">
+                    <div class="goal-item completed">
+                        <div class="goal-header">
+                            <div class="goal-title">📖 Completar 3 lições</div>
+                            <div class="goal-status">✅ Concluído</div>
+                        </div>
+                        <div class="goal-progress">
+                            <div class="goal-progress-fill completed" style="width: 100%"></div>
+                        </div>
+                        <div class="goal-reward">Recompensa: 50 moedas + 100 XP</div>
+                    </div>
+
+                    <div class="goal-item completed">
+                        <div class="goal-header">
+                            <div class="goal-title">⏱️ Estudar 30 minutos</div>
+                            <div class="goal-status">✅ Concluído</div>
+                        </div>
+                        <div class="goal-progress">
+                            <div class="goal-progress-fill completed" style="width: 100%"></div>
+                        </div>
+                        <div class="goal-reward">Recompensa: 30 moedas + 75 XP</div>
+                    </div>
+
+                    <div class="goal-item">
+                        <div class="goal-header">
+                            <div class="goal-title">⭐ Ganhar 200 XP</div>
+                            <div class="goal-status">175/200</div>
+                        </div>
+                        <div class="goal-progress">
+                            <div class="goal-progress-fill" style="width: 87.5%"></div>
+                        </div>
+                        <div class="goal-reward">Recompensa: 40 moedas</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leaderboard Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🏅 Ranking Semanal</div>
+                    <div class="card-icon">#7</div>
+                </div>
+                
+                <div class="leaderboard-list">
+                    <div class="leaderboard-item">
+                        <div class="rank top-3">🥇</div>
+                        <div class="user-info">
+                            <div class="username">Ana Silva</div>
+                            <div class="user-level">Nível 8 - Guru</div>
+                        </div>
+                        <div class="score">2,450 XP</div>
+                    </div>
+                    
+                    <div class="leaderboard-item">
+                        <div class="rank top-3">🥈</div>
+                        <div class="user-info">
+                            <div class="username">Carlos Santos</div>
+                            <div class="user-level">Nível 7 - Master</div>
+                        </div>
+                        <div class="score">2,180 XP</div>
+                    </div>
+                    
+                    <div class="leaderboard-item">
+                        <div class="rank top-3">🥉</div>
+                        <div class="user-info">
+                            <div class="username">Maria Oliveira</div>
+                            <div class="user-level">Nível 6 - Expert</div>
+                        </div>
+                        <div class="score">1,920 XP</div>
+                    </div>
+                    
+                    <div class="leaderboard-item">
+                        <div class="rank">4</div>
+                        <div class="user-info">
+                            <div class="username">João Costa</div>
+                            <div class="user-level">Nível 5 - Scholar</div>
+                        </div>
+                        <div class="score">1,650 XP</div>
+                    </div>
+                    
+                    <div class="leaderboard-item">
+                        <div class="rank">5</div>
+                        <div class="user-info">
+                            <div class="username">Pedro Lima</div>
+                            <div class="user-level">Nível 4 - Learner</div>
+                        </div>
+                        <div class="score">1,380 XP</div>
+                    </div>
+                    
+                    <div class="leaderboard-item">
+                        <div class="rank">6</div>
+                        <div class="user-info">
+                            <div class="username">Lucia Ferreira</div>
+                            <div class="user-level">Nível 4 - Learner</div>
+                        </div>
+                        <div class="score">1,150 XP</div>
+                    </div>
+                    
+                    <div class="leaderboard-item user">
+                        <div class="rank">7</div>
+                        <div class="user-info">
+                            <div class="username">Você</div>
+                            <div class="user-level">Nível 3 - Student</div>
+                        </div>
+                        <div class="score">980 XP</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🔔 Notificações</div>
+                    <div class="card-icon">3 novas</div>
+                </div>
+                
+                <div class="notifications-list">
+                    <div class="notification unread achievement">
+                        <div class="notification-icon">🚀</div>
+                        <div class="notification-content">
+                            <div class="notification-title">Nova Conquista Desbloqueada!</div>
+                            <div class="notification-message">Você ganhou a conquista "Speed Demon" por completar 5 lições em um dia!</div>
+                            <div class="notification-time">2 minutos atrás</div>
+                        </div>
+                    </div>
+                    
+                    <div class="notification unread">
+                        <div class="notification-icon">🎯</div>
+                        <div class="notification-content">
+                            <div class="notification-title">Objetivo Concluído!</div>
+                            <div class="notification-message">Parabéns! Você completou seu objetivo diário de estudar 30 minutos.</div>
+                            <div class="notification-time">1 hora atrás</div>
+                        </div>
+                    </div>
+                    
+                    <div class="notification unread">
+                        <div class="notification-icon">🔥</div>
+                        <div class="notification-content">
+                            <div class="notification-title">Sequência de 23 Dias!</div>
+                            <div class="notification-message">Incrível! Você manteve sua sequência de aprendizado por 23 dias consecutivos!</div>
+                            <div class="notification-time">3 horas atrás</div>
+                        </div>
+                    </div>
+                    
+                    <div class="notification">
+                        <div class="notification-icon">💰</div>
+                        <div class="notification-content">
+                            <div class="notification-title">Moedas Recebidas</div>
+                            <div class="notification-message">Você ganhou 50 moedas por completar uma lição!</div>
+                            <div class="notification-time">5 horas atrás</div>
+                        </div>
+                    </div>
+                    
+                    <div class="notification">
+                        <div class="notification-icon">📈</div>
+                        <div class="notification-content">
+                            <div class="notification-title">Subiu no Ranking!</div>
+                            <div class="notification-message">Você subiu para a 7ª posição no ranking semanal!</div>
+                            <div class="notification-time">1 dia atrás</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Store Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🛍️ Loja Virtual</div>
+                    <div class="card-icon">Novidades</div>
+                </div>
+                
+                <div class="store-grid">
+                    <div class="store-item affordable">
+                        <div class="item-icon">🛡️</div>
+                        <div class="item-name">Proteção de Sequência</div>
+                        <div class="item-description">Protege sua sequência por um dia</div>
+                        <div class="item-price">
+                            <span>🪙</span>
+                            <span>100</span>
+                        </div>
+                        <button class="buy-button">Comprar</button>
+                    </div>
+                    
+                    <div class="store-item affordable">
+                        <div class="item-icon">⚡</div>
+                        <div class="item-name">Boost de XP</div>
+                        <div class="item-description">Dobra o XP por 2 horas</div>
+                        <div class="item-price">
+                            <span>🪙</span>
+                            <span>200</span>
+                        </div>
+                        <button class="buy-button">Comprar</button>
+                    </div>
+                    
+                    <div class="store-item">
+                        <div class="item-icon">🎨</div>
+                        <div class="item-name">Tema Escuro</div>
+                        <div class="item-description">Personalize sua interface</div>
+                        <div class="item-price">
+                            <span>💎</span>
+                            <span>50</span>
+                        </div>
+                        <button class="buy-button" disabled>Insuficiente</button>
+                    </div>
+                    
+                    <div class="store-item owned">
+                        <div class="item-icon">🏆</div>
+                        <div class="item-name">Avatar Dourado</div>
+                        <div class="item-description">Avatar exclusivo premium</div>
+                        <div class="item-price">
+                            <span>Possuído</span>
+                        </div>
+                        <button class="buy-button" disabled>Equipado</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="card" style="margin-top: 20px;">
+            <div class="card-header">
+                <div class="card-title">📊 Estatísticas Gerais</div>
+                <div class="card-icon">Esta Semana</div>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">47</div>
+                    <div class="stat-label">Lições Completadas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">12.5h</div>
+                    <div class="stat-label">Tempo de Estudo</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">2,180</div>
+                    <div class="stat-label">XP Total</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">156</div>
+                    <div class="stat-label">Interações com Cody</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Conquistas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">23</div>
+                    <div class="stat-label">Sequência Atual</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        function switchTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabId).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        // Simulate real-time updates
+        function updateDashboard() {
+            // Simulate XP progress
+            const xpFill = document.getElementById('xp-fill');
+            const currentProgress = parseInt(xpFill.style.width);
+            if (currentProgress < 100) {
+                const newProgress = Math.min(100, currentProgress + Math.random() * 2);
+                xpFill.style.width = newProgress + '%';
+            }
+
+            // Update goal progress
+            const goalProgressBars = document.querySelectorAll('.goal-progress-fill:not(.completed)');
+            goalProgressBars.forEach(bar => {
+                const currentWidth = parseInt(bar.style.width) || 0;
+                if (currentWidth < 100) {
+                    const newWidth = Math.min(100, currentWidth + Math.random() * 3);
+                    bar.style.width = newWidth + '%';
+                    
+                    // Update goal status text
+                    const goalItem = bar.closest('.goal-item');
+                    if (newWidth >= 100) {
+                        goalItem.classList.add('completed');
+                        bar.classList.add('completed');
+                        const statusElement = goalItem.querySelector('.goal-status');
+                        statusElement.textContent = '✅ Concluído';
+                    }
+                }
+            });
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simulate loading user data
+            console.log('Gamification Dashboard initialized');
+            
+            // Start real-time updates
+            setInterval(updateDashboard, 5000);
+            
+            // Add click handlers for badges
+            document.querySelectorAll('.badge').forEach(badge => {
+                badge.addEventListener('click', function() {
+                    const badgeName = this.querySelector('.badge-name').textContent;
+                    const badgeDescription = this.querySelector('.badge-description').textContent;
+                    alert(`${badgeName}\n\n${badgeDescription}`);
+                });
+            });
+            
+            // Add click handlers for store items
+            document.querySelectorAll('.buy-button:not(:disabled)').forEach(button => {
+                button.addEventListener('click', function() {
+                    const item = this.closest('.store-item');
+                    const itemName = item.querySelector('.item-name').textContent;
+                    const price = item.querySelector('.item-price').textContent.trim();
+                    
+                    if (confirm(`Deseja comprar ${itemName} por ${price}?`)) {
+                        alert('Item comprado com sucesso!');
+                        item.classList.add('owned');
+                        this.textContent = 'Possuído';
+                        this.disabled = true;
+                        
+                        // Update coins
+                        const currentCoins = parseInt(document.getElementById('coins-amount').textContent.replace(',', ''));
+                        const itemPrice = parseInt(price.match(/\d+/)[0]);
+                        document.getElementById('coins-amount').textContent = (currentCoins - itemPrice).toLocaleString();
+                    }
+                });
+            });
+            
+            // Add notification click handlers
+            document.querySelectorAll('.notification.unread').forEach(notification => {
+                notification.addEventListener('click', function() {
+                    this.classList.remove('unread');
+                    // Update notification counter
+                    const counter = document.querySelector('.card-title + .card-icon');
+                    const currentCount = parseInt(counter.textContent.split(' ')[0]);
+                    if (currentCount > 1) {
+                        counter.textContent = `${currentCount - 1} novas`;
+                    } else {
+                        counter.textContent = 'Lidas';
+                    }
+                });
+            });
+        });
+
+        // Simulate lesson completion
+        function simulateLessonCompletion() {
+            // This would be called when a user completes a lesson
+            const earnedXP = 100;
+            const earnedCoins = 15;
+            
+            // Update XP
+            const currentXP = parseInt(document.getElementById('current-xp').textContent);
+            document.getElementById('current-xp').textContent = currentXP + earnedXP;
+            
+            // Update coins
+            const currentCoins = parseInt(document.getElementById('coins-amount').textContent.replace(',', ''));
+            document.getElementById('coins-amount').textContent = (currentCoins + earnedCoins).toLocaleString();
+            
+            // Check for new achievements
+            const newBadges = ['Speed Demon', 'Knowledge Seeker'];
+            if (Math.random() < 0.3) { // 30% chance of new badge
+                const badgeName = newBadges[Math.floor(Math.random() * newBadges.length)];
+                alert(`🎉 Nova conquista desbloqueada: ${badgeName}!`);
+            }
+            
+            // Update streak
+            const currentStreak = parseInt(document.getElementById('current-streak').textContent);
+            document.getElementById('current-streak').textContent = currentStreak;
+            
+            console.log(`Lesson completed! +${earnedXP} XP, +${earnedCoins} coins`);
+        }
+
+        // Add some demo interactivity
+        setInterval(() => {
+            if (Math.random() < 0.1) { // 10% chance per interval
+                simulateLessonCompletion();
+            }
+        }, 10000);
+    </script>
+</body>
+</html>
