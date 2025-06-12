@@ -7,6 +7,7 @@ const progressController = require('../controllers/progressController');
 const codyController = require('../controllers/codyController');
 const userController = require('../controllers/userController');
 const gamificationController = require('../controllers/simplifiedGamificationController');
+const ageAdaptationController = require('../controllers/ageAdaptationController');
 
 // Advanced AI Services
 const learningAnalyticsService = require('../services/learningAnalyticsService');

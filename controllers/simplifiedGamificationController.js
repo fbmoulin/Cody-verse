@@ -1,9 +1,11 @@
 const BaseController = require('../core/BaseController');
 const gamificationService = require('../services/simplifiedGamificationService');
+const AgeAdaptationService = require('../services/ageAdaptationService');
 
 class SimplifiedGamificationController extends BaseController {
   constructor() {
     super('SimplifiedGamificationController');
+    this.ageAdaptationService = new AgeAdaptationService();
   }
   async getDashboard(req, res) {
     await this.handleRequest(req, res, async (req) => {
@@ -12,7 +14,28 @@ class SimplifiedGamificationController extends BaseController {
       const cacheKey = `dashboard:${userId}`;
       const dashboard = await this.executeWithCache(
         cacheKey,
-        () => gamificationService.getUserDashboard(userId),
+        async () => {
+          const baseDashboard = await gamificationService.getUserDashboard(userId);
+          
+          // Get user's age group and adapt content
+          const userAgeGroup = baseDashboard.user?.age_group || 'adult';
+          const adaptedContent = this.ageAdaptationService.adaptContent(baseDashboard, userAgeGroup);
+          const languageTemplates = this.ageAdaptationService.getLanguageTemplates(userAgeGroup);
+          const uiAdaptations = this.ageAdaptationService.getUIAdaptations(userAgeGroup);
+          
+          return {
+            ...baseDashboard,
+            ...adaptedContent,
+            ageGroup: userAgeGroup,
+            languageTemplates,
+            uiAdaptations,
+            adaptedMessages: {
+              welcome: languageTemplates.welcome,
+              encouragement: languageTemplates.encouragement,
+              progress: languageTemplates.progress
+            }
+          };
+        },
         180000
       );
       
