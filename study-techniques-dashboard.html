@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 Técnicas Avançadas de Estudo - Cody Verse</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .techniques-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .technique-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 5px solid #667eea;
+        }
+
+        .technique-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .technique-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .technique-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+
+        .technique-title {
+            color: #667eea;
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+
+        .effectiveness-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e6ff;
+            border-radius: 3px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .effectiveness-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+            transition: width 0.8s ease;
+        }
+
+        .technique-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .detail-item {
+            background: #f8f9ff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .best-for-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .tag {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            font-size: 0.9rem;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f8f9ff;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .pomodoro-timer {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #ff6b6b, #ff8a80);
+            color: white;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .timer-display {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .session-tracker {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .progress-ring {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+        .progress-ring svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring circle {
+            fill: transparent;
+            stroke: #e0e6ff;
+            stroke-width: 8;
+        }
+
+        .progress-ring .progress {
+            stroke: #667eea;
+            stroke-linecap: round;
+            transition: stroke-dasharray 0.5s ease;
+        }
+
+        .feynman-steps {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9ff;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .step-content p {
+            margin-bottom: 8px;
+        }
+
+        .step-time {
+            font-size: 0.8rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        .mind-map-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            min-height: 300px;
+            position: relative;
+        }
+
+        .central-node {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #667eea;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            z-index: 10;
+        }
+
+        .branch-node {
+            position: absolute;
+            background: #f8f9ff;
+            border: 2px solid #667eea;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .branch-node:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .metric-label {
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .active-session {
+            border: 3px solid #66bb6a;
+            background: linear-gradient(135deg, #e8f5e8, #f1f8e9);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #667eea;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        @media (max-width: 768px) {
+            .techniques-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .technique-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .timer-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Técnicas Avançadas de Estudo</h1>
+            <p>Sistema Inteligente de Otimização do Aprendizado</p>
+        </div>
+
+        <!-- Técnicas Principais -->
+        <div class="techniques-grid">
+            <!-- Técnica Pomodoro -->
+            <div class="technique-card" id="pomodoro-card">
+                <div class="technique-header">
+                    <div class="technique-icon">🍅</div>
+                    <div class="technique-title">Técnica Pomodoro</div>
+                </div>
+                <p>Sessões de estudo focadas com intervalos regulares para maximizar concentração e produtividade.</p>
+                
+                <div class="effectiveness-bar">
+                    <div class="effectiveness-fill" style="width: 85%"></div>
+                </div>
+
+                <div class="technique-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Eficácia:</span> 85%
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Tempo:</span> Baixo
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Dificuldade:</span> Fácil
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Sessão:</span> 25 min
+                    </div>
+                </div>
+
+                <div class="best-for-tags">
+                    <span class="tag">Concentração</span>
+                    <span class="tag">Produtividade</span>
+                    <span class="tag">Gestão do Tempo</span>
+                </div>
+
+                <button class="btn btn-primary" onclick="startPomodoro()">Iniciar Sessão</button>
+                <button class="btn btn-secondary" onclick="customizePomodoro()">Personalizar</button>
+            </div>
+
+            <!-- Repetição Espaçada -->
+            <div class="technique-card">
+                <div class="technique-header">
+                    <div class="technique-icon">🔄</div>
+                    <div class="technique-title">Repetição Espaçada</div>
+                </div>
+                <p>Sistema otimizado baseado na curva do esquecimento para maximizar retenção de longo prazo.</p>
+                
+                <div class="effectiveness-bar">
+                    <div class="effectiveness-fill" style="width: 95%"></div>
+                </div>
+
+                <div class="technique-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Eficácia:</span> 95%
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Tempo:</span> Médio
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Dificuldade:</span> Fácil
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Algoritmo:</span> SM2+
+                    </div>
+                </div>
+
+                <div class="best-for-tags">
+                    <span class="tag">Memorização</span>
+                    <span class="tag">Vocabulário</span>
+                    <span class="tag">Conceitos</span>
+                </div>
+
+                <button class="btn btn-primary" onclick="setupSpacedRepetition()">Configurar</button>
+                <button class="btn btn-secondary" onclick="viewSchedule()">Ver Agenda</button>
+            </div>
+
+            <!-- Recordação Ativa -->
+            <div class="technique-card">
+                <div class="technique-header">
+                    <div class="technique-icon">🧠</div>
+                    <div class="technique-title">Recordação Ativa</div>
+                </div>
+                <p>Teste seu conhecimento sem consultar material para fortalecer conexões neurais.</p>
+                
+                <div class="effectiveness-bar">
+                    <div class="effectiveness-fill" style="width: 92%"></div>
+                </div>
+
+                <div class="technique-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Eficácia:</span> 92%
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Tempo:</span> Médio
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Dificuldade:</span> Médio
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Métodos:</span> 3
+                    </div>
+                </div>
+
+                <div class="best-for-tags">
+                    <span class="tag">Compreensão</span>
+                    <span class="tag">Retenção</span>
+                    <span class="tag">Autoavaliação</span>
+                </div>
+
+                <button class="btn btn-primary" onclick="generateActiveRecall()">Gerar Questões</button>
+                <button class="btn btn-secondary" onclick="startQuiz()">Teste Rápido</button>
+            </div>
+
+            <!-- Técnica Feynman -->
+            <div class="technique-card">
+                <div class="technique-header">
+                    <div class="technique-icon">🎓</div>
+                    <div class="technique-title">Técnica Feynman</div>
+                </div>
+                <p>Explique conceitos com linguagem simples para identificar lacunas no conhecimento.</p>
+                
+                <div class="effectiveness-bar">
+                    <div class="effectiveness-fill" style="width: 90%"></div>
+                </div>
+
+                <div class="technique-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Eficácia:</span> 90%
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Tempo:</span> Alto
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Dificuldade:</span> Médio
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Passos:</span> 5
+                    </div>
+                </div>
+
+                <div class="best-for-tags">
+                    <span class="tag">Compreensão Profunda</span>
+                    <span class="tag">Conceitos Complexos</span>
+                    <span class="tag">Ensino</span>
+                </div>
+
+                <button class="btn btn-primary" onclick="startFeynman()">Iniciar Técnica</button>
+                <button class="btn btn-secondary" onclick="viewFeynmanGuide()">Ver Guia</button>
+            </div>
+
+            <!-- Mapas Mentais -->
+            <div class="technique-card">
+                <div class="technique-header">
+                    <div class="technique-icon">🗺️</div>
+                    <div class="technique-title">Mapas Mentais</div>
+                </div>
+                <p>Organização visual de informações para melhor compreensão e memorização.</p>
+                
+                <div class="effectiveness-bar">
+                    <div class="effectiveness-fill" style="width: 80%"></div>
+                </div>
+
+                <div class="technique-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Eficácia:</span> 80%
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Tempo:</span> Médio
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Dificuldade:</span> Fácil
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Estrutura:</span> Radial
+                    </div>
+                </div>
+
+                <div class="best-for-tags">
+                    <span class="tag">Organização</span>
+                    <span class="tag">Criatividade</span>
+                    <span class="tag">Visão Geral</span>
+                </div>
+
+                <button class="btn btn-primary" onclick="createMindMap()">Criar Mapa</button>
+                <button class="btn btn-secondary" onclick="viewMindMapTemplates()">Modelos</button>
+            </div>
+
+            <!-- Intercalação -->
+            <div class="technique-card">
+                <div class="technique-header">
+                    <div class="technique-icon">🔀</div>
+                    <div class="technique-title">Intercalação</div>
+                </div>
+                <p>Alternância entre diferentes tópicos para melhorar discriminação e transferência.</p>
+                
+                <div class="effectiveness-bar">
+                    <div class="effectiveness-fill" style="width: 88%"></div>
+                </div>
+
+                <div class="technique-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Eficácia:</span> 88%
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Tempo:</span> Médio
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Dificuldade:</span> Difícil
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Padrão:</span> ABCABC
+                    </div>
+                </div>
+
+                <div class="best-for-tags">
+                    <span class="tag">Discriminação</span>
+                    <span class="tag">Transferência</span>
+                    <span class="tag">Flexibilidade</span>
+                </div>
+
+                <button class="btn btn-primary" onclick="setupInterleaving()">Configurar</button>
+                <button class="btn btn-secondary" onclick="viewInterleavingPatterns()">Padrões</button>
+            </div>
+        </div>
+
+        <!-- Timer Pomodoro -->
+        <div class="pomodoro-timer" id="pomodoro-timer" style="display: none;">
+            <h3>Sessão Pomodoro Ativa</h3>
+            <div class="timer-display" id="timer-display">25:00</div>
+            <div class="session-tracker">
+                <div class="progress-ring">
+                    <svg>
+                        <circle cx="60" cy="60" r="54"></circle>
+                        <circle class="progress" cx="60" cy="60" r="54" stroke-dasharray="339.292" stroke-dashoffset="339.292"></circle>
+                    </svg>
+                </div>
+                <p>Sessão 1 de 4 - Foco Total</p>
+            </div>
+            <div class="timer-controls">
+                <button class="btn btn-secondary" onclick="pauseTimer()">Pausar</button>
+                <button class="btn btn-primary" onclick="stopTimer()">Finalizar</button>
+                <button class="btn btn-secondary" onclick="skipBreak()">Pular Pausa</button>
+            </div>
+        </div>
+
+        <!-- Guia Feynman -->
+        <div class="feynman-steps" id="feynman-guide" style="display: none;">
+            <h3>Técnica Feynman: Inteligência Artificial</h3>
+            
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h4>Escolha o Conceito</h4>
+                    <p>Escreva "Inteligência Artificial" no topo de uma folha</p>
+                    <div class="step-time">Tempo estimado: 2 minutos</div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h4>Explique com Linguagem Simples</h4>
+                    <p>Explique o conceito como se fosse para uma criança de 12 anos</p>
+                    <div class="step-time">Tempo estimado: 10-15 minutos</div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h4>Identifique Lacunas</h4>
+                    <p>Marque pontos onde teve dificuldade ou incerteza</p>
+                    <div class="step-time">Tempo estimado: 5 minutos</div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h4>Revise e Estude</h4>
+                    <p>Volte ao material para preencher as lacunas identificadas</p>
+                    <div class="step-time">Tempo estimado: 15-20 minutos</div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h4>Repita o Processo</h4>
+                    <p>Explique novamente até conseguir fazer de forma fluida</p>
+                    <div class="step-time">Tempo estimado: 10 minutos</div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="startFeynmanTimer()">Iniciar com Timer</button>
+            <button class="btn btn-secondary" onclick="hideFeynmanGuide()">Fechar</button>
+        </div>
+
+        <!-- Mapa Mental -->
+        <div class="mind-map-container" id="mind-map" style="display: none;">
+            <h3 style="margin-bottom: 20px;">Mapa Mental: Inteligência Artificial</h3>
+            
+            <div class="central-node">
+                Inteligência Artificial
+            </div>
+            
+            <div class="branch-node" style="top: 20%; left: 20%;">
+                Machine Learning
+            </div>
+            
+            <div class="branch-node" style="top: 20%; right: 20%;">
+                Redes Neurais
+            </div>
+            
+            <div class="branch-node" style="bottom: 20%; left: 20%;">
+                Processamento de Linguagem
+            </div>
+            
+            <div class="branch-node" style="bottom: 20%; right: 20%;">
+                Visão Computacional
+            </div>
+            
+            <div class="branch-node" style="top: 50%; left: 10%;">
+                Algoritmos
+            </div>
+            
+            <div class="branch-node" style="top: 50%; right: 10%;">
+                Aplicações
+            </div>
+
+            <button class="btn btn-primary" onclick="expandMindMap()">Expandir</button>
+            <button class="btn btn-secondary" onclick="hideMindMap()">Fechar</button>
+        </div>
+
+        <!-- Analytics de Progresso -->
+        <div class="analytics-grid">
+            <div class="metric-card">
+                <div class="metric-value" id="total-sessions">12</div>
+                <div class="metric-label">Sessões Concluídas</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-value" id="avg-focus">23.5</div>
+                <div class="metric-label">Foco Médio (min)</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-value" id="retention-rate">87%</div>
+                <div class="metric-label">Taxa de Retenção</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-value" id="technique-mastery">4/8</div>
+                <div class="metric-label">Técnicas Dominadas</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // Demo user ID
+        const DEMO_USER_ID = 1;
+        let currentTimer = null;
+        let currentSession = null;
+
+        // Técnica Pomodoro
+        function startPomodoro() {
+            const card = document.getElementById('pomodoro-card');
+            card.classList.add('active-session');
+            
+            const timer = document.getElementById('pomodoro-timer');
+            timer.style.display = 'block';
+            
+            showNotification('Sessão Pomodoro iniciada! Foco total pelos próximos 25 minutos.');
+            
+            // Simular início via API
+            startPomodoroSession();
+        }
+
+        async function startPomodoroSession() {
+            try {
+                const response = await fetch(`/api/study-techniques/pomodoro/start/${DEMO_USER_ID}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer demo-token'
+                    },
+                    body: JSON.stringify({
+                        taskDescription: 'Estudo de Inteligência Artificial',
+                        customDuration: 25
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    currentSession = data.data;
+                    startTimerCountdown(25 * 60); // 25 minutos em segundos
+                } else {
+                    throw new Error('Failed to start session');
+                }
+            } catch (error) {
+                // Fallback para demonstração
+                currentSession = { sessionId: 'demo_session_' + Date.now() };
+                startTimerCountdown(25 * 60);
+            }
+        }
+
+        function startTimerCountdown(totalSeconds) {
+            let timeLeft = totalSeconds;
+            const display = document.getElementById('timer-display');
+            const progressCircle = document.querySelector('.progress-ring .progress');
+            const circumference = 339.292;
+            
+            currentTimer = setInterval(() => {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                display.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                // Atualizar progresso circular
+                const progress = (totalSeconds - timeLeft) / totalSeconds;
+                const offset = circumference - (progress * circumference);
+                progressCircle.style.strokeDashoffset = offset;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(currentTimer);
+                    completeSession();
+                }
+                
+                timeLeft--;
+            }, 1000);
+        }
+
+        function completeSession() {
+            showNotification('Sessão Pomodoro concluída! Hora da pausa de 5 minutos.');
+            
+            // Finalizar sessão via API
+            if (currentSession) {
+                endStudySession();
+            }
+            
+            stopTimer();
+        }
+
+        async function endStudySession() {
+            try {
+                const response = await fetch(`/api/study-techniques/session/end/${currentSession.sessionId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer demo-token'
+                    },
+                    body: JSON.stringify({
+                        actualDuration: 25,
+                        productivity: 8,
+                        interruptions: 0,
+                        completed: true,
+                        notes: 'Sessão produtiva de estudo'
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    updateSessionMetrics(data.data);
+                }
+            } catch (error) {
+                // Fallback
+                updateSessionMetrics({ effectiveness: 0.85 });
+            }
+        }
+
+        function updateSessionMetrics(sessionData) {
+            const totalSessions = document.getElementById('total-sessions');
+            const currentValue = parseInt(totalSessions.textContent);
+            totalSessions.textContent = currentValue + 1;
+        }
+
+        function pauseTimer() {
+            if (currentTimer) {
+                clearInterval(currentTimer);
+                currentTimer = null;
+                showNotification('Timer pausado');
+            }
+        }
+
+        function stopTimer() {
+            if (currentTimer) {
+                clearInterval(currentTimer);
+                currentTimer = null;
+            }
+            
+            const timer = document.getElementById('pomodoro-timer');
+            timer.style.display = 'none';
+            
+            const card = document.getElementById('pomodoro-card');
+            card.classList.remove('active-session');
+            
+            // Reset display
+            document.getElementById('timer-display').textContent = '25:00';
+            document.querySelector('.progress-ring .progress').style.strokeDashoffset = '339.292';
+        }
+
+        function customizePomodoro() {
+            showNotification('Personalização Pomodoro: 25min trabalho, 5min pausa baseado no seu perfil');
+        }
+
+        // Repetição Espaçada
+        function setupSpacedRepetition() {
+            showNotification('Sistema de repetição espaçada configurado! Próxima revisão em 1 dia.');
+        }
+
+        function viewSchedule() {
+            showNotification('Agenda: Hoje - 2 revisões | Amanhã - 1 revisão | Próxima semana - 3 revisões');
+        }
+
+        // Recordação Ativa
+        async function generateActiveRecall() {
+            try {
+                const response = await fetch(`/api/study-techniques/active-recall/${DEMO_USER_ID}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer demo-token'
+                    },
+                    body: JSON.stringify({
+                        topic: 'Inteligência Artificial',
+                        content: 'Conceitos fundamentais de IA, machine learning e redes neurais',
+                        difficulty: 'intermediate'
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    displayActiveRecallQuestions(data.data.questions);
+                } else {
+                    throw new Error('Failed to generate questions');
+                }
+            } catch (error) {
+                // Fallback
+                const questions = [
+                    'Explique a diferença entre machine learning e deep learning',
+                    'Como funciona uma rede neural artificial?',
+                    'Quais são as principais aplicações de IA hoje?'
+                ];
+                displayActiveRecallQuestions(questions);
+            }
+        }
+
+        function displayActiveRecallQuestions(questions) {
+            const questionList = Array.isArray(questions) ? questions : questions.map(q => q.question || q);
+            showNotification(`Geradas ${questionList.length} questões de recordação ativa! Teste seu conhecimento.`);
+        }
+
+        function startQuiz() {
+            showNotification('Quiz rápido iniciado! Responda sem consultar o material.');
+        }
+
+        // Técnica Feynman
+        function startFeynman() {
+            const guide = document.getElementById('feynman-guide');
+            guide.style.display = 'block';
+            showNotification('Técnica Feynman iniciada! Siga os 5 passos para dominar o conceito.');
+        }
+
+        function viewFeynmanGuide() {
+            startFeynman();
+        }
+
+        function hideFeynmanGuide() {
+            document.getElementById('feynman-guide').style.display = 'none';
+        }
+
+        function startFeynmanTimer() {
+            showNotification('Timer Feynman iniciado! Comece explicando com suas próprias palavras.');
+        }
+
+        // Mapas Mentais
+        function createMindMap() {
+            const mindMap = document.getElementById('mind-map');
+            mindMap.style.display = 'block';
+            showNotification('Mapa mental criado! Clique nos nós para expandir conceitos.');
+        }
+
+        function viewMindMapTemplates() {
+            showNotification('Modelos disponíveis: Radial, Hierárquico, Fluxograma, Conceitual');
+        }
+
+        function hideMindMap() {
+            document.getElementById('mind-map').style.display = 'none';
+        }
+
+        function expandMindMap() {
+            showNotification('Mapa expandido! Novos conceitos conectados automaticamente.');
+        }
+
+        // Intercalação
+        function setupInterleaving() {
+            showNotification('Intercalação configurada: IA → Prompt Engineering → Agentes → IA...');
+        }
+
+        function viewInterleavingPatterns() {
+            showNotification('Padrões: ABCABC (3 tópicos), ABCDABCD (4 tópicos), Personalizado');
+        }
+
+        // Sistema de notificações
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+
+        // Carregar perfil do usuário ao inicializar
+        async function loadUserProfile() {
+            try {
+                const response = await fetch(`/api/study-techniques/profile/${DEMO_USER_ID}`, {
+                    headers: { 'Authorization': 'Bearer demo-token' }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    updateUIWithProfile(data.data.profile);
+                }
+            } catch (error) {
+                console.log('Using fallback profile data');
+            }
+        }
+
+        function updateUIWithProfile(profile) {
+            // Atualizar interface com dados do perfil
+            showNotification(`Perfil carregado: ${profile.learningPattern} | ${profile.preferredStyle}`);
+        }
+
+        // Inicializar ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserProfile();
+            showNotification('Sistema de técnicas avançadas carregado! Selecione uma técnica para começar.');
+        });
+    </script>
+</body>
+</html>

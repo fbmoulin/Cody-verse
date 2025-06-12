@@ -11,6 +11,9 @@ const userController = require('../controllers/userController');
 const learningAnalyticsService = require('../services/learningAnalyticsService');
 const aiContentGenerationService = require('../services/aiContentGenerationService');
 
+// Controllers
+const studyTechniquesController = require('../controllers/studyTechniquesController');
+
 // Middleware de autenticação básica
 const authenticateUser = require('../server/auth');
 
@@ -151,6 +154,17 @@ router.post('/ai/motivate', authenticateUser, async (req, res) => {
     res.status(500).json({ success: false, error: 'Failed to generate motivational content' });
   }
 });
+
+// Advanced Study Techniques Routes
+router.get('/study-techniques/profile/:userId', authenticateUser, studyTechniquesController.analyzeStudyProfile.bind(studyTechniquesController));
+router.get('/study-techniques/recommendations/:userId', authenticateUser, studyTechniquesController.getPersonalizedTechniques.bind(studyTechniquesController));
+router.post('/study-techniques/pomodoro/start/:userId', authenticateUser, studyTechniquesController.startPomodoroSession.bind(studyTechniquesController));
+router.post('/study-techniques/session/end/:sessionId', authenticateUser, studyTechniquesController.endStudySession.bind(studyTechniquesController));
+router.post('/study-techniques/active-recall/:userId', authenticateUser, studyTechniquesController.generateActiveRecall.bind(studyTechniquesController));
+router.post('/study-techniques/feynman/:userId', authenticateUser, studyTechniquesController.implementFeynman.bind(studyTechniquesController));
+router.post('/study-techniques/mind-map/:userId', authenticateUser, studyTechniquesController.createMindMap.bind(studyTechniquesController));
+router.post('/study-techniques/spaced-repetition/:userId', authenticateUser, studyTechniquesController.setupSpacedRepetition.bind(studyTechniquesController));
+router.get('/study-techniques/analytics/:userId', authenticateUser, studyTechniquesController.getStudyAnalytics.bind(studyTechniquesController));
 
 // Rota de health check
 router.get('/health', require('../server/database').healthCheck);
