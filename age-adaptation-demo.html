@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodyVerse - Demo Adaptação por Idade</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .age-selector {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .age-groups {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .age-group {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .age-group:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .age-group.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .age-group.child {
+            border-color: #ff6b6b;
+        }
+
+        .age-group.child.active {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 100%);
+        }
+
+        .age-group.teen {
+            border-color: #4ecdc4;
+        }
+
+        .age-group.teen.active {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+        }
+
+        .age-group.adult {
+            border-color: #6c5ce7;
+        }
+
+        .age-group.adult.active {
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+        }
+
+        .adaptation-demo {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .demo-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .demo-card h3 {
+            margin-bottom: 15px;
+            color: #333;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .language-demo {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .exercise-demo {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .exercise-tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            border: 1px solid #bbdefb;
+        }
+
+        .ui-demo {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .ui-demo.child {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 100%);
+            color: white;
+            font-size: 1.2rem;
+            animation: bounce 2s infinite;
+        }
+
+        .ui-demo.teen {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .ui-demo.adult {
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            color: white;
+            font-size: 1rem;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .stats-demo {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .recommendation-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recommendation-list li {
+            background: #f0f8ff;
+            margin: 8px 0;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #667eea;
+        }
+
+        .test-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .response-display {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌟 CodyVerse - Adaptação por Idade</h1>
+            <p>Experiências personalizadas para cada faixa etária</p>
+        </div>
+
+        <div class="age-selector">
+            <h2>Selecione a Faixa Etária para Ver as Adaptações</h2>
+            <div class="age-groups">
+                <div class="age-group child" data-age="child">
+                    <h3>👶 Crianças (7-12 anos)</h3>
+                    <p>Interface colorida e divertida com linguagem simples</p>
+                </div>
+                <div class="age-group teen" data-age="teen">
+                    <h3>🧒 Adolescentes (13-18 anos)</h3>
+                    <p>Design moderno com linguagem motivacional</p>
+                </div>
+                <div class="age-group adult active" data-age="adult">
+                    <h3>👨‍💼 Adultos (19+ anos)</h3>
+                    <p>Interface profissional com foco em resultados</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="adaptation-demo">
+            <div class="demo-card">
+                <h3>💬 Adaptação de Linguagem</h3>
+                <div class="language-demo" id="languageDemo">
+                    <div id="welcomeMessage">Carregando mensagem de boas-vindas...</div>
+                    <div id="encouragementMessage" style="margin-top: 10px;">Carregando encorajamento...</div>
+                </div>
+                
+                <button class="test-button" onclick="testRegistration()">
+                    Testar Registro de Usuário
+                </button>
+                <div class="response-display" id="registrationResponse" style="display: none;"></div>
+            </div>
+
+            <div class="demo-card">
+                <h3>🎮 Exercícios Adaptados</h3>
+                <div class="exercise-demo" id="exerciseDemo">
+                    <div class="loading">Carregando tipos de exercícios...</div>
+                </div>
+                
+                <button class="test-button" onclick="generateExercises()">
+                    Gerar Exercícios
+                </button>
+                <div class="response-display" id="exerciseResponse" style="display: none;"></div>
+            </div>
+
+            <div class="demo-card">
+                <h3>🎨 Interface Adaptada</h3>
+                <div class="ui-demo" id="uiDemo">
+                    Exemplo de interface profissional para adultos
+                </div>
+                <div class="stats-demo" id="statsDemo">
+                    <div class="stat-item">
+                        <div class="stat-value" id="coinsValue">25</div>
+                        <div class="stat-label">Moedas Iniciais</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="sessionTime">45</div>
+                        <div class="stat-label">Min/Sessão</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="maxQuestions">15</div>
+                        <div class="stat-label">Questões/Sessão</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-card">
+                <h3>💡 Recomendações Personalizadas</h3>
+                <ul class="recommendation-list" id="recommendationsList">
+                    <li>Carregando recomendações...</li>
+                </ul>
+                
+                <button class="test-button" onclick="getAgeProfile()">
+                    Obter Perfil Etário
+                </button>
+                <div class="response-display" id="profileResponse" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentAge = 'adult';
+        
+        const adaptations = {
+            child: {
+                welcome: "Olá! Que bom te ver aqui! 🌟",
+                encouragement: "Você está indo muito bem! Continue assim!",
+                exercises: ["drag_drop", "matching", "coloring", "simple_quiz", "story_completion"],
+                uiText: "Interface super colorida e divertida! 🎨🌈",
+                coins: 100,
+                sessionTime: 15,
+                maxQuestions: 5,
+                recommendations: [
+                    "Faça pausas frequentes durante os estudos",
+                    "Use cores e desenhos para ajudar a lembrar",
+                    "Peça ajuda quando precisar",
+                    "Comemore cada conquista!"
+                ]
+            },
+            teen: {
+                welcome: "E aí! Pronto para mais uma sessão de estudos?",
+                encouragement: "Você está arrasando! Bora continuar!",
+                exercises: ["multiple_choice", "fill_blanks", "coding_challenges", "projects", "peer_discussions"],
+                uiText: "Design moderno e intuitivo para jovens",
+                coins: 50,
+                sessionTime: 25,
+                maxQuestions: 10,
+                recommendations: [
+                    "Defina metas de estudo realistas",
+                    "Use técnicas de memorização ativa",
+                    "Conecte o aprendizado com seus interesses",
+                    "Compartilhe conhecimento com colegas"
+                ]
+            },
+            adult: {
+                welcome: "Bem-vindo de volta. Vamos continuar seu desenvolvimento?",
+                encouragement: "Excelente progresso. Continue focado em seus objetivos.",
+                exercises: ["case_studies", "simulations", "research_projects", "presentations", "certifications"],
+                uiText: "Interface profissional para desenvolvimento",
+                coins: 25,
+                sessionTime: 45,
+                maxQuestions: 15,
+                recommendations: [
+                    "Estabeleça rotinas de estudo consistentes",
+                    "Aplique conhecimentos em contextos práticos",
+                    "Mantenha foco nos objetivos profissionais",
+                    "Monitore seu progresso regularmente"
+                ]
+            }
+        };
+
+        function updateAdaptations(ageGroup) {
+            currentAge = ageGroup;
+            const adaptation = adaptations[ageGroup];
+            
+            // Update language demo
+            document.getElementById('welcomeMessage').textContent = adaptation.welcome;
+            document.getElementById('encouragementMessage').textContent = adaptation.encouragement;
+            
+            // Update exercises
+            const exerciseDemo = document.getElementById('exerciseDemo');
+            exerciseDemo.innerHTML = adaptation.exercises.map(exercise => 
+                `<span class="exercise-tag">${exercise.replace(/_/g, ' ')}</span>`
+            ).join('');
+            
+            // Update UI demo
+            const uiDemo = document.getElementById('uiDemo');
+            uiDemo.className = `ui-demo ${ageGroup}`;
+            uiDemo.textContent = adaptation.uiText;
+            
+            // Update stats
+            document.getElementById('coinsValue').textContent = adaptation.coins;
+            document.getElementById('sessionTime').textContent = adaptation.sessionTime;
+            document.getElementById('maxQuestions').textContent = adaptation.maxQuestions;
+            
+            // Update recommendations
+            const recommendationsList = document.getElementById('recommendationsList');
+            recommendationsList.innerHTML = adaptation.recommendations.map(rec => 
+                `<li>${rec}</li>`
+            ).join('');
+        }
+
+        // Age group selection
+        document.querySelectorAll('.age-group').forEach(group => {
+            group.addEventListener('click', () => {
+                document.querySelectorAll('.age-group').forEach(g => g.classList.remove('active'));
+                group.classList.add('active');
+                updateAdaptations(group.dataset.age);
+            });
+        });
+
+        async function testRegistration() {
+            const birthDates = {
+                child: '2016-05-15',
+                teen: '2009-03-20',
+                adult: '1999-08-10'
+            };
+            
+            const names = {
+                child: 'Sofia Silva',
+                teen: 'João Santos',
+                adult: 'Maria Oliveira'
+            };
+            
+            try {
+                const response = await fetch('/api/age-adaptation/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: names[currentAge],
+                        email: `${currentAge}@example.com`,
+                        birthDate: birthDates[currentAge]
+                    })
+                });
+                
+                const data = await response.json();
+                document.getElementById('registrationResponse').style.display = 'block';
+                document.getElementById('registrationResponse').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('registrationResponse').style.display = 'block';
+                document.getElementById('registrationResponse').textContent = 'Erro: ' + error.message;
+            }
+        }
+
+        async function generateExercises() {
+            const topics = {
+                child: 'programming',
+                teen: 'web development',
+                adult: 'data science'
+            };
+            
+            try {
+                const response = await fetch('/api/age-adaptation/exercises', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        topic: topics[currentAge],
+                        ageGroup: currentAge,
+                        difficulty: 'medium'
+                    })
+                });
+                
+                const data = await response.json();
+                document.getElementById('exerciseResponse').style.display = 'block';
+                document.getElementById('exerciseResponse').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('exerciseResponse').style.display = 'block';
+                document.getElementById('exerciseResponse').textContent = 'Erro: ' + error.message;
+            }
+        }
+
+        async function getAgeProfile() {
+            const birthDates = {
+                child: '2016-05-15',
+                teen: '2009-03-20',
+                adult: '1999-08-10'
+            };
+            
+            try {
+                const response = await fetch(`/api/age-adaptation/profile?birthDate=${birthDates[currentAge]}`);
+                const data = await response.json();
+                document.getElementById('profileResponse').style.display = 'block';
+                document.getElementById('profileResponse').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('profileResponse').style.display = 'block';
+                document.getElementById('profileResponse').textContent = 'Erro: ' + error.message;
+            }
+        }
+
+        // Initialize with adult adaptations
+        updateAdaptations('adult');
+
+        console.log('CodyVerse Age Adaptation Demo initialized successfully');
+    </script>
+</body>
+</html>
