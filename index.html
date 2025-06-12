@@ -981,7 +981,7 @@
         
         <div class="nav-buttons">
             <button class="btn btn-primary" onclick="showDashboard()">Dashboard do Curso</button>
-            <button class="btn btn-secondary" onclick="showProgress()">Meu Progresso</button>
+            <button class="btn btn-secondary" id="progressBtn">Meu Progresso</button>
         </div>
         
         <div class="course-grid" id="courseGrid">
@@ -2262,10 +2262,14 @@
         }
         
         async function showProgress() {
+            console.log('showProgress function called');
             try {
                 // Hide course grid and show progress interface
-                document.getElementById('courseGrid').style.display = 'none';
-                document.querySelector('.nav-buttons').style.display = 'none';
+                const courseGrid = document.getElementById('courseGrid');
+                const navButtons = document.querySelector('.nav-buttons');
+                
+                if (courseGrid) courseGrid.style.display = 'none';
+                if (navButtons) navButtons.style.display = 'none';
                 
                 // Create progress container if it doesn't exist
                 let progressContainer = document.getElementById('progressContainer');
@@ -2287,8 +2291,11 @@
                 progressContainer.style.display = 'block';
                 
                 // Load progress data from gamification API
+                console.log('Fetching progress data...');
                 const response = await fetch('/api/gamification/dashboard/1');
+                console.log('Response received:', response.status);
                 const result = await response.json();
+                console.log('Data received:', result);
                 
                 if (result.success) {
                     renderProgressData(result.data);
@@ -2298,6 +2305,18 @@
             } catch (error) {
                 console.error('Error loading progress:', error);
                 showNotification('Erro ao carregar progresso. Tente novamente.');
+                
+                // Show the container anyway with an error message
+                let progressContainer = document.getElementById('progressContainer');
+                if (progressContainer) {
+                    progressContainer.querySelector('.progress-content').innerHTML = `
+                        <div class="loading-message">
+                            <h3>Erro ao carregar dados de progresso</h3>
+                            <p>Verifique sua conexão e tente novamente.</p>
+                            <button class="btn btn-primary" onclick="refreshProgress()">Tentar Novamente</button>
+                        </div>
+                    `;
+                }
             }
         }
         
@@ -2504,6 +2523,13 @@
             const nextBtn = document.querySelector('[data-lesson-next]');
             if (nextBtn) {
                 nextBtn.addEventListener('click', nextLesson);
+            }
+            
+            // Setup progress button event listener
+            const progressBtn = document.getElementById('progressBtn');
+            if (progressBtn) {
+                progressBtn.addEventListener('click', showProgress);
+                console.log('Progress button event listener added');
             }
             
             setTimeout(() => {
