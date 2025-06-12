@@ -1,25 +1,23 @@
+const BaseController = require('../core/BaseController');
 const gamificationService = require('../services/simplifiedGamificationService');
 
-class SimplifiedGamificationController {
-  // Get user's complete gamification dashboard
+class SimplifiedGamificationController extends BaseController {
+  constructor() {
+    super('SimplifiedGamificationController');
+  }
   async getDashboard(req, res) {
-    try {
-      const userId = req.params.userId || req.user?.id || 1; // Default to user 1 for demo
+    await this.handleRequest(req, res, async (req) => {
+      const userId = this.parseIntParam(req.params.userId, 'userId', 1);
       
-      const dashboard = await gamificationService.getUserDashboard(userId);
+      const cacheKey = `dashboard:${userId}`;
+      const dashboard = await this.executeWithCache(
+        cacheKey,
+        () => gamificationService.getUserDashboard(userId),
+        180000
+      );
       
-      res.json({
-        success: true,
-        data: dashboard
-      });
-
-    } catch (error) {
-      console.error('Error getting gamification dashboard:', error);
-      res.status(500).json({ 
-        error: 'Failed to get dashboard',
-        message: error.message 
-      });
-    }
+      return this.createResponse(dashboard, 'Dashboard retrieved successfully');
+    });
   }
 
   // Process lesson completion with gamification rewards
