@@ -3,10 +3,18 @@ const { dbManager } = require('../server/database');
 class SimplifiedGamificationService {
   constructor() {
     this.initialized = false;
+    this.initializationPromise = null;
   }
 
   async initialize() {
     if (this.initialized) return;
+    if (this.initializationPromise) return this.initializationPromise;
+    
+    this.initializationPromise = this._performInitialization();
+    await this.initializationPromise;
+  }
+
+  async _performInitialization() {
     
     try {
       const client = await dbManager.pool.connect();
