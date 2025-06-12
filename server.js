@@ -12,6 +12,11 @@ const systemHealth = require('./services/systemHealthMonitor');
 const cacheService = require('./services/cacheService');
 const RequestMiddleware = require('./server/requestMiddleware');
 
+// Core refactored components
+const configManager = require('./core/ConfigManager');
+const dataAccessLayer = require('./core/DataAccessLayer');
+const apiDocGenerator = require('./core/APIDocGenerator');
+
 // Middleware
 const {
   setupSecurity,
@@ -35,8 +40,9 @@ class CodyVerseServer {
     try {
       console.log('Inicializando Cody Verse Backend...');
       
-      // Validar configurações
-      validateConfig();
+      // Validate enhanced configuration
+      configManager.validate();
+      console.log('Enhanced configuration validated');
       
       // Initialize enhanced connection pool
       try {
@@ -54,6 +60,10 @@ class CodyVerseServer {
         console.warn('Database connection error:', error.message);
         console.log('Server will continue with in-memory data');
       }
+
+      // Initialize API documentation
+      apiDocGenerator.autoRegisterRoutes();
+      console.log('API documentation initialized');
 
       // Start system health monitoring
       systemHealth.startMonitoring();
@@ -131,6 +141,32 @@ class CodyVerseServer {
     this.app.get('/cache-stats', (req, res) => {
       const stats = cacheService.getStats();
       res.json(stats);
+    });
+
+    // API Documentation endpoints
+    this.app.get('/api-spec.json', (req, res) => {
+      const spec = apiDocGenerator.generateOpenAPISpec();
+      res.json(spec);
+    });
+
+    this.app.get('/docs', (req, res) => {
+      const html = apiDocGenerator.generateHTMLDoc();
+      res.setHeader('Content-Type', 'text/html');
+      res.send(html);
+    });
+
+    // Enhanced configuration endpoint
+    this.app.get('/config', (req, res) => {
+      res.json({
+        environment: configManager.getEnvironmentInfo(),
+        features: {
+          caching: true,
+          circuitBreakers: true,
+          rateLimiting: true,
+          monitoring: true,
+          documentation: true
+        }
+      });
     });
 
     // Status do servidor
