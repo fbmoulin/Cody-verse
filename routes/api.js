@@ -7,8 +7,6 @@ const progressController = require('../controllers/progressController');
 const codyController = require('../controllers/codyController');
 const userController = require('../controllers/userController');
 const gamificationController = require('../controllers/simplifiedGamificationController');
-const AIStudyCompanionController = require('../controllers/aiStudyCompanionController');
-const aiStudyCompanionController = new AIStudyCompanionController();
 
 // Advanced AI Services
 const learningAnalyticsService = require('../services/learningAnalyticsService');
@@ -178,19 +176,6 @@ router.get('/gamification/goals/:userId', gamificationController.getGoals.bind(g
 router.get('/gamification/notifications/:userId', gamificationController.getNotifications.bind(gamificationController));
 router.post('/gamification/lesson-complete/:userId', gamificationController.processLessonCompletion.bind(gamificationController));
 router.post('/gamification/simulate-lesson/:userId', gamificationController.simulateLessonCompletion.bind(gamificationController));
-
-// AI Study Companion Routes
-router.post('/study-companion/start', authenticateUser, aiStudyCompanionController.startSession.bind(aiStudyCompanionController));
-router.post('/study-companion/:sessionId/guidance', authenticateUser, aiStudyCompanionController.provideLiveGuidance.bind(aiStudyCompanionController));
-router.get('/study-companion/:sessionId/status', authenticateUser, aiStudyCompanionController.getSessionStatus.bind(aiStudyCompanionController));
-router.post('/study-companion/:sessionId/motivation', authenticateUser, aiStudyCompanionController.requestMotivation.bind(aiStudyCompanionController));
-router.post('/study-companion/:sessionId/break', authenticateUser, aiStudyCompanionController.requestBreak.bind(aiStudyCompanionController));
-router.post('/study-companion/:sessionId/end', authenticateUser, aiStudyCompanionController.endSession.bind(aiStudyCompanionController));
-router.post('/study-companion/:sessionId/pause', authenticateUser, aiStudyCompanionController.pauseSession.bind(aiStudyCompanionController));
-router.post('/study-companion/:sessionId/resume', authenticateUser, aiStudyCompanionController.resumeSession.bind(aiStudyCompanionController));
-router.get('/study-companion/personalities', aiStudyCompanionController.getCompanionPersonalities.bind(aiStudyCompanionController));
-router.get('/study-companion/tips', aiStudyCompanionController.getStudyTips.bind(aiStudyCompanionController));
-router.get('/study-companion/stats', authenticateUser, aiStudyCompanionController.getActiveSessionsStats.bind(aiStudyCompanionController));
 
 // Rota de health check
 router.get('/health', require('../server/database').healthCheck);
