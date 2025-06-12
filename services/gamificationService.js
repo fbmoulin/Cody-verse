@@ -1,11 +1,5 @@
-const { db } = require('../server/database');
-const { 
-  users, badges, userBadges, userWallet, coinTransactions, 
-  userStreaks, userGoals, userLevels, leaderboards, 
-  gamificationNotifications, userLessonProgress, userModuleProgress,
-  learningSessions, codyInteractions
-} = require('../shared/schema');
-const { eq, and, desc, asc, sum, count, gte, lte, sql } = require('drizzle-orm');
+const { dbManager } = require('../server/database');
+const gamificationDataInitializer = require('./gamificationDataInitializer');
 
 class GamificationService {
   constructor() {

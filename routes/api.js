@@ -6,7 +6,7 @@ const courseController = require('../controllers/courseController');
 const progressController = require('../controllers/progressController');
 const codyController = require('../controllers/codyController');
 const userController = require('../controllers/userController');
-const gamificationController = require('../controllers/gamificationController');
+const gamificationController = require('../controllers/simplifiedGamificationController');
 
 // Advanced AI Services
 const learningAnalyticsService = require('../services/learningAnalyticsService');
@@ -168,17 +168,14 @@ router.post('/study-techniques/spaced-repetition/:userId', authenticateUser, stu
 router.get('/study-techniques/analytics/:userId', authenticateUser, studyTechniquesController.getStudyAnalytics.bind(studyTechniquesController));
 
 // Gamification Routes
-router.get('/gamification/dashboard/:userId', authenticateUser, gamificationController.getDashboard.bind(gamificationController));
-router.get('/gamification/badges/:userId', authenticateUser, gamificationController.getUserBadges.bind(gamificationController));
-router.get('/gamification/wallet/:userId', authenticateUser, gamificationController.getWallet.bind(gamificationController));
-router.get('/gamification/streaks/:userId', authenticateUser, gamificationController.getStreaks.bind(gamificationController));
-router.get('/gamification/goals/:userId', authenticateUser, gamificationController.getGoals.bind(gamificationController));
-router.get('/gamification/leaderboards/:userId', authenticateUser, gamificationController.getLeaderboards.bind(gamificationController));
-router.get('/gamification/store/:userId', authenticateUser, gamificationController.getStore.bind(gamificationController));
-router.post('/gamification/purchase/:userId', authenticateUser, gamificationController.purchaseItem.bind(gamificationController));
-router.get('/gamification/notifications/:userId', authenticateUser, gamificationController.getNotifications.bind(gamificationController));
-router.patch('/gamification/notifications/:userId/:notificationId/read', authenticateUser, gamificationController.markNotificationRead.bind(gamificationController));
-router.post('/gamification/lesson-complete/:userId', authenticateUser, gamificationController.processLessonCompletion.bind(gamificationController));
+router.get('/gamification/dashboard/:userId', gamificationController.getDashboard.bind(gamificationController));
+router.get('/gamification/badges/:userId', gamificationController.getUserBadges.bind(gamificationController));
+router.get('/gamification/wallet/:userId', gamificationController.getWallet.bind(gamificationController));
+router.get('/gamification/streaks/:userId', gamificationController.getStreaks.bind(gamificationController));
+router.get('/gamification/goals/:userId', gamificationController.getGoals.bind(gamificationController));
+router.get('/gamification/notifications/:userId', gamificationController.getNotifications.bind(gamificationController));
+router.post('/gamification/lesson-complete/:userId', gamificationController.processLessonCompletion.bind(gamificationController));
+router.post('/gamification/simulate-lesson/:userId', gamificationController.simulateLessonCompletion.bind(gamificationController));
 
 // Rota de health check
 router.get('/health', require('../server/database').healthCheck);
