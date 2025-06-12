@@ -5,6 +5,12 @@ const { dbManager, testConnection, closeConnections } = require('./server/databa
 const dataInitializer = require('./services/dataInitializer');
 const performanceMiddleware = require('./server/performanceMiddleware');
 
+// Enhanced services for robustness
+const connectionPool = require('./server/connectionPool');
+const errorHandler = require('./services/errorHandlerService');
+const systemHealth = require('./services/systemHealthMonitor');
+const cacheService = require('./services/cacheService');
+
 // Middleware
 const {
   setupSecurity,
@@ -31,8 +37,11 @@ class CodyVerseServer {
       // Validar configurações
       validateConfig();
       
-      // Initialize database with migrations
+      // Initialize enhanced connection pool
       try {
+        await connectionPool.initialize();
+        console.log('Enhanced database connection pool initialized');
+        
         await dbManager.initialize();
         console.log('Database initialized with migrations');
         
@@ -44,6 +53,9 @@ class CodyVerseServer {
         console.warn('Database connection error:', error.message);
         console.log('Server will continue with in-memory data');
       }
+
+      // Start system health monitoring
+      systemHealth.startMonitoring();
       
       // Configurar middleware
       this.setupMiddleware();
@@ -93,8 +105,24 @@ class CodyVerseServer {
     // Rotas da API
     this.app.use('/api', apiRoutes);
 
-    // Health check
-    this.app.get('/health', require('./server/database').healthCheck);
+    // Enhanced health check
+    this.app.get('/health', (req, res) => {
+      systemHealth.recordRequest();
+      const healthStatus = systemHealth.getHealthStatus();
+      res.status(healthStatus.overall === 'healthy' ? 200 : 503).json(healthStatus);
+    });
+
+    // Detailed system metrics
+    this.app.get('/metrics', (req, res) => {
+      const metrics = systemHealth.getDetailedMetrics();
+      res.json(metrics);
+    });
+
+    // Cache statistics
+    this.app.get('/cache-stats', (req, res) => {
+      const stats = cacheService.getStats();
+      res.json(stats);
+    });
 
     // Status do servidor
     this.app.get('/status', (req, res) => {
@@ -104,7 +132,8 @@ class CodyVerseServer {
         status: 'operational',
         uptime: process.uptime(),
         timestamp: new Date().toISOString(),
-        environment: config.server.nodeEnv
+        environment: config.server.nodeEnv,
+        health: systemHealth.getHealthStatus().overall
       });
     });
 
@@ -142,8 +171,10 @@ class CodyVerseServer {
         this.server.close(async () => {
           console.log('Servidor HTTP fechado');
           
-          // Fechar conexões com banco
+          // Enhanced graceful shutdown
+          await systemHealth.gracefulShutdown();
           await closeConnections();
+          await connectionPool.close();
           
           console.log('Shutdown completo');
           process.exit(0);
