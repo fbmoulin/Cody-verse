@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Study Companion - Cody Verse</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .companion-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 800px;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .companion-header {
+            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .companion-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .companion-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .companion-status {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .setup-section {
+            padding: 30px;
+            display: block;
+        }
+
+        .setup-section.hidden {
+            display: none;
+        }
+
+        .session-section {
+            flex: 1;
+            display: none;
+            flex-direction: column;
+        }
+
+        .session-section.active {
+            display: flex;
+        }
+
+        .session-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .session-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4facfe;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+            transition: width 0.3s ease;
+        }
+
+        .chat-area {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .message.companion {
+            justify-content: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .message.companion .message-bubble {
+            background: #e3f2fd;
+            color: #1565c0;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.user .message-bubble {
+            background: #4facfe;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .input-area {
+            padding: 20px;
+            border-top: 1px solid #e9ecef;
+            background: #f8f9fa;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(79, 172, 254, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .personality-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .personality-card {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .personality-card:hover {
+            border-color: #4facfe;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .personality-card.selected {
+            border-color: #4facfe;
+            background: #e3f2fd;
+        }
+
+        .personality-avatar {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .personality-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .personality-desc {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e9ecef;
+            border-top: 4px solid #4facfe;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .tips-section {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .tips-title {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .tip {
+            font-size: 0.9rem;
+            color: #856404;
+            margin-bottom: 5px;
+            padding-left: 15px;
+            position: relative;
+        }
+
+        .tip:before {
+            content: "💡";
+            position: absolute;
+            left: 0;
+        }
+
+        @media (max-width: 768px) {
+            .companion-container {
+                margin: 10px;
+                min-height: calc(100vh - 20px);
+            }
+            
+            .personality-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .session-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="companion-container">
+        <!-- Header -->
+        <div class="companion-header">
+            <div class="companion-avatar" id="companionAvatar">🤖</div>
+            <div class="companion-name" id="companionName">AI Study Companion</div>
+            <div class="companion-status" id="companionStatus">Ready to help you study</div>
+        </div>
+
+        <!-- Setup Section -->
+        <div class="setup-section" id="setupSection">
+            <h2 style="margin-bottom: 20px; text-align: center; color: #495057;">Let's Set Up Your Study Session</h2>
+            
+            <div class="form-group">
+                <label for="subject">What would you like to study?</label>
+                <input type="text" id="subject" placeholder="e.g., Mathematics, History, Programming">
+            </div>
+
+            <div class="form-group">
+                <label for="duration">How long do you want to study? (minutes)</label>
+                <select id="duration">
+                    <option value="25">25 minutes (Pomodoro)</option>
+                    <option value="45" selected>45 minutes</option>
+                    <option value="60">1 hour</option>
+                    <option value="90">1.5 hours</option>
+                    <option value="120">2 hours</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="difficulty">Difficulty Level</label>
+                <select id="difficulty">
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate" selected>Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Choose Your Study Companion</label>
+                <div class="personality-cards" id="personalityCards">
+                    <div class="personality-card" data-personality="encouraging">
+                        <div class="personality-avatar">😊</div>
+                        <div class="personality-name">Alex</div>
+                        <div class="personality-desc">Warm and encouraging</div>
+                    </div>
+                    <div class="personality-card selected" data-personality="analytical">
+                        <div class="personality-avatar">🧠</div>
+                        <div class="personality-name">Morgan</div>
+                        <div class="personality-desc">Logical and systematic</div>
+                    </div>
+                    <div class="personality-card" data-personality="friendly">
+                        <div class="personality-avatar">😄</div>
+                        <div class="personality-name">Sam</div>
+                        <div class="personality-desc">Fun and relatable</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="startStudySession()" style="width: 100%;">
+                Start Study Session
+            </button>
+        </div>
+
+        <!-- Loading Section -->
+        <div class="loading" id="loadingSection">
+            <div class="spinner"></div>
+            <p>Setting up your personalized study session...</p>
+        </div>
+
+        <!-- Active Session Section -->
+        <div class="session-section" id="sessionSection">
+            <!-- Session Info -->
+            <div class="session-info">
+                <div class="session-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="elapsedTime">0</div>
+                        <div class="stat-label">Minutes Elapsed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="remainingTime">45</div>
+                        <div class="stat-label">Minutes Left</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="concentrationScore">100</div>
+                        <div class="stat-label">Focus Score</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="sessionProgress">0%</div>
+                        <div class="stat-label">Progress</div>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Chat Area -->
+            <div class="chat-area" id="chatArea">
+                <!-- Messages will be added here dynamically -->
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-area">
+                <div class="tips-section" id="tipsSection" style="display: none;">
+                    <div class="tips-title">Study Tips for This Session:</div>
+                    <div id="tipsList"></div>
+                </div>
+                
+                <div class="input-group">
+                    <input type="text" id="messageInput" placeholder="Ask for help, share how you're feeling, or request guidance..." style="flex: 1;">
+                    <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="requestMotivation()">Need Motivation</button>
+                    <button class="btn btn-warning" onclick="requestBreak()">Take Break</button>
+                    <button class="btn btn-secondary" onclick="pauseSession()">Pause</button>
+                    <button class="btn btn-danger" onclick="endSession()">End Session</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSession = null;
+        let sessionTimer = null;
+        let selectedPersonality = 'analytical';
+
+        // Initialize personality selection
+        document.addEventListener('DOMContentLoaded', function() {
+            const personalityCards = document.querySelectorAll('.personality-card');
+            personalityCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    personalityCards.forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedPersonality = this.dataset.personality;
+                });
+            });
+
+            // Enable enter key for message input
+            document.getElementById('messageInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        });
+
+        async function startStudySession() {
+            const subject = document.getElementById('subject').value.trim();
+            const duration = parseInt(document.getElementById('duration').value);
+            const difficulty = document.getElementById('difficulty').value;
+
+            if (!subject) {
+                alert('Please enter a subject to study');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('setupSection').classList.add('hidden');
+            document.getElementById('loadingSection').classList.add('active');
+
+            try {
+                const response = await fetch('/api/study-companion/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer dummy-token' // In real app, use actual auth
+                    },
+                    body: JSON.stringify({
+                        subject,
+                        duration,
+                        difficulty,
+                        personalityType: selectedPersonality
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to start session');
+                }
+
+                const data = await response.json();
+                currentSession = data.data;
+
+                // Update UI for active session
+                setupActiveSession(currentSession);
+                
+            } catch (error) {
+                console.error('Error starting session:', error);
+                alert('Failed to start study session. Please try again.');
+                // Return to setup
+                document.getElementById('setupSection').classList.remove('hidden');
+                document.getElementById('loadingSection').classList.remove('active');
+            }
+        }
+
+        function setupActiveSession(session) {
+            // Hide loading, show session
+            document.getElementById('loadingSection').classList.remove('active');
+            document.getElementById('sessionSection').classList.add('active');
+
+            // Update companion info
+            const avatars = {
+                'Alex': '😊',
+                'Morgan': '🧠',
+                'Sam': '😄'
+            };
+            document.getElementById('companionAvatar').textContent = avatars[session.companion] || '🤖';
+            document.getElementById('companionName').textContent = session.companion;
+            document.getElementById('companionStatus').textContent = 'Active study session';
+
+            // Update session stats
+            document.getElementById('remainingTime').textContent = session.studyPlan.totalDuration;
+
+            // Add initial guidance message
+            addMessage('companion', session.guidance.message);
+
+            // Show study tips
+            if (session.studyPlan.focusTechniques) {
+                showStudyTips(session.studyPlan.focusTechniques);
+            }
+
+            // Start session timer
+            startSessionTimer(session.studyPlan.totalDuration);
+        }
+
+        function startSessionTimer(totalMinutes) {
+            let elapsedMinutes = 0;
+            
+            sessionTimer = setInterval(() => {
+                elapsedMinutes++;
+                const remaining = Math.max(0, totalMinutes - elapsedMinutes);
+                const progress = Math.min(100, (elapsedMinutes / totalMinutes) * 100);
+
+                document.getElementById('elapsedTime').textContent = elapsedMinutes;
+                document.getElementById('remainingTime').textContent = remaining;
+                document.getElementById('sessionProgress').textContent = Math.round(progress) + '%';
+                document.getElementById('progressFill').style.width = progress + '%';
+
+                // Auto-end session when time is up
+                if (remaining === 0) {
+                    clearInterval(sessionTimer);
+                    addMessage('companion', 'Time\'s up! Great work on completing your study session. Let\'s review how it went.');
+                    // Could auto-call endSession() here
+                }
+            }, 60000); // Update every minute
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+
+            if (!message || !currentSession) return;
+
+            // Add user message to chat
+            addMessage('user', message);
+            input.value = '';
+
+            try {
+                const response = await fetch(`/api/study-companion/${currentSession.sessionId}/guidance`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer dummy-token'
+                    },
+                    body: JSON.stringify({
+                        userInput: message
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to get guidance');
+                }
+
+                const data = await response.json();
+                const guidance = data.data;
+
+                // Add companion response
+                addMessage('companion', guidance.companionResponse);
+
+                // Update concentration score
+                if (guidance.concentrationLevel) {
+                    document.getElementById('concentrationScore').textContent = guidance.concentrationLevel;
+                }
+
+                // Show break recommendation if needed
+                if (guidance.breakRecommendation && guidance.breakRecommendation.needed) {
+                    setTimeout(() => {
+                        addMessage('companion', `I notice you might benefit from a ${guidance.breakRecommendation.duration}-minute break. ${guidance.breakRecommendation.activities.join(', ')}`);
+                    }, 1000);
+                }
+
+            } catch (error) {
+                console.error('Error getting guidance:', error);
+                addMessage('companion', 'Sorry, I\'m having trouble responding right now. Please try again.');
+            }
+        }
+
+        async function requestMotivation() {
+            if (!currentSession) return;
+
+            try {
+                const response = await fetch(`/api/study-companion/${currentSession.sessionId}/motivation`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer dummy-token'
+                    },
+                    body: JSON.stringify({
+                        currentMood: 'need encouragement'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to get motivation');
+                }
+
+                const data = await response.json();
+                addMessage('companion', data.data.message);
+
+            } catch (error) {
+                console.error('Error getting motivation:', error);
+                addMessage('companion', 'You\'re doing great! Keep up the excellent work. Every minute of study builds your knowledge and skills.');
+            }
+        }
+
+        async function requestBreak() {
+            if (!currentSession) return;
+
+            try {
+                const response = await fetch(`/api/study-companion/${currentSession.sessionId}/break`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer dummy-token'
+                    },
+                    body: JSON.stringify({
+                        breakType: 'short'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to request break');
+                }
+
+                const data = await response.json();
+                const breakInfo = data.data;
+                
+                addMessage('companion', `${breakInfo.message} Here are some suggested activities: ${breakInfo.activities.join(', ')}`);
+
+            } catch (error) {
+                console.error('Error requesting break:', error);
+                addMessage('companion', 'Great idea to take a break! Try some light stretching, deep breathing, or a short walk. Come back refreshed!');
+            }
+        }
+
+        async function pauseSession() {
+            if (!currentSession) return;
+
+            if (sessionTimer) {
+                clearInterval(sessionTimer);
+                sessionTimer = null;
+            }
+
+            try {
+                const response = await fetch(`/api/study-companion/${currentSession.sessionId}/pause`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer dummy-token'
+                    },
+                    body: JSON.stringify({
+                        reason: 'user_request'
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    addMessage('companion', data.data.message);
+                    document.getElementById('companionStatus').textContent = 'Session paused';
+                }
+
+            } catch (error) {
+                console.error('Error pausing session:', error);
+            }
+
+            // Update UI for paused state
+            const actionButtons = document.querySelector('.action-buttons');
+            actionButtons.innerHTML = `
+                <button class="btn btn-success" onclick="resumeSession()">Resume Session</button>
+                <button class="btn btn-danger" onclick="endSession()">End Session</button>
+            `;
+        }
+
+        async function resumeSession() {
+            if (!currentSession) return;
+
+            try {
+                const response = await fetch(`/api/study-companion/${currentSession.sessionId}/resume`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer dummy-token'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    addMessage('companion', data.data.welcomeBackMessage);
+                    document.getElementById('companionStatus').textContent = 'Active study session';
+                    
+                    // Restart timer
+                    const remainingMinutes = parseInt(document.getElementById('remainingTime').textContent);
+                    startSessionTimer(remainingMinutes);
+                }
+
+            } catch (error) {
+                console.error('Error resuming session:', error);
+            }
+
+            // Restore action buttons
+            const actionButtons = document.querySelector('.action-buttons');
+            actionButtons.innerHTML = `
+                <button class="btn btn-success" onclick="requestMotivation()">Need Motivation</button>
+                <button class="btn btn-warning" onclick="requestBreak()">Take Break</button>
+                <button class="btn btn-secondary" onclick="pauseSession()">Pause</button>
+                <button class="btn btn-danger" onclick="endSession()">End Session</button>
+            `;
+        }
+
+        async function endSession() {
+            if (!currentSession) return;
+
+            if (sessionTimer) {
+                clearInterval(sessionTimer);
+                sessionTimer = null;
+            }
+
+            const completionPercentage = prompt('How much of your study goal did you complete? (0-100%)');
+            const feedback = prompt('Any feedback about this session? (optional)');
+
+            try {
+                const response = await fetch(`/api/study-companion/${currentSession.sessionId}/end`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer dummy-token'
+                    },
+                    body: JSON.stringify({
+                        completionPercentage: parseInt(completionPercentage) || 85,
+                        feedback: feedback || '',
+                        selfRating: 8
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to end session');
+                }
+
+                const data = await response.json();
+                const summary = data.data;
+
+                // Show session summary
+                addMessage('companion', summary.summary);
+                if (summary.achievements && summary.achievements.length > 0) {
+                    addMessage('companion', `Achievements: ${summary.achievements.join(', ')}`);
+                }
+                if (summary.recommendations && summary.recommendations.length > 0) {
+                    addMessage('companion', `Recommendations: ${summary.recommendations.join(', ')}`);
+                }
+                addMessage('companion', summary.encouragement);
+
+                // Update UI for ended session
+                document.getElementById('companionStatus').textContent = 'Session completed';
+                
+                // Show restart button
+                const actionButtons = document.querySelector('.action-buttons');
+                actionButtons.innerHTML = `
+                    <button class="btn btn-primary" onclick="location.reload()">Start New Session</button>
+                `;
+
+            } catch (error) {
+                console.error('Error ending session:', error);
+                addMessage('companion', 'Session ended. Thank you for studying with me! You did great work today.');
+            }
+
+            currentSession = null;
+        }
+
+        function addMessage(sender, text) {
+            const chatArea = document.getElementById('chatArea');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.textContent = text;
+            
+            messageDiv.appendChild(bubble);
+            chatArea.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function showStudyTips(tips) {
+            const tipsSection = document.getElementById('tipsSection');
+            const tipsList = document.getElementById('tipsList');
+            
+            tipsList.innerHTML = '';
+            tips.forEach(tip => {
+                const tipDiv = document.createElement('div');
+                tipDiv.className = 'tip';
+                tipDiv.textContent = tip;
+                tipsList.appendChild(tipDiv);
+            });
+            
+            tipsSection.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
