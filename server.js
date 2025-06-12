@@ -3,6 +3,7 @@ const path = require('path');
 const { config, validateConfig } = require('./server/config');
 const { dbManager, testConnection, closeConnections } = require('./server/database');
 const dataInitializer = require('./services/dataInitializer');
+const performanceMiddleware = require('./server/performanceMiddleware');
 
 // Middleware
 const {
