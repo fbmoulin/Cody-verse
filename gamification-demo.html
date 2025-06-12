@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 Live Gamification Demo - Cody Verse</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .demo-controls {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .status-bar {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f8f9ff;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .card-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .level-display {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .level-icon {
+            font-size: 4rem;
+            margin-bottom: 10px;
+        }
+
+        .level-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .xp-info {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 12px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.8s ease;
+        }
+
+        .wallet-display {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+
+        .currency {
+            text-align: center;
+        }
+
+        .currency-amount {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .currency-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .badges-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 5px 15px rgba(255,215,0,0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .badge:hover {
+            transform: scale(1.05);
+        }
+
+        .badge-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .badge-name {
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .badge-description {
+            font-size: 0.7rem;
+            opacity: 0.9;
+        }
+
+        .goals-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .goal-item {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .goal-item.completed {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .goal-title {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .goal-status {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .goal-progress {
+            background: #e9ecef;
+            border-radius: 8px;
+            height: 8px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .goal-progress-fill {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            height: 100%;
+            border-radius: 8px;
+            transition: width 0.5s ease;
+        }
+
+        .goal-progress-fill.completed {
+            background: linear-gradient(90deg, #28a745, #20c997);
+        }
+
+        .notifications-list {
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .notification {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .notification:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .notification.achievement {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+
+        .notification.goal_completed {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+        }
+
+        .notification-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            margin-top: 2px;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .notification-message {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .notification-time {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .streak-display {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .streak-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ff6b35;
+            margin-bottom: 10px;
+        }
+
+        .streak-fire {
+            font-size: 1.5rem;
+            margin: 0 5px;
+            animation: flicker 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .api-info {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 15px;
+            color: white;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .control-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 Live Gamification Demo</h1>
+            <p>Sistema Completo de Badges e Recompensas em Tempo Real</p>
+            <div class="api-info">
+                API Base: /api/gamification | User ID: 1 | Status: <span id="api-status">Conectado</span>
+            </div>
+        </div>
+
+        <div class="demo-controls">
+            <h3 style="margin-bottom: 20px;">Controles de Demonstração</h3>
+            <div class="control-buttons">
+                <button class="btn btn-primary" onclick="simulateLesson()">
+                    <span id="lesson-btn-text">🎯 Simular Lição</span>
+                </button>
+                <button class="btn btn-secondary" onclick="refreshDashboard()">
+                    <span id="refresh-btn-text">🔄 Atualizar Dashboard</span>
+                </button>
+                <button class="btn btn-warning" onclick="simulate5Lessons()">
+                    📚 Simular 5 Lições
+                </button>
+            </div>
+            <div class="status-bar" id="status-bar">
+                Pronto para demonstração. Clique em "Simular Lição" para ver o sistema em ação!
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- User Level Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">👤 Nível do Usuário</div>
+                </div>
+                
+                <div class="level-display">
+                    <div class="level-icon" id="level-icon">🌱</div>
+                    <div class="level-name" id="level-name">Novice</div>
+                    <div class="xp-info">
+                        <span id="current-xp">0</span> / <span id="next-level-xp">100</span> XP
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="xp-progress" style="width: 0%"></div>
+                    </div>
+                    <div style="font-size: 0.9rem; color: #666;">
+                        <span id="xp-to-next">100</span> XP para próximo nível
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wallet Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">💰 Carteira Virtual</div>
+                </div>
+                
+                <div class="wallet-display">
+                    <div class="currency">
+                        <div class="currency-amount" id="coins-amount">0</div>
+                        <div class="currency-label">🪙 Moedas</div>
+                    </div>
+                    <div class="currency">
+                        <div class="currency-amount" id="gems-amount">0</div>
+                        <div class="currency-label">💎 Gemas</div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 15px; color: #666; font-size: 0.9rem;">
+                    Total ganho: <span id="total-earned">0</span> moedas
+                </div>
+            </div>
+
+            <!-- Badges Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🏆 Conquistas</div>
+                    <div class="card-value" id="badges-count">0</div>
+                </div>
+                
+                <div class="badges-container" id="badges-container">
+                    <div style="text-align: center; color: #666; padding: 40px 20px;">
+                        Complete lições para desbloquear conquistas!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Streaks Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🔥 Sequências</div>
+                </div>
+                
+                <div class="streak-display">
+                    <div class="streak-number">
+                        <span class="streak-fire">🔥</span>
+                        <span id="current-streak">0</span>
+                        <span class="streak-fire">🔥</span>
+                    </div>
+                    <p>Dias consecutivos de aprendizado</p>
+                    <p style="margin-top: 10px; color: #666; font-size: 0.9rem;">
+                        Maior sequência: <strong id="longest-streak">0</strong> dias
+                    </p>
+                </div>
+            </div>
+
+            <!-- Goals Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🎯 Objetivos Diários</div>
+                    <div class="card-value" id="goals-completed">0/3</div>
+                </div>
+                
+                <div class="goals-list" id="goals-list">
+                    <div style="text-align: center; color: #666; padding: 20px;">
+                        Carregando objetivos...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🔔 Notificações</div>
+                    <div class="card-value" id="notifications-count">0</div>
+                </div>
+                
+                <div class="notifications-list" id="notifications-list">
+                    <div style="text-align: center; color: #666; padding: 40px 20px;">
+                        Nenhuma notificação ainda
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api/gamification';
+        const USER_ID = 1;
+        let currentData = null;
+        let isLoading = false;
+
+        // Initialize dashboard on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshDashboard();
+            console.log('Gamification Demo initialized');
+        });
+
+        // Refresh dashboard data
+        async function refreshDashboard() {
+            if (isLoading) return;
+            
+            isLoading = true;
+            updateStatus('Atualizando dashboard...', false);
+            
+            const refreshBtn = document.getElementById('refresh-btn-text');
+            refreshBtn.innerHTML = '<div class="loading"></div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/dashboard/${USER_ID}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentData = result.data;
+                    updateDashboardUI(currentData);
+                    updateStatus(`Dashboard atualizado com sucesso! Nível ${currentData.user.level} - ${currentData.user.levelName}`, true);
+                    document.getElementById('api-status').textContent = 'Conectado';
+                } else {
+                    throw new Error(result.error || 'Failed to fetch dashboard');
+                }
+            } catch (error) {
+                console.error('Error refreshing dashboard:', error);
+                updateStatus('Erro ao atualizar dashboard: ' + error.message, false);
+                document.getElementById('api-status').textContent = 'Erro';
+            } finally {
+                refreshBtn.textContent = '🔄 Atualizar Dashboard';
+                isLoading = false;
+            }
+        }
+
+        // Simulate lesson completion
+        async function simulateLesson() {
+            if (isLoading) return;
+            
+            isLoading = true;
+            updateStatus('Simulando conclusão de lição...', false);
+            
+            const lessonBtn = document.getElementById('lesson-btn-text');
+            lessonBtn.innerHTML = '<div class="loading"></div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/simulate-lesson/${USER_ID}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const { simulatedData, results } = result;
+                    
+                    updateStatus(
+                        `Lição ${simulatedData.lessonId} concluída! ` +
+                        `+${results.xpAwarded} XP, +${results.coinsAwarded} moedas. ` +
+                        `${results.newBadges.length > 0 ? `Nova conquista desbloqueada!` : ''}`,
+                        true
+                    );
+                    
+                    // Refresh dashboard to show updated data
+                    setTimeout(() => {
+                        refreshDashboard();
+                    }, 1000);
+                } else {
+                    throw new Error(result.error || 'Failed to simulate lesson');
+                }
+            } catch (error) {
+                console.error('Error simulating lesson:', error);
+                updateStatus('Erro ao simular lição: ' + error.message, false);
+            } finally {
+                lessonBtn.textContent = '🎯 Simular Lição';
+                isLoading = false;
+            }
+        }
+
+        // Simulate 5 lessons quickly
+        async function simulate5Lessons() {
+            updateStatus('Simulando 5 lições consecutivas...', false);
+            
+            for (let i = 0; i < 5; i++) {
+                await simulateLesson();
+                await new Promise(resolve => setTimeout(resolve, 500)); // Wait 500ms between lessons
+            }
+            
+            updateStatus('5 lições simuladas com sucesso! Verifique suas novas conquistas!', true);
+        }
+
+        // Update dashboard UI with data
+        function updateDashboardUI(data) {
+            const { user, wallet, badges, streak, goals, notifications } = data;
+            
+            // Update user level
+            document.getElementById('level-icon').textContent = user.levelIcon;
+            document.getElementById('level-name').textContent = `Nível ${user.level} - ${user.levelName}`;
+            document.getElementById('current-xp').textContent = user.totalXP;
+            document.getElementById('next-level-xp').textContent = user.totalXP + user.xpToNext;
+            document.getElementById('xp-to-next').textContent = user.xpToNext;
+            document.getElementById('xp-progress').style.width = user.xpProgress + '%';
+            
+            // Update wallet
+            document.getElementById('coins-amount').textContent = wallet.coins.toLocaleString();
+            document.getElementById('gems-amount').textContent = wallet.gems;
+            document.getElementById('total-earned').textContent = wallet.total_coins_earned.toLocaleString();
+            
+            // Update badges
+            updateBadgesDisplay(badges);
+            
+            // Update streak
+            document.getElementById('current-streak').textContent = streak.current_streak;
+            document.getElementById('longest-streak').textContent = streak.longest_streak;
+            
+            // Update goals
+            updateGoalsDisplay(goals);
+            
+            // Update notifications
+            updateNotificationsDisplay(notifications);
+        }
+
+        // Update badges display
+        function updateBadgesDisplay(badges) {
+            const container = document.getElementById('badges-container');
+            const count = document.getElementById('badges-count');
+            
+            count.textContent = badges.length;
+            
+            if (badges.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; color: #666; padding: 40px 20px;">
+                        Complete lições para desbloquear conquistas!
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = badges.map(badge => `
+                <div class="badge">
+                    <div class="badge-icon">${badge.badge_icon}</div>
+                    <div class="badge-name">${badge.badge_name}</div>
+                    <div class="badge-description">${badge.badge_description}</div>
+                </div>
+            `).join('');
+        }
+
+        // Update goals display
+        function updateGoalsDisplay(goals) {
+            const container = document.getElementById('goals-list');
+            const completedCount = goals.filter(g => g.is_completed).length;
+            
+            document.getElementById('goals-completed').textContent = `${completedCount}/${goals.length}`;
+            
+            container.innerHTML = goals.map(goal => {
+                const progress = Math.min(100, (goal.current_progress / goal.target_value) * 100);
+                const isCompleted = goal.is_completed;
+                
+                let goalTitle = '';
+                switch (goal.goal_type) {
+                    case 'lessons':
+                        goalTitle = `📖 Completar ${goal.target_value} lições`;
+                        break;
+                    case 'time_minutes':
+                        goalTitle = `⏱️ Estudar ${goal.target_value} minutos`;
+                        break;
+                    case 'xp':
+                        goalTitle = `⭐ Ganhar ${goal.target_value} XP`;
+                        break;
+                    default:
+                        goalTitle = goal.goal_type;
+                }
+                
+                return `
+                    <div class="goal-item ${isCompleted ? 'completed' : ''}">
+                        <div class="goal-header">
+                            <div class="goal-title">${goalTitle}</div>
+                            <div class="goal-status">${isCompleted ? '✅ Concluído' : `${goal.current_progress}/${goal.target_value}`}</div>
+                        </div>
+                        <div class="goal-progress">
+                            <div class="goal-progress-fill ${isCompleted ? 'completed' : ''}" style="width: ${progress}%"></div>
+                        </div>
+                        <div style="font-size: 0.8rem; color: #ffa500; font-weight: bold;">
+                            Recompensa: ${goal.rewards_coins} moedas${goal.rewards_xp > 0 ? ` + ${goal.rewards_xp} XP` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update notifications display
+        function updateNotificationsDisplay(notifications) {
+            const container = document.getElementById('notifications-list');
+            const count = document.getElementById('notifications-count');
+            
+            count.textContent = notifications.length;
+            
+            if (notifications.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; color: #666; padding: 40px 20px;">
+                        Nenhuma notificação ainda
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = notifications.map(notification => `
+                <div class="notification ${notification.notification_type}">
+                    <div class="notification-icon">${notification.icon}</div>
+                    <div class="notification-content">
+                        <div class="notification-title">${notification.title}</div>
+                        <div class="notification-message">${notification.message}</div>
+                        <div class="notification-time">${notification.timeAgo}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update status message
+        function updateStatus(message, isSuccess = true) {
+            const statusBar = document.getElementById('status-bar');
+            statusBar.textContent = message;
+            statusBar.style.background = isSuccess ? '#d4edda' : '#f8d7da';
+            statusBar.style.color = isSuccess ? '#155724' : '#721c24';
+            statusBar.style.borderColor = isSuccess ? '#c3e6cb' : '#f5c6cb';
+        }
+
+        // Auto-refresh dashboard every 30 seconds
+        setInterval(() => {
+            if (!isLoading) {
+                refreshDashboard();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>
