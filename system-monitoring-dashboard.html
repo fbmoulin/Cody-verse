@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 System Monitoring Dashboard - Cody Verse</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            color: #ecf0f1;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #3498db;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .metric-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .metric-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .metric-icon {
+            font-size: 2rem;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .metric-description {
+            color: #bdc3c7;
+            font-size: 0.9rem;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-healthy { background: #27ae60; }
+        .status-warning { background: #f39c12; }
+        .status-error { background: #e74c3c; }
+
+        .progress-bar {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.8s ease;
+        }
+
+        .progress-healthy { background: linear-gradient(90deg, #27ae60, #2ecc71); }
+        .progress-warning { background: linear-gradient(90deg, #f39c12, #e67e22); }
+        .progress-error { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+
+        .chart-container {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #3498db;
+        }
+
+        .logs-container {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .log-timestamp {
+            color: #95a5a6;
+            margin-right: 10px;
+        }
+
+        .log-level-info { color: #3498db; }
+        .log-level-warn { color: #f39c12; }
+        .log-level-error { color: #e74c3c; }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: rgba(52,152,219,0.8);
+            color: white;
+        }
+
+        .btn:hover {
+            background: rgba(52,152,219,1);
+            transform: translateY(-2px);
+        }
+
+        .btn-refresh {
+            background: rgba(46,204,113,0.8);
+        }
+
+        .btn-refresh:hover {
+            background: rgba(46,204,113,1);
+        }
+
+        .btn-clear {
+            background: rgba(231,76,60,0.8);
+        }
+
+        .btn-clear:hover {
+            background: rgba(231,76,60,1);
+        }
+
+        .circuit-breaker {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .breaker-name {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .breaker-state {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .breaker-closed { background: #27ae60; color: white; }
+        .breaker-open { background: #e74c3c; color: white; }
+        .breaker-half-open { background: #f39c12; color: white; }
+
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 System Monitoring Dashboard</h1>
+            <p>Monitoramento em tempo real da robustez e estabilidade do Cody Verse</p>
+            <div style="margin-top: 15px;">
+                <span class="status-indicator status-healthy"></span>Sistema Operacional
+                <span style="margin: 0 20px;">|</span>
+                <span id="last-update">Última atualização: --:--</span>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-refresh" onclick="refreshAllMetrics()">🔄 Atualizar Métricas</button>
+            <button class="btn" onclick="toggleAutoRefresh()">⏯️ Auto-refresh</button>
+            <button class="btn btn-clear" onclick="clearLogs()">🗑️ Limpar Logs</button>
+            <button class="btn" onclick="exportMetrics()">📊 Exportar Dados</button>
+        </div>
+
+        <div class="metrics-grid">
+            <!-- System Health -->
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-title">Saúde do Sistema</div>
+                    <div class="metric-icon">💚</div>
+                </div>
+                <div class="metric-value" id="system-health">Carregando...</div>
+                <div class="metric-description">Status geral do sistema</div>
+                <div class="progress-bar">
+                    <div class="progress-fill progress-healthy" id="health-progress" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Memory Usage -->
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-title">Uso de Memória</div>
+                    <div class="metric-icon">🧠</div>
+                </div>
+                <div class="metric-value" id="memory-usage">0 MB</div>
+                <div class="metric-description">Heap usado / Total disponível</div>
+                <div class="progress-bar">
+                    <div class="progress-fill progress-healthy" id="memory-progress" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Request Metrics -->
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-title">Requisições</div>
+                    <div class="metric-icon">📊</div>
+                </div>
+                <div class="metric-value" id="request-count">0</div>
+                <div class="metric-description">Total de requisições processadas</div>
+                <div style="margin-top: 10px;">
+                    <div>Erros: <span id="error-count">0</span></div>
+                    <div>Consultas lentas: <span id="slow-queries">0</span></div>
+                </div>
+            </div>
+
+            <!-- Database Status -->
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-title">Database</div>
+                    <div class="metric-icon">🗄️</div>
+                </div>
+                <div class="metric-value" id="db-status">Conectado</div>
+                <div class="metric-description">Status da conexão</div>
+                <div style="margin-top: 10px;">
+                    <div>Conexões ativas: <span id="active-connections">0</span></div>
+                    <div>Pool status: <span id="pool-status">Operacional</span></div>
+                </div>
+            </div>
+
+            <!-- Cache Performance -->
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-title">Cache</div>
+                    <div class="metric-icon">⚡</div>
+                </div>
+                <div class="metric-value" id="cache-hit-rate">0%</div>
+                <div class="metric-description">Taxa de acerto do cache</div>
+                <div style="margin-top: 10px;">
+                    <div>Hits: <span id="cache-hits">0</span></div>
+                    <div>Size: <span id="cache-size">0</span></div>
+                </div>
+            </div>
+
+            <!-- Uptime -->
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-title">Uptime</div>
+                    <div class="metric-icon">⏰</div>
+                </div>
+                <div class="metric-value" id="uptime">0h 0m</div>
+                <div class="metric-description">Tempo online</div>
+            </div>
+        </div>
+
+        <!-- Circuit Breakers -->
+        <div class="chart-container">
+            <div class="chart-title">⚡ Circuit Breakers</div>
+            <div id="circuit-breakers">
+                <div class="circuit-breaker">
+                    <div class="breaker-name">API:</div>
+                    <div class="breaker-state breaker-closed" id="breaker-api">CLOSED</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-time Logs -->
+        <div class="chart-container">
+            <div class="chart-title">📋 Logs do Sistema</div>
+            <div class="logs-container" id="system-logs">
+                <div class="log-entry">
+                    <span class="log-timestamp">[--:--:--]</span>
+                    <span class="log-level-info">INFO</span>
+                    Sistema de monitoramento iniciado
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let autoRefresh = true;
+        let refreshInterval = null;
+        const logs = [];
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshAllMetrics();
+            startAutoRefresh();
+            addLog('INFO', 'Dashboard de monitoramento inicializado');
+        });
+
+        async function refreshAllMetrics() {
+            try {
+                await Promise.all([
+                    updateHealthMetrics(),
+                    updateSystemMetrics(),
+                    updateCacheStats(),
+                    updateCircuitBreakers()
+                ]);
+                
+                document.getElementById('last-update').textContent = 
+                    `Última atualização: ${new Date().toLocaleTimeString()}`;
+                
+                addLog('INFO', 'Métricas atualizadas com sucesso');
+            } catch (error) {
+                addLog('ERROR', `Erro ao atualizar métricas: ${error.message}`);
+            }
+        }
+
+        async function updateHealthMetrics() {
+            try {
+                const response = await fetch('/health');
+                const health = await response.json();
+                
+                document.getElementById('system-health').textContent = 
+                    health.overall.charAt(0).toUpperCase() + health.overall.slice(1);
+                
+                const healthProgress = document.getElementById('health-progress');
+                const progressWidth = health.overall === 'healthy' ? 100 : 
+                                    health.overall === 'degraded' ? 60 : 30;
+                healthProgress.style.width = progressWidth + '%';
+                healthProgress.className = `progress-fill progress-${
+                    health.overall === 'healthy' ? 'healthy' : 
+                    health.overall === 'degraded' ? 'warning' : 'error'
+                }`;
+                
+                document.getElementById('request-count').textContent = health.metrics.requests;
+                document.getElementById('error-count').textContent = health.metrics.errors;
+                document.getElementById('slow-queries').textContent = health.metrics.slowQueries;
+                
+                // Update uptime
+                const uptimeMs = health.uptime || 0;
+                const hours = Math.floor(uptimeMs / 3600000);
+                const minutes = Math.floor((uptimeMs % 3600000) / 60000);
+                document.getElementById('uptime').textContent = `${hours}h ${minutes}m`;
+                
+            } catch (error) {
+                addLog('ERROR', `Erro ao buscar métricas de saúde: ${error.message}`);
+            }
+        }
+
+        async function updateSystemMetrics() {
+            try {
+                const response = await fetch('/metrics');
+                const metrics = await response.json();
+                
+                // Memory usage
+                const memoryUsed = metrics.memory.heapUsed;
+                const memoryTotal = metrics.memory.heapTotal;
+                const memoryPercent = (memoryUsed / memoryTotal) * 100;
+                
+                document.getElementById('memory-usage').textContent = 
+                    `${memoryUsed} MB / ${memoryTotal} MB`;
+                
+                const memoryProgress = document.getElementById('memory-progress');
+                memoryProgress.style.width = memoryPercent + '%';
+                memoryProgress.className = `progress-fill progress-${
+                    memoryPercent < 70 ? 'healthy' : 
+                    memoryPercent < 90 ? 'warning' : 'error'
+                }`;
+                
+            } catch (error) {
+                addLog('ERROR', `Erro ao buscar métricas do sistema: ${error.message}`);
+            }
+        }
+
+        async function updateCacheStats() {
+            try {
+                const response = await fetch('/cache-stats');
+                const cache = await response.json();
+                
+                document.getElementById('cache-hit-rate').textContent = cache.hitRate + '%';
+                document.getElementById('cache-hits').textContent = cache.hits;
+                document.getElementById('cache-size').textContent = `${cache.size}/${cache.maxSize}`;
+                
+            } catch (error) {
+                addLog('ERROR', `Erro ao buscar estatísticas do cache: ${error.message}`);
+            }
+        }
+
+        async function updateCircuitBreakers() {
+            try {
+                const response = await fetch('/metrics');
+                const metrics = await response.json();
+                
+                const circuitBreakersDiv = document.getElementById('circuit-breakers');
+                circuitBreakersDiv.innerHTML = '';
+                
+                if (metrics.circuitBreakers) {
+                    for (const [name, breaker] of Object.entries(metrics.circuitBreakers)) {
+                        const breakerDiv = document.createElement('div');
+                        breakerDiv.className = 'circuit-breaker';
+                        breakerDiv.innerHTML = `
+                            <div class="breaker-name">${name.toUpperCase()}:</div>
+                            <div class="breaker-state breaker-${breaker.state.toLowerCase()}">${breaker.state}</div>
+                            <span style="margin-left: 10px; color: #bdc3c7;">
+                                Falhas: ${breaker.failureCount}
+                            </span>
+                        `;
+                        circuitBreakersDiv.appendChild(breakerDiv);
+                    }
+                }
+                
+            } catch (error) {
+                addLog('ERROR', `Erro ao buscar circuit breakers: ${error.message}`);
+            }
+        }
+
+        function addLog(level, message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = {
+                timestamp,
+                level,
+                message
+            };
+            
+            logs.unshift(logEntry);
+            if (logs.length > 100) logs.pop(); // Keep only last 100 logs
+            
+            updateLogsDisplay();
+        }
+
+        function updateLogsDisplay() {
+            const logsContainer = document.getElementById('system-logs');
+            logsContainer.innerHTML = logs.map(log => `
+                <div class="log-entry">
+                    <span class="log-timestamp">[${log.timestamp}]</span>
+                    <span class="log-level-${log.level.toLowerCase()}">${log.level}</span>
+                    ${log.message}
+                </div>
+            `).join('');
+        }
+
+        function toggleAutoRefresh() {
+            autoRefresh = !autoRefresh;
+            if (autoRefresh) {
+                startAutoRefresh();
+                addLog('INFO', 'Auto-refresh ativado');
+            } else {
+                stopAutoRefresh();
+                addLog('INFO', 'Auto-refresh desativado');
+            }
+        }
+
+        function startAutoRefresh() {
+            if (refreshInterval) clearInterval(refreshInterval);
+            refreshInterval = setInterval(refreshAllMetrics, 10000); // Every 10 seconds
+        }
+
+        function stopAutoRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+                refreshInterval = null;
+            }
+        }
+
+        function clearLogs() {
+            logs.length = 0;
+            updateLogsDisplay();
+            addLog('INFO', 'Logs limpos');
+        }
+
+        function exportMetrics() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                logs: logs,
+                lastUpdate: document.getElementById('last-update').textContent
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], 
+                { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `codyverse-metrics-${Date.now()}.json`;
+            a.click();
+            
+            URL.revokeObjectURL(url);
+            addLog('INFO', 'Métricas exportadas');
+        }
+    </script>
+</body>
+</html>
