@@ -104,36 +104,99 @@ class SimplifiedGamificationService {
     const client = await dbManager.pool.connect();
     
     try {
-      // Get user basic data - create if doesn't exist
-      let userResult = await client.query('SELECT * FROM users WHERE id = $1', [userId]);
-      if (userResult.rows.length === 0) {
-        // Create default user for testing
-        await client.query(
-          'INSERT INTO users (id, email, name, total_xp, is_active, profile_data) VALUES ($1, $2, $3, 0, true, $4)',
-          [userId, `user${userId}@codyverse.edu`, `User ${userId}`, '{"preferences": {"language": "pt-BR"}}']
-        );
-        userResult = await client.query('SELECT * FROM users WHERE id = $1', [userId]);
-      }
+      // Single optimized query to get/create user and initialize gamification data
+      const userResult = await client.query(`
+        WITH user_upsert AS (
+          INSERT INTO users (id, email, name, total_xp, is_active, profile_data) 
+          VALUES ($1, $2, $3, 0, true, $4)
+          ON CONFLICT (id) DO NOTHING
+          RETURNING *
+        ),
+        wallet_upsert AS (
+          INSERT INTO user_wallet (user_id, coins, gems)
+          VALUES ($1, 0, 0)
+          ON CONFLICT (user_id) DO NOTHING
+          RETURNING *
+        ),
+        streak_upsert AS (
+          INSERT INTO user_streaks (user_id, streak_type, current_streak, longest_streak)
+          VALUES ($1, 'daily_lesson', 0, 0)
+          ON CONFLICT (user_id, streak_type) DO NOTHING
+          RETURNING *
+        )
+        SELECT * FROM users WHERE id = $1
+      `, [userId, `user${userId}@codyverse.edu`, `User ${userId}`, '{"preferences": {"language": "pt-BR"}}']);
       
       const user = userResult.rows[0];
 
-      // Initialize user gamification data if needed
-      await this.ensureUserGamificationData(userId, client);
+      // Single optimized query to get all gamification data
+      const gamificationResult = await client.query(`
+        SELECT 
+          'wallet' as type, 
+          json_build_object(
+            'id', w.id, 'user_id', w.user_id, 'coins', w.coins, 'gems', w.gems,
+            'total_coins_earned', w.total_coins_earned, 'total_coins_spent', w.total_coins_spent,
+            'last_updated', w.last_updated
+          ) as data
+        FROM user_wallet w WHERE w.user_id = $1
+        UNION ALL
+        SELECT 
+          'streak' as type,
+          json_build_object(
+            'id', s.id, 'user_id', s.user_id, 'streak_type', s.streak_type,
+            'current_streak', s.current_streak, 'longest_streak', s.longest_streak,
+            'last_activity_date', s.last_activity_date
+          ) as data
+        FROM user_streaks s WHERE s.user_id = $1 AND s.streak_type = 'daily_lesson'
+        UNION ALL
+        SELECT 
+          'badges' as type,
+          json_agg(json_build_object(
+            'id', b.id, 'badgeName', b.badge_name, 'badgeDescription', b.badge_description,
+            'badgeIcon', b.badge_icon, 'badgeType', 'achievement', 'unlockedAt', b.earned_at
+          )) as data
+        FROM user_badges b WHERE b.user_id = $1
+        UNION ALL
+        SELECT 
+          'goals' as type,
+          json_agg(json_build_object(
+            'id', g.id, 'user_id', g.user_id, 'goal_type', g.goal_type,
+            'target_value', g.target_value, 'current_progress', g.current_progress,
+            'is_completed', g.is_completed, 'goal_date', g.goal_date,
+            'rewards_coins', g.rewards_coins, 'rewards_xp', g.rewards_xp
+          )) as data
+        FROM daily_goals g WHERE g.user_id = $1 AND g.goal_date = CURRENT_DATE
+        UNION ALL
+        SELECT 
+          'notifications' as type,
+          json_agg(json_build_object(
+            'id', n.id, 'user_id', n.user_id, 'notification_type', n.notification_type,
+            'title', n.title, 'message', n.message, 'icon', n.icon,
+            'is_read', n.is_read, 'created_at', n.created_at,
+            'timeAgo', CASE 
+              WHEN EXTRACT(EPOCH FROM (NOW() - n.created_at)) < 3600 THEN 
+                EXTRACT(MINUTES FROM (NOW() - n.created_at))::text || ' minutos atrás'
+              ELSE 
+                EXTRACT(HOURS FROM (NOW() - n.created_at))::text || ' horas atrás'
+            END
+          ) ORDER BY n.created_at DESC) as data
+        FROM gamification_notifications n WHERE n.user_id = $1
+      `, [userId]);
 
-      // Execute all queries in parallel for better performance
-      const [walletResult, badgesResult, streakResult, goalsResult, notificationsResult] = await Promise.all([
-        client.query('SELECT * FROM user_wallet WHERE user_id = $1', [userId]),
-        client.query('SELECT * FROM user_badges WHERE user_id = $1 ORDER BY earned_at DESC', [userId]),
-        client.query('SELECT * FROM user_streaks WHERE user_id = $1 AND streak_type = $2', [userId, 'daily_lesson']),
-        client.query('SELECT * FROM daily_goals WHERE user_id = $1 AND goal_date = CURRENT_DATE', [userId]),
-        client.query('SELECT * FROM gamification_notifications WHERE user_id = $1 ORDER BY created_at DESC LIMIT 10', [userId])
-      ]);
+      // Parse results
+      const wallet = { coins: 0, gems: 0, total_coins_earned: 0, total_coins_spent: 0 };
+      const streak = { current_streak: 0, longest_streak: 0, last_activity_date: new Date() };
+      let badges = [];
+      let goals = [];
+      let notifications = [];
 
-      const wallet = walletResult.rows[0] || { coins: 0, gems: 0 };
-      const badges = badgesResult.rows;
-      const streak = streakResult.rows[0] || { current_streak: 0, longest_streak: 0 };
-      let goals = goalsResult.rows;
-      const notifications = notificationsResult.rows;
+      gamificationResult.rows.forEach(row => {
+        if (row.type === 'wallet' && row.data) Object.assign(wallet, row.data);
+        if (row.type === 'streak' && row.data) Object.assign(streak, row.data);
+        if (row.type === 'badges' && row.data) badges = row.data || [];
+        if (row.type === 'goals' && row.data) goals = row.data || [];
+        if (row.type === 'notifications' && row.data) notifications = row.data || [];
+      });
 
       // Create default goals if none exist (only if needed)
       if (goals.length === 0) {
