@@ -2273,7 +2273,10 @@
                 
                 // Create progress container if it doesn't exist
                 let progressContainer = document.getElementById('progressContainer');
+                console.log('Existing progressContainer:', progressContainer);
+                
                 if (!progressContainer) {
+                    console.log('Creating new progress container');
                     progressContainer = document.createElement('div');
                     progressContainer.id = 'progressContainer';
                     progressContainer.innerHTML = `
@@ -2285,10 +2288,24 @@
                             <div class="loading-message">Carregando dados de progresso...</div>
                         </div>
                     `;
-                    document.querySelector('.container').appendChild(progressContainer);
+                    const container = document.querySelector('.container');
+                    console.log('Container element:', container);
+                    if (container) {
+                        container.appendChild(progressContainer);
+                        console.log('Progress container added to DOM');
+                    } else {
+                        console.error('Container element not found');
+                    }
+                } else {
+                    console.log('Using existing progress container');
                 }
                 
-                progressContainer.style.display = 'block';
+                if (progressContainer) {
+                    progressContainer.style.display = 'block';
+                    console.log('Progress container display set to block');
+                } else {
+                    console.error('Progress container is null');
+                }
                 
                 // Load progress data from gamification API
                 console.log('Fetching progress data...');
@@ -2327,7 +2344,15 @@
         }
         
         function renderProgressData(data) {
+            console.log('renderProgressData called with:', data);
             const progressContent = document.querySelector('.progress-content');
+            console.log('progressContent element:', progressContent);
+            
+            if (!progressContent) {
+                console.error('Progress content element not found');
+                return;
+            }
+            
             const { user, wallet, badges, streak, goals, notifications } = data;
             
             progressContent.innerHTML = `
