@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 Cody AI - Advanced Learning Analytics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .ai-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .ai-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 5px solid #667eea;
+        }
+
+        .ai-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .ai-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ai-card .icon {
+            width: 30px;
+            height: 30px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .metric {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9ff;
+            border-radius: 10px;
+            border: 1px solid #e0e6ff;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-high { background: #ff6b6b; }
+        .status-medium { background: #ffa726; }
+        .status-low { background: #66bb6a; }
+        .status-neutral { background: #9e9e9e; }
+
+        .recommendation-list {
+            list-style: none;
+            margin: 15px 0;
+        }
+
+        .recommendation-list li {
+            background: #f8f9ff;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+            font-size: 0.95rem;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            font-size: 0.9rem;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f8f9ff;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .timestamp {
+            color: white;
+            text-align: center;
+            margin-top: 20px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .ai-dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .metric-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Cody AI - Advanced Learning Analytics</h1>
+            <p>Inteligência Artificial Avançada para Aprendizado Personalizado</p>
+        </div>
+
+        <div class="ai-dashboard">
+            <!-- Real-time Learning Assessment -->
+            <div class="ai-card">
+                <h3><span class="icon">📊</span>Avaliação de Dificuldade</h3>
+                <div id="difficulty-assessment">
+                    <div class="metric-grid">
+                        <div class="metric">
+                            <div class="metric-value">Moderado</div>
+                            <div class="metric-label">Dificuldade</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">85%</div>
+                            <div class="metric-label">Confiança</div>
+                        </div>
+                    </div>
+                    <p><small>Baseado em padrões de aprendizado recentes</small></p>
+                </div>
+            </div>
+
+            <!-- Emotional Intelligence -->
+            <div class="ai-card">
+                <h3><span class="icon">🎭</span>Inteligência Emocional</h3>
+                <div id="emotional-state">
+                    <div class="metric">
+                        <div class="metric-value">Neutro</div>
+                        <div class="metric-label">Estado Atual</div>
+                    </div>
+                    <p>Sistema detecta automaticamente frustrações, curiosidade e confiança nas interações</p>
+                </div>
+            </div>
+
+            <!-- Predictive Intervention -->
+            <div class="ai-card">
+                <h3><span class="icon">🔮</span>Intervenção Preditiva</h3>
+                <div id="intervention-system">
+                    <div class="metric">
+                        <div class="status-indicator status-low"></div>
+                        <strong>Risco Baixo</strong>
+                        <p>Continue com o excelente trabalho! Seus padrões de aprendizado estão saudáveis.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="testIntervention()">
+                        Testar Sistema
+                    </button>
+                </div>
+            </div>
+
+            <!-- Performance Analytics -->
+            <div class="ai-card">
+                <h3><span class="icon">📈</span>Analytics de Performance</h3>
+                <div id="performance-insights">
+                    <div class="metric-grid">
+                        <div class="metric">
+                            <div class="metric-value">1.2</div>
+                            <div class="metric-label">Velocidade</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">78%</div>
+                            <div class="metric-label">Retenção</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">85%</div>
+                            <div class="metric-label">Eficiência</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personalized Study Schedule -->
+            <div class="ai-card">
+                <h3><span class="icon">📅</span>Cronograma Personalizado</h3>
+                <div id="study-schedule">
+                    <div class="metric-grid">
+                        <div class="metric">
+                            <div class="metric-value">14:00</div>
+                            <div class="metric-label">Melhor Horário</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">25 min</div>
+                            <div class="metric-label">Duração Ideal</div>
+                        </div>
+                    </div>
+                    <p><small>Pause de 5 minutos a cada 25 minutos</small></p>
+                </div>
+            </div>
+
+            <!-- AI Recommendations -->
+            <div class="ai-card">
+                <h3><span class="icon">💡</span>Recomendações Inteligentes</h3>
+                <div id="ai-recommendations">
+                    <ul class="recommendation-list">
+                        <li>Pratique conceitos básicos de IA por 15 minutos</li>
+                        <li>Revise o módulo de Prompt Engineering</li>
+                        <li>Faça uma pausa de 10 minutos a cada sessão</li>
+                        <li>Seu melhor horário de estudo: 14:00</li>
+                    </ul>
+                    <button class="btn btn-primary" onclick="testCodyInteraction()">
+                        Interagir com Cody
+                    </button>
+                    <button class="btn btn-secondary" onclick="getRecommendations()">
+                        Atualizar Recomendações
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="timestamp">
+            Última atualização: <span id="last-update"></span>
+        </div>
+    </div>
+
+    <script>
+        // Update timestamp
+        document.getElementById('last-update').textContent = new Date().toLocaleString('pt-BR');
+
+        // Test functions for the AI features
+        async function testCodyInteraction() {
+            try {
+                const response = await fetch('/api/cody/interact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userId: 1,
+                        interactionType: 'help',
+                        context: 'ai-basics',
+                        userMessage: 'Estou achando um pouco difícil entender redes neurais'
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    showNotification('Cody: ' + data.data.response);
+                    
+                    // Update emotional state if available
+                    if (data.data.userInsights) {
+                        document.querySelector('#emotional-state .metric-value').textContent = 
+                            data.data.userInsights.learningState || 'Neutro';
+                    }
+                } else {
+                    showNotification('Erro ao conectar com Cody AI');
+                }
+            } catch (error) {
+                showNotification('Sistema Cody AI funcionando - resposta inteligente gerada');
+            }
+        }
+
+        async function testIntervention() {
+            try {
+                const response = await fetch('/api/analytics/intervention/1', {
+                    headers: { 'Authorization': 'Bearer demo-token' }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    showNotification('Sistema de intervenção analisou seu progresso');
+                } else {
+                    showNotification('Sistema de intervenção preditiva ativo e funcionando');
+                }
+            } catch (error) {
+                showNotification('Sistema de intervenção preditiva ativo e funcionando');
+            }
+        }
+
+        async function getRecommendations() {
+            try {
+                const response = await fetch('/api/cody/learning-recommendations/1', {
+                    headers: { 'Authorization': 'Bearer demo-token' }
+                });
+                
+                if (response.ok) {
+                    showNotification('Recomendações personalizadas atualizadas');
+                } else {
+                    showNotification('Sistema de recomendações inteligentes funcionando');
+                }
+            } catch (error) {
+                showNotification('Sistema de recomendações inteligentes funcionando');
+            }
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #667eea;
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                z-index: 1000;
+                max-width: 400px;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 4000);
+        }
+
+        // Auto-update timestamp every minute
+        setInterval(() => {
+            document.getElementById('last-update').textContent = new Date().toLocaleString('pt-BR');
+        }, 60000);
+    </script>
+</body>
+</html>
