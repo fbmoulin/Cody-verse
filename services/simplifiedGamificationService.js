@@ -86,15 +86,21 @@ class SimplifiedGamificationService {
 
       client.release();
       this.initialized = true;
+      this.initializationPromise = null;
       console.log('Simplified gamification tables initialized');
       
     } catch (error) {
       console.error('Error initializing gamification tables:', error);
+      this.initializationPromise = null;
+      throw error;
     }
   }
 
   async getUserDashboard(userId) {
-    await this.initialize();
+    // Only initialize once
+    if (!this.initialized) {
+      await this.initialize();
+    }
     const client = await dbManager.pool.connect();
     
     try {
