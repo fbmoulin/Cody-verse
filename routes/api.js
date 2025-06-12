@@ -178,6 +178,14 @@ router.get('/gamification/notifications/:userId', gamificationController.getNoti
 router.post('/gamification/lesson-complete/:userId', gamificationController.processLessonCompletion.bind(gamificationController));
 router.post('/gamification/simulate-lesson/:userId', gamificationController.simulateLessonCompletion.bind(gamificationController));
 
+// Age Adaptation Routes
+const ageController = new (require('../controllers/ageAdaptationController'))();
+router.post('/age-adaptation/register', ageController.registerUserWithAge.bind(ageController));
+router.get('/age-adaptation/content/:userId', ageController.getAgeAdaptedContent.bind(ageController));
+router.post('/age-adaptation/exercises', ageController.generateAgeBasedExercises.bind(ageController));
+router.get('/age-adaptation/profile', ageController.getAgeProfile.bind(ageController));
+router.post('/age-adaptation/rewards', ageController.adaptGamificationRewards.bind(ageController));
+
 // Rota de health check
 router.get('/health', require('../server/database').healthCheck);
 
