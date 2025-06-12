@@ -2,6 +2,8 @@ const { db } = require('../server/database');
 const { courseModules, lessons, codyInteractions } = require('../shared/schema');
 const { courseModulesData, lessonsData } = require('../server/staticData');
 const { eq, asc } = require('drizzle-orm');
+const errorHandler = require('./errorHandlerService');
+const newCacheService = require('./cacheService');
 
 class DataService {
   // Get all courses with proper error handling

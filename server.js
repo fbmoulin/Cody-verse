@@ -10,6 +10,7 @@ const connectionPool = require('./server/connectionPool');
 const errorHandler = require('./services/errorHandlerService');
 const systemHealth = require('./services/systemHealthMonitor');
 const cacheService = require('./services/cacheService');
+const RequestMiddleware = require('./server/requestMiddleware');
 
 // Middleware
 const {
@@ -88,6 +89,10 @@ class CodyVerseServer {
     
     // Parsing de requisições
     setupParsing(this.app);
+    
+    // Enhanced request tracking and monitoring
+    this.app.use(RequestMiddleware.createRequestTracker());
+    this.app.use(RequestMiddleware.createRateLimiter(60000, 200)); // 200 requests per minute
   }
 
   setupRoutes() {
@@ -102,7 +107,11 @@ class CodyVerseServer {
       }
     }));
 
-    // Rotas da API
+    // Cache middleware for API routes
+    this.app.use('/api', RequestMiddleware.createCacheMiddleware(180000)); // 3 minutes cache
+    
+    // Rotas da API with circuit breaker
+    this.app.use('/api', RequestMiddleware.createCircuitBreaker('api', { threshold: 10 }));
     this.app.use('/api', apiRoutes);
 
     // Enhanced health check
@@ -142,7 +151,8 @@ class CodyVerseServer {
       res.sendFile(path.join(__dirname, 'index.html'));
     });
 
-    // Middleware de tratamento de erros (deve ser o último)
+    // Enhanced error handling middleware (deve ser o último)
+    this.app.use(RequestMiddleware.createErrorHandler());
     setupErrorHandling(this.app);
   }
 
