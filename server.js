@@ -122,7 +122,11 @@ class CodyVerseServer {
       }
     }));
 
-    // Responsive Design System Routes
+    // Modern React Frontend Routes
+    this.app.get('/', (req, res) => {
+      res.sendFile(path.join(__dirname, 'index.html'));
+    });
+
     this.app.get('/design-system', (req, res) => {
       res.sendFile(path.join(__dirname, 'codyverse-design-system.html'));
     });
