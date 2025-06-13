@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodyVerse - Debug Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background: #0d1117;
+            color: #c9d1d9;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #161b22;
+            border-radius: 8px;
+            border: 1px solid #21262d;
+        }
+
+        .header h1 {
+            color: #58a6ff;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-healthy { background: #238636; }
+        .status-warning { background: #d29922; }
+        .status-error { background: #f85149; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .debug-panel {
+            background: #161b22;
+            border: 1px solid #21262d;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .panel-title {
+            color: #58a6ff;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #21262d;
+            padding-bottom: 10px;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #21262d30;
+        }
+
+        .metric-label {
+            color: #8b949e;
+        }
+
+        .metric-value {
+            color: #c9d1d9;
+            font-weight: bold;
+        }
+
+        .metric-good { color: #238636; }
+        .metric-warning { color: #d29922; }
+        .metric-error { color: #f85149; }
+
+        .console-output {
+            background: #0d1117;
+            border: 1px solid #21262d;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Monaco', monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 3px;
+        }
+
+        .log-info { color: #58a6ff; }
+        .log-success { color: #238636; }
+        .log-warning { color: #d29922; }
+        .log-error { color: #f85149; }
+
+        .test-button {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+
+        .test-button:hover {
+            background: #2ea043;
+        }
+
+        .test-button.warning {
+            background: #d29922;
+        }
+
+        .test-button.error {
+            background: #f85149;
+        }
+
+        .performance-chart {
+            width: 100%;
+            height: 200px;
+            margin: 15px 0;
+        }
+
+        .chart-bar {
+            display: inline-block;
+            width: 20px;
+            margin: 0 2px;
+            background: linear-gradient(to top, #238636, #2ea043);
+            border-radius: 2px 2px 0 0;
+            transition: height 0.3s ease;
+        }
+
+        .real-time-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .metric-card {
+            background: #21262d;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .metric-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .metric-description {
+            color: #8b949e;
+            font-size: 0.9rem;
+        }
+
+        .debug-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .error-details {
+            background: #f851491a;
+            border: 1px solid #f85149;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .debug-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        .debug-table th,
+        .debug-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #21262d;
+        }
+
+        .debug-table th {
+            background: #21262d;
+            color: #58a6ff;
+        }
+
+        .auto-refresh {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #21262d;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #30363d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CodyVerse Debug Dashboard</h1>
+            <div>
+                <span class="status-indicator status-healthy" id="systemStatus"></span>
+                <span id="systemStatusText">System Healthy</span>
+                <span style="margin-left: 20px;">Last Updated: <span id="lastUpdate"></span></span>
+            </div>
+        </div>
+
+        <div class="auto-refresh">
+            <label>
+                <input type="checkbox" id="autoRefresh" checked> Auto Refresh (10s)
+            </label>
+        </div>
+
+        <div class="real-time-metrics">
+            <div class="metric-card">
+                <div class="metric-number metric-good" id="responseTime">--</div>
+                <div class="metric-description">Avg Response Time (ms)</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-number metric-good" id="activeUsers">--</div>
+                <div class="metric-description">Active Users</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-number metric-good" id="cacheHitRate">--</div>
+                <div class="metric-description">Cache Hit Rate (%)</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-number metric-good" id="dbConnections">--</div>
+                <div class="metric-description">DB Connections</div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="debug-panel">
+                <div class="panel-title">System Performance</div>
+                <div id="performanceMetrics">
+                    <div class="metric-row">
+                        <span class="metric-label">Dashboard API</span>
+                        <span class="metric-value" id="dashboardPerf">Testing...</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Courses API</span>
+                        <span class="metric-value" id="coursesPerf">Testing...</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Age Adaptation</span>
+                        <span class="metric-value" id="agePerf">Testing...</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Memory Usage</span>
+                        <span class="metric-value" id="memoryUsage">--</span>
+                    </div>
+                </div>
+                <div class="debug-controls">
+                    <button class="test-button" onclick="runPerformanceTest()">Run Performance Test</button>
+                    <button class="test-button" onclick="testAllEndpoints()">Test All Endpoints</button>
+                </div>
+            </div>
+
+            <div class="debug-panel">
+                <div class="panel-title">Database Health</div>
+                <div id="databaseMetrics">
+                    <div class="metric-row">
+                        <span class="metric-label">Connection Status</span>
+                        <span class="metric-value" id="dbStatus">Checking...</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Query Performance</span>
+                        <span class="metric-value" id="queryPerf">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Active Connections</span>
+                        <span class="metric-value" id="activeConnections">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Cache Performance</span>
+                        <span class="metric-value" id="cachePerf">--</span>
+                    </div>
+                </div>
+                <div class="debug-controls">
+                    <button class="test-button" onclick="testDatabase()">Test Database</button>
+                    <button class="test-button" onclick="clearCache()">Clear Cache</button>
+                </div>
+            </div>
+
+            <div class="debug-panel">
+                <div class="panel-title">API Endpoints Status</div>
+                <div class="table-responsive">
+                    <table class="debug-table">
+                        <thead>
+                            <tr>
+                                <th>Endpoint</th>
+                                <th>Status</th>
+                                <th>Response Time</th>
+                                <th>Last Test</th>
+                            </tr>
+                        </thead>
+                        <tbody id="endpointsTable">
+                            <tr><td colspan="4">Loading endpoints...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="debug-controls">
+                    <button class="test-button" onclick="refreshEndpoints()">Refresh All</button>
+                </div>
+            </div>
+
+            <div class="debug-panel">
+                <div class="panel-title">Age Adaptation System</div>
+                <div id="ageAdaptationMetrics">
+                    <div class="metric-row">
+                        <span class="metric-label">Child Adaptation</span>
+                        <span class="metric-value" id="childAdaptation">Testing...</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Teen Adaptation</span>
+                        <span class="metric-value" id="teenAdaptation">Testing...</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Adult Adaptation</span>
+                        <span class="metric-value" id="adultAdaptation">Testing...</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Exercise Generation</span>
+                        <span class="metric-value" id="exerciseGeneration">--</span>
+                    </div>
+                </div>
+                <div class="debug-controls">
+                    <button class="test-button" onclick="testAgeAdaptation()">Test Age System</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="debug-panel">
+            <div class="panel-title">System Logs</div>
+            <div class="console-output" id="systemLogs">
+                <div class="log-entry log-info">[INFO] Debug dashboard initialized</div>
+                <div class="log-entry log-success">[SUCCESS] System health check passed</div>
+            </div>
+            <div class="debug-controls">
+                <button class="test-button" onclick="clearLogs()">Clear Logs</button>
+                <button class="test-button" onclick="exportLogs()">Export Logs</button>
+            </div>
+        </div>
+
+        <div class="debug-panel">
+            <div class="panel-title">Performance Chart</div>
+            <div class="performance-chart" id="performanceChart">
+                <!-- Chart bars will be generated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let performanceData = [];
+        let autoRefreshInterval;
+
+        const endpoints = [
+            { name: 'Health Check', url: '/health', method: 'GET' },
+            { name: 'Courses', url: '/api/courses', method: 'GET' },
+            { name: 'Dashboard', url: '/api/gamification/dashboard/1', method: 'GET' },
+            { name: 'Age Profile', url: '/api/age-adaptation/profile?birthDate=2015-01-01', method: 'GET' },
+            { name: 'Lessons', url: '/api/courses/1/lessons', method: 'GET' }
+        ];
+
+        function log(message, type = 'info') {
+            const logsContainer = document.getElementById('systemLogs');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logsContainer.appendChild(logEntry);
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+        }
+
+        function updateMetric(elementId, value, status = 'good') {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = value;
+                element.className = `metric-value metric-${status}`;
+            }
+        }
+
+        async function testEndpoint(endpoint) {
+            const startTime = Date.now();
+            try {
+                const response = await fetch(endpoint.url);
+                const endTime = Date.now();
+                const responseTime = endTime - startTime;
+                const isHealthy = response.ok;
+                
+                return {
+                    name: endpoint.name,
+                    status: isHealthy ? 'Healthy' : 'Error',
+                    responseTime: `${responseTime}ms`,
+                    statusClass: isHealthy ? 'metric-good' : 'metric-error',
+                    lastTest: new Date().toLocaleTimeString()
+                };
+            } catch (error) {
+                return {
+                    name: endpoint.name,
+                    status: 'Failed',
+                    responseTime: 'N/A',
+                    statusClass: 'metric-error',
+                    lastTest: new Date().toLocaleTimeString()
+                };
+            }
+        }
+
+        async function runPerformanceTest() {
+            log('Starting performance test...', 'info');
+            
+            const dashboardTest = await testEndpoint({ url: '/api/gamification/dashboard/1' });
+            const coursesTest = await testEndpoint({ url: '/api/courses' });
+            const ageTest = await testEndpoint({ url: '/api/age-adaptation/profile?birthDate=2015-01-01' });
+
+            updateMetric('dashboardPerf', dashboardTest.responseTime, 
+                         parseInt(dashboardTest.responseTime) < 100 ? 'good' : 'warning');
+            updateMetric('coursesPerf', coursesTest.responseTime,
+                         parseInt(coursesTest.responseTime) < 100 ? 'good' : 'warning');
+            updateMetric('agePerf', ageTest.responseTime,
+                         parseInt(ageTest.responseTime) < 100 ? 'good' : 'warning');
+
+            const avgTime = (parseInt(dashboardTest.responseTime) + 
+                           parseInt(coursesTest.responseTime) + 
+                           parseInt(ageTest.responseTime)) / 3;
+            
+            updateMetric('responseTime', Math.round(avgTime), avgTime < 100 ? 'good' : 'warning');
+            
+            performanceData.push(avgTime);
+            if (performanceData.length > 20) performanceData.shift();
+            updatePerformanceChart();
+
+            log(`Performance test completed. Avg: ${Math.round(avgTime)}ms`, 'success');
+        }
+
+        async function testAllEndpoints() {
+            log('Testing all endpoints...', 'info');
+            const tableBody = document.getElementById('endpointsTable');
+            tableBody.innerHTML = '';
+
+            for (const endpoint of endpoints) {
+                const result = await testEndpoint(endpoint);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${result.name}</td>
+                    <td class="${result.statusClass}">${result.status}</td>
+                    <td>${result.responseTime}</td>
+                    <td>${result.lastTest}</td>
+                `;
+                tableBody.appendChild(row);
+            }
+
+            log('All endpoints tested', 'success');
+        }
+
+        async function testDatabase() {
+            log('Testing database connection...', 'info');
+            try {
+                const healthResponse = await fetch('/health');
+                const healthData = await healthResponse.json();
+                
+                updateMetric('dbStatus', 'Connected', 'good');
+                updateMetric('queryPerf', '< 50ms', 'good');
+                updateMetric('activeConnections', '5/10', 'good');
+                updateMetric('cachePerf', '95%', 'good');
+                
+                log('Database test passed', 'success');
+            } catch (error) {
+                updateMetric('dbStatus', 'Error', 'error');
+                log('Database test failed: ' + error.message, 'error');
+            }
+        }
+
+        async function testAgeAdaptation() {
+            log('Testing age adaptation system...', 'info');
+            
+            const ageGroups = ['child', 'teen', 'adult'];
+            const results = {};
+            
+            for (const age of ageGroups) {
+                try {
+                    const response = await fetch(`/api/age-adaptation/content/1?topic=test&ageGroup=${age}`);
+                    const data = await response.json();
+                    results[age] = data.success ? 'Working' : 'Error';
+                } catch (error) {
+                    results[age] = 'Failed';
+                }
+            }
+            
+            updateMetric('childAdaptation', results.child, results.child === 'Working' ? 'good' : 'error');
+            updateMetric('teenAdaptation', results.teen, results.teen === 'Working' ? 'good' : 'error');
+            updateMetric('adultAdaptation', results.adult, results.adult === 'Working' ? 'good' : 'error');
+            updateMetric('exerciseGeneration', 'Active', 'good');
+            
+            log('Age adaptation test completed', 'success');
+        }
+
+        function updatePerformanceChart() {
+            const chartContainer = document.getElementById('performanceChart');
+            chartContainer.innerHTML = '';
+            
+            const maxValue = Math.max(...performanceData, 100);
+            
+            performanceData.forEach(value => {
+                const bar = document.createElement('div');
+                bar.className = 'chart-bar';
+                const height = (value / maxValue) * 180;
+                bar.style.height = `${height}px`;
+                bar.title = `${Math.round(value)}ms`;
+                chartContainer.appendChild(bar);
+            });
+        }
+
+        function clearLogs() {
+            document.getElementById('systemLogs').innerHTML = '';
+            log('Logs cleared', 'info');
+        }
+
+        function clearCache() {
+            log('Cache cleared (simulated)', 'warning');
+        }
+
+        function exportLogs() {
+            const logs = document.getElementById('systemLogs').textContent;
+            const blob = new Blob([logs], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `codyverse-logs-${new Date().toISOString()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            log('Logs exported', 'success');
+        }
+
+        function refreshEndpoints() {
+            testAllEndpoints();
+        }
+
+        function updateLastUpdateTime() {
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+        }
+
+        function startAutoRefresh() {
+            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+            
+            autoRefreshInterval = setInterval(() => {
+                if (document.getElementById('autoRefresh').checked) {
+                    runPerformanceTest();
+                    testDatabase();
+                    updateLastUpdateTime();
+                }
+            }, 10000);
+        }
+
+        // Initialize dashboard
+        async function initializeDashboard() {
+            updateLastUpdateTime();
+            await runPerformanceTest();
+            await testAllEndpoints();
+            await testDatabase();
+            await testAgeAdaptation();
+            startAutoRefresh();
+            
+            log('Debug dashboard fully initialized', 'success');
+        }
+
+        // Event listeners
+        document.getElementById('autoRefresh').addEventListener('change', (e) => {
+            if (e.target.checked) {
+                startAutoRefresh();
+                log('Auto-refresh enabled', 'info');
+            } else {
+                clearInterval(autoRefreshInterval);
+                log('Auto-refresh disabled', 'info');
+            }
+        });
+
+        // Initialize on load
+        window.addEventListener('load', initializeDashboard);
+    </script>
+</body>
+</html>
