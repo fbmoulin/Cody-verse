@@ -760,6 +760,164 @@
             background: linear-gradient(135deg, hsl(34 197 94) 0%, hsl(132 204 22) 100%);
         }
 
+        /* Lessons Module Styles */
+        .lessons-container {
+            display: grid;
+            gap: var(--spacing-sm);
+        }
+
+        .lesson-item {
+            background: hsla(var(--card), 0.1);
+            border: 1px solid hsla(var(--border), 0.3);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-md);
+            transition: var(--transition-normal);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .lesson-item:hover {
+            transform: translateX(4px);
+            border-color: hsla(var(--primary), 0.5);
+            background: hsla(var(--card), 0.2);
+        }
+
+        .lesson-item.completed {
+            background: hsla(var(--success), 0.1);
+            border-color: hsla(var(--success), 0.3);
+        }
+
+        .lesson-item.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .lesson-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .lesson-title {
+            font-size: var(--font-size-lg);
+            font-weight: 700;
+            color: hsl(var(--foreground));
+            margin-bottom: 0.25rem;
+        }
+
+        .lesson-type {
+            background: hsla(var(--primary), 0.2);
+            color: hsl(var(--primary));
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--border-radius-sm);
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .lesson-type.theory {
+            background: hsla(var(--info), 0.2);
+            color: hsl(var(--info));
+        }
+
+        .lesson-type.interactive {
+            background: hsla(var(--primary), 0.2);
+            color: hsl(var(--primary));
+        }
+
+        .lesson-type.lab {
+            background: hsla(var(--accent), 0.2);
+            color: hsl(var(--accent));
+        }
+
+        .lesson-type.quiz {
+            background: hsla(var(--warning), 0.2);
+            color: hsl(var(--warning));
+        }
+
+        .lesson-meta {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-sm);
+            font-size: var(--font-size-sm);
+            color: hsl(var(--muted-foreground));
+        }
+
+        .lesson-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .lesson-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: hsl(var(--success));
+            border-radius: var(--border-radius-sm);
+            transition: var(--transition-normal);
+        }
+
+        .module-card {
+            background: hsla(var(--card), 0.1);
+            border: 1px solid hsla(var(--border), 0.3);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            cursor: pointer;
+            transition: var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module-card:hover {
+            transform: translateY(-4px);
+            border-color: hsla(var(--primary), 0.5);
+            box-shadow: var(--shadow-md);
+        }
+
+        .module-card.selected {
+            border-color: hsl(var(--primary));
+            background: hsla(var(--primary), 0.1);
+        }
+
+        .module-title {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+            color: hsl(var(--foreground));
+        }
+
+        .module-description {
+            color: hsl(var(--muted-foreground));
+            margin-bottom: var(--spacing-md);
+            line-height: 1.6;
+        }
+
+        .module-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: var(--font-size-sm);
+        }
+
+        .module-progress-bar {
+            width: 100%;
+            height: 6px;
+            background: hsla(var(--muted), 0.3);
+            border-radius: var(--border-radius-sm);
+            margin: var(--spacing-sm) 0;
+            overflow: hidden;
+        }
+
+        .module-progress-fill {
+            height: 100%;
+            background: hsl(var(--primary));
+            border-radius: var(--border-radius-sm);
+            transition: var(--transition-normal);
+        }
+
         /* Enhanced Responsive Design */
         @media (max-width: 1200px) {
             .dashboard {
@@ -839,6 +997,7 @@
             <ul class="nav-links">
                 <li><a class="nav-link active" onclick="showTab('dashboard')" data-tab="dashboard">Dashboard</a></li>
                 <li><a class="nav-link" onclick="showTab('courses')" data-tab="courses">Cursos</a></li>
+                <li><a class="nav-link" onclick="showTab('lessons')" data-tab="lessons">Lições</a></li>
                 <li><a class="nav-link" onclick="showTab('achievements')" data-tab="achievements">Conquistas</a></li>
                 <li class="theme-switcher">
                     <button class="theme-btn" onclick="toggleThemeMenu()" title="Trocar Tema">
@@ -969,6 +1128,39 @@
         </div>
     </div>
 
+    <!-- Lessons Tab -->
+    <div id="lessons-tab" class="tab-content hidden">
+        <div style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+            <h1 style="margin-bottom: 2rem; font-size: 2.5rem; font-weight: 800;" class="text-gradient">
+                Lições Interativas
+            </h1>
+            
+            <!-- Module Selection -->
+            <div class="card" style="margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem;">Selecionar Módulo</h3>
+                <div id="module-list" class="courses-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Carregando módulos...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lessons List -->
+            <div class="lessons-section">
+                <div class="lessons-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3 id="current-module-title">Selecione um módulo para ver as lições</h3>
+                    <div class="progress-info" style="background: hsla(var(--primary), 0.1); padding: 0.5rem 1rem; border-radius: var(--border-radius-sm); font-weight: 600;">
+                        <span id="lessons-progress">0/0 concluídas</span>
+                    </div>
+                </div>
+                <div id="lessons-list" class="lessons-container">
+                    <!-- Lessons will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Achievements Tab -->
     <div id="achievements-tab" class="tab-content hidden">
         <div style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
@@ -991,7 +1183,9 @@
                 this.data = {
                     dashboard: null,
                     courses: null,
-                    badges: null
+                    badges: null,
+                    lessons: null,
+                    selectedModule: null
                 };
                 this.currentTab = 'dashboard';
                 this.cache = new Map();
@@ -1223,6 +1417,8 @@
                 loadDashboard();
             } else if (tabName === 'courses' && !appState.get('courses')) {
                 loadCourses();
+            } else if (tabName === 'lessons' && !appState.get('courses')) {
+                loadModules();
             } else if (tabName === 'achievements' && !appState.get('badges')) {
                 loadBadges();
             }
@@ -1444,6 +1640,145 @@
 
         function openCourse(courseId) {
             console.log('Opening course:', courseId);
+        }
+
+        // Enhanced Modules Loading
+        async function loadModules() {
+            if (appState.isLoading('modules')) return;
+
+            appState.setLoading('modules', true);
+            UI.showLoading('module-list');
+
+            try {
+                const result = await api.get('/courses');
+
+                if (result.success) {
+                    appState.set('courses', result.data);
+                    updateModulesUI(result.data);
+                } else {
+                    throw new Error(result.message || 'Failed to load modules');
+                }
+            } catch (error) {
+                console.error('Modules loading error:', error);
+                UI.showError('module-list', 'Erro ao carregar módulos');
+            } finally {
+                appState.setLoading('modules', false);
+            }
+        }
+
+        function updateModulesUI(modules) {
+            const container = document.getElementById('module-list');
+            
+            container.innerHTML = modules.map(module => `
+                <div class="module-card" onclick="selectModule('${module.id}', '${module.title}')" data-module-id="${module.id}">
+                    <div class="module-title">${module.title}</div>
+                    <div class="module-description">${module.description}</div>
+                    <div class="module-progress-bar">
+                        <div class="module-progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="module-meta">
+                        <span class="difficulty difficulty-${module.difficulty.toLowerCase()}">${module.difficulty}</span>
+                        <span class="module-xp">⚡ ${module.total_xp} XP</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Enhanced Lessons Loading
+        async function selectModule(moduleId, moduleTitle) {
+            // Update selected module UI
+            document.querySelectorAll('.module-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.querySelector(`[data-module-id="${moduleId}"]`).classList.add('selected');
+
+            // Update module title
+            document.getElementById('current-module-title').textContent = moduleTitle;
+
+            // Load lessons for this module
+            await loadLessons(moduleId);
+        }
+
+        async function loadLessons(moduleId) {
+            if (appState.isLoading('lessons')) return;
+
+            appState.setLoading('lessons', true);
+            UI.showLoading('lessons-list');
+
+            try {
+                const result = await api.get(`/courses/${moduleId}/lessons`);
+
+                if (result.success) {
+                    appState.set('lessons', result.data);
+                    appState.set('selectedModule', moduleId);
+                    updateLessonsUI(result.data);
+                    updateLessonsProgress(result.data);
+                } else {
+                    throw new Error(result.message || 'Failed to load lessons');
+                }
+            } catch (error) {
+                console.error('Lessons loading error:', error);
+                UI.showError('lessons-list', 'Erro ao carregar lições');
+            } finally {
+                appState.setLoading('lessons', false);
+            }
+        }
+
+        function updateLessonsUI(lessons) {
+            const container = document.getElementById('lessons-list');
+            
+            if (!lessons || lessons.length === 0) {
+                container.innerHTML = '<p style="text-align: center; opacity: 0.7; padding: 2rem;">Nenhuma lição encontrada para este módulo.</p>';
+                return;
+            }
+
+            container.innerHTML = lessons.map((lesson, index) => {
+                const isLocked = index > 0 && !lessons[index - 1].completed;
+                const progress = lesson.completed ? 100 : lesson.progress || 0;
+                
+                return `
+                    <div class="lesson-item ${lesson.completed ? 'completed' : ''} ${isLocked ? 'locked' : ''}" 
+                         onclick="${!isLocked ? `startLesson('${lesson.id}')` : 'void(0)'}">
+                        <div class="lesson-progress" style="width: ${progress}%"></div>
+                        <div class="lesson-header">
+                            <div>
+                                <div class="lesson-title">
+                                    ${lesson.completed ? '✅' : isLocked ? '🔒' : '📚'} ${lesson.title}
+                                </div>
+                                <div class="lesson-meta">
+                                    <span>⏱️ ${lesson.duration}</span>
+                                    <span>⚡ ${lesson.xp_reward} XP</span>
+                                    <span>📋 ${getLessonTypeLabel(lesson.lesson_type)}</span>
+                                </div>
+                            </div>
+                            <div class="lesson-type ${lesson.lesson_type}">${lesson.lesson_type}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateLessonsProgress(lessons) {
+            const completedLessons = lessons.filter(lesson => lesson.completed).length;
+            const totalLessons = lessons.length;
+            
+            document.getElementById('lessons-progress').textContent = `${completedLessons}/${totalLessons} concluídas`;
+        }
+
+        function getLessonTypeLabel(type) {
+            const labels = {
+                'theory': 'Teoria',
+                'interactive': 'Interativo',
+                'lab': 'Laboratório',
+                'quiz': 'Quiz'
+            };
+            return labels[type] || type;
+        }
+
+        function startLesson(lessonId) {
+            console.log('Starting lesson:', lessonId);
+            // Here you would implement the lesson player/viewer
+            alert(`Iniciando lição ${lessonId}. Interface de lição será implementada em breve.`);
         }
 
         // Enhanced scroll effects
