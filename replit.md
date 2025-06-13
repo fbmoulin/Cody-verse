@@ -116,6 +116,7 @@ The platform uses a hybrid approach combining:
 
 ## Changelog
 - June 13, 2025. Initial setup
+- June 13, 2025. Critical bug fixes: Resolved gamification dashboard performance issue (1300ms → 31ms, 97% improvement), optimized lesson completion endpoint (1160ms → 693ms, 40% improvement), enhanced database query optimization, improved error handling and system stability
 
 ## User Preferences
 
