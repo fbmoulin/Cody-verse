@@ -46,10 +46,11 @@ router.get('/gamification/dashboard/:userId', async (req, res) => {
         FROM users WHERE id = $1
       ),
       wallet_data AS (
-        SELECT COALESCE(balance, 0) as coins,
-               COALESCE(total_earned, 0) as total_coins_earned,
-               COALESCE(total_spent, 0) as total_coins_spent,
-               updated_at as last_updated
+        SELECT COALESCE(coins, 0) as coins,
+               COALESCE(gems, 0) as gems,
+               COALESCE(total_coins_earned, 0) as total_coins_earned,
+               COALESCE(total_coins_spent, 0) as total_coins_spent,
+               last_updated
         FROM user_wallet WHERE user_id = $1
       ),
       streak_data AS (
@@ -96,6 +97,7 @@ router.get('/gamification/dashboard/:userId', async (req, res) => {
       SELECT 
         u.id, u.name, u.total_xp, u.level, u.age_group, u.current_streak,
         COALESCE(w.coins, 0) as coins,
+        COALESCE(w.gems, 0) as gems,
         COALESCE(w.total_coins_earned, 0) as total_coins_earned,
         COALESCE(w.total_coins_spent, 0) as total_coins_spent,
         w.last_updated,
@@ -158,7 +160,7 @@ router.get('/gamification/dashboard/:userId', async (req, res) => {
           id: parseInt(row.id),
           user_id: parseInt(row.id),
           coins: parseInt(row.coins) || 0,
-          gems: 0, // Not in current schema
+          gems: parseInt(row.gems) || 0,
           total_coins_earned: parseInt(row.total_coins_earned) || 0,
           total_coins_spent: parseInt(row.total_coins_spent) || 0,
           last_updated: row.last_updated
@@ -269,13 +271,15 @@ router.get('/courses', async (req, res) => {
     }
 
     const result = await dbManager.query(`
-      SELECT c.*, 
-             COUNT(l.id) as lesson_count,
-             COALESCE(AVG(l.difficulty_level), 1) as avg_difficulty
-      FROM courses c
-      LEFT JOIN lessons l ON c.id = l.course_id
-      GROUP BY c.id
-      ORDER BY c.order_index, c.id
+      SELECT cm.id, cm.title, cm.description, cm.difficulty, 
+             cm.duration, cm.total_xp, cm.order_index, cm.is_active,
+             COUNT(l.id) as lesson_count
+      FROM course_modules cm
+      LEFT JOIN lessons l ON cm.id = l.module_id
+      WHERE cm.is_active = true
+      GROUP BY cm.id, cm.title, cm.description, cm.difficulty, 
+               cm.duration, cm.total_xp, cm.order_index, cm.is_active
+      ORDER BY cm.order_index, cm.id
       LIMIT 20
     `);
     
