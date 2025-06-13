@@ -145,6 +145,17 @@ class SimplifiedGamificationService {
         goals = await this.createDailyGoalsOptimized(userId, client);
       }
 
+      // Get notifications efficiently
+      const notificationsResult = await client.query(`
+        SELECT id, user_id, notification_type, title, message, icon, is_read, created_at
+        FROM gamification_notifications 
+        WHERE user_id = $1 
+        ORDER BY created_at DESC 
+        LIMIT 10
+      `, [userId]);
+      
+      const notifications = notificationsResult.rows;
+
       // Calculate level based on XP
       const currentXP = user.total_xp || 0;
       const level = this.calculateLevel(currentXP);
