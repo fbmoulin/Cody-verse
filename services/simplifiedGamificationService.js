@@ -129,83 +129,20 @@ class SimplifiedGamificationService {
       
       const user = userResult.rows[0];
 
-      // Single optimized query to get all gamification data
-      const gamificationResult = await client.query(`
-        SELECT 
-          'wallet' as type, 
-          json_build_object(
-            'id', w.id, 'user_id', w.user_id, 'coins', w.coins, 'gems', w.gems,
-            'total_coins_earned', w.total_coins_earned, 'total_coins_spent', w.total_coins_spent,
-            'last_updated', w.last_updated
-          ) as data
-        FROM user_wallet w WHERE w.user_id = $1
-        UNION ALL
-        SELECT 
-          'streak' as type,
-          json_build_object(
-            'id', s.id, 'user_id', s.user_id, 'streak_type', s.streak_type,
-            'current_streak', s.current_streak, 'longest_streak', s.longest_streak,
-            'last_activity_date', s.last_activity_date
-          ) as data
-        FROM user_streaks s WHERE s.user_id = $1 AND s.streak_type = 'daily_lesson'
-        UNION ALL
-        SELECT 
-          'badges' as type,
-          json_agg(json_build_object(
-            'id', b.id, 'badgeName', b.badge_name, 'badgeDescription', b.badge_description,
-            'badgeIcon', b.badge_icon, 'badgeType', 'achievement', 'unlockedAt', b.earned_at
-          )) as data
-        FROM user_badges b WHERE b.user_id = $1
-        UNION ALL
-        SELECT 
-          'goals' as type,
-          json_agg(json_build_object(
-            'id', g.id, 'user_id', g.user_id, 'goal_type', g.goal_type,
-            'target_value', g.target_value, 'current_progress', g.current_progress,
-            'is_completed', g.is_completed, 'goal_date', g.goal_date,
-            'rewards_coins', g.rewards_coins, 'rewards_xp', g.rewards_xp
-          )) as data
-        FROM daily_goals g WHERE g.user_id = $1 AND g.goal_date = CURRENT_DATE
-        UNION ALL
-        SELECT 
-          'notifications' as type,
-          json_agg(json_build_object(
-            'id', n.id, 'user_id', n.user_id, 'notification_type', n.notification_type,
-            'title', n.title, 'message', n.message, 'icon', n.icon,
-            'is_read', n.is_read, 'created_at', n.created_at,
-            'timeAgo', CASE 
-              WHEN EXTRACT(EPOCH FROM (NOW() - n.created_at)) < 3600 THEN 
-                EXTRACT(MINUTES FROM (NOW() - n.created_at))::text || ' minutos atrás'
-              ELSE 
-                EXTRACT(HOURS FROM (NOW() - n.created_at))::text || ' horas atrás'
-            END
-          ) ORDER BY n.created_at DESC) as data
-        FROM gamification_notifications n WHERE n.user_id = $1
-      `, [userId]);
+      // Optimized parallel queries for better performance
+      const [walletResult, streakResult, goalsResult] = await Promise.all([
+        client.query('SELECT * FROM user_wallet WHERE user_id = $1', [userId]),
+        client.query('SELECT * FROM user_streaks WHERE user_id = $1 AND streak_type = $2', [userId, 'daily_lesson']),
+        client.query('SELECT * FROM daily_goals WHERE user_id = $1 AND goal_date = CURRENT_DATE', [userId])
+      ]);
 
-      // Parse results
-      const wallet = { coins: 0, gems: 0, total_coins_earned: 0, total_coins_spent: 0 };
-      const streak = { current_streak: 0, longest_streak: 0, last_activity_date: new Date() };
-      let badges = [];
-      let goals = [];
-      let notifications = [];
+      const wallet = walletResult.rows[0] || { coins: 0, gems: 0, total_coins_earned: 0, total_coins_spent: 0 };
+      const streak = streakResult.rows[0] || { current_streak: 0, longest_streak: 0, last_activity_date: new Date() };
+      let goals = goalsResult.rows;
 
-      gamificationResult.rows.forEach(row => {
-        if (row.type === 'wallet' && row.data) Object.assign(wallet, row.data);
-        if (row.type === 'streak' && row.data) Object.assign(streak, row.data);
-        if (row.type === 'badges' && row.data) badges = row.data || [];
-        if (row.type === 'goals' && row.data) goals = row.data || [];
-        if (row.type === 'notifications' && row.data) notifications = row.data || [];
-      });
-
-      // Create default goals if none exist (only if needed)
+      // Create default goals if none exist (optimized)
       if (goals.length === 0) {
-        await this.createDailyGoals(userId, client);
-        const newGoalsResult = await client.query(
-          'SELECT * FROM daily_goals WHERE user_id = $1 AND goal_date = CURRENT_DATE',
-          [userId]
-        );
-        goals = newGoalsResult.rows;
+        goals = await this.createDailyGoalsOptimized(userId, client);
       }
 
       // Calculate level based on XP
@@ -224,7 +161,7 @@ class SimplifiedGamificationService {
           xpProgress: level.progress
         },
         wallet,
-        badges,
+        badges: await this.getCachedUserBadges(userId, client),
         streak,
         goals,
         notifications: notifications.map(n => ({
@@ -273,6 +210,42 @@ class SimplifiedGamificationService {
         VALUES ($1, $2, $3, $4, $5)
       `, [userId, goal.type, goal.target, goal.rewardCoins, goal.rewardXP]);
     }
+  }
+
+  async createDailyGoalsOptimized(userId, client) {
+    const result = await client.query(`
+      INSERT INTO daily_goals (user_id, goal_type, target_value, rewards_coins, rewards_xp)
+      VALUES 
+        ($1, 'lessons', 3, 50, 100),
+        ($1, 'time_minutes', 30, 30, 75),
+        ($1, 'xp', 200, 40, 0)
+      RETURNING *
+    `, [userId]);
+    return result.rows;
+  }
+
+  async getCachedUserBadges(userId, client) {
+    const cacheKey = `user_badges_${userId}`;
+    const cached = this.cache.get(cacheKey);
+    
+    if (cached) {
+      return cached;
+    }
+
+    const result = await client.query(`
+      SELECT 
+        id, badge_name as "badgeName", badge_description as "badgeDescription",
+        badge_icon as "badgeIcon", 'achievement' as "badgeType", 
+        earned_at as "unlockedAt"
+      FROM user_badges 
+      WHERE user_id = $1 
+      ORDER BY earned_at DESC
+      LIMIT 10
+    `, [userId]);
+
+    const badges = result.rows;
+    this.cache.set(cacheKey, badges, 300000); // 5 minutes
+    return badges;
   }
 
   async processLessonCompletion(userId, lessonId, timeSpent = 15, score = 100) {
