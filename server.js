@@ -124,7 +124,7 @@ class CodyVerseServer {
 
     // Modern Frontend Routes
     this.app.get('/', (req, res) => {
-      res.sendFile(path.join(__dirname, 'standalone-app.html'));
+      res.sendFile(path.join(__dirname, 'app.html'));
     });
 
     this.app.get('/design-system', (req, res) => {
