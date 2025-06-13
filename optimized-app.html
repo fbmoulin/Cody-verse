@@ -3,482 +3,852 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodyVerse - Plataforma Educacional</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    
+    <title>CodyVerse - Educational Platform</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/framer-motion@10/dist/framer-motion.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #4F46E5;
             --secondary: #22D3EE;
             --accent: #FACC15;
-            --background: #1F2937;
-            --surface: #111827;
-            --surface-light: #1F2937;
-            --text-primary: #F9FAFB;
-            --text-secondary: #D1D5DB;
-            --text-muted: #9CA3AF;
+            --dark: #1F2937;
+            --dark-light: #374151;
+            --text-light: #F9FAFB;
             --success: #10B981;
+            --warning: #F59E0B;
             --error: #EF4444;
-            --gradient-primary: linear-gradient(135deg, var(--primary), var(--secondary));
-            --gradient-accent: linear-gradient(135deg, var(--accent), #FDE047);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--background);
-            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--dark) 0%, var(--dark-light) 100%);
+            color: var(--text-light);
             min-height: 100vh;
-            line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        .app-container {
+        .app {
             min-height: 100vh;
+            position: relative;
+        }
+
+        /* Loading States */
+        .skeleton {
+            background: linear-gradient(90deg, #374151 25%, #4B5563 50%, #374151 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(31, 41, 55, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary);
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--secondary);
+            background: rgba(34, 211, 238, 0.1);
+        }
+
+        /* Dashboard Layout */
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
         }
 
-        .main-card {
-            max-width: 900px;
-            width: 100%;
-            background: var(--surface);
-            border-radius: 1.5rem;
-            padding: 3rem;
-            text-align: center;
-            border: 1px solid var(--surface-light);
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
         }
 
-        .logo-section {
-            margin-bottom: 3rem;
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
         }
 
-        .logo-icon {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto 1rem;
-            color: var(--primary);
-            filter: drop-shadow(0 0 20px rgba(79, 70, 229, 0.3));
+        /* Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
         }
 
-        .logo-title {
-            font-family: 'Poppins', sans-serif;
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 1rem;
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
-        .logo-subtitle {
-            font-size: 1.125rem;
-            color: var(--text-secondary);
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
             margin-bottom: 2rem;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 1rem;
-            margin-bottom: 3rem;
-        }
-
         .stat-card {
-            background: var(--surface-light);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 16px;
             padding: 1.5rem;
-            border-radius: 1rem;
-            transition: transform 0.2s ease;
+            color: white;
+            position: relative;
+            overflow: hidden;
         }
 
-        .stat-card:hover {
-            transform: translateY(-4px);
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="white" opacity="0.1"/><circle cx="20" cy="20" r="1" fill="white" opacity="0.1"/><circle cx="80" cy="30" r="1.5" fill="white" opacity="0.1"/></svg>');
+            pointer-events: none;
         }
-
-        .stat-icon {
-            width: 40px;
-            height: 40px;
-            margin: 0 auto 0.75rem;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.125rem;
-            font-weight: 600;
-        }
-
-        .stat-icon.level { background: var(--primary); color: white; }
-        .stat-icon.xp { background: var(--accent); color: var(--background); }
-        .stat-icon.coins { background: var(--secondary); color: white; }
-        .stat-icon.streak { background: var(--success); color: white; }
 
         .stat-value {
-            font-size: 1.75rem;
+            font-size: 2.5rem;
             font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.5rem;
         }
 
         .stat-label {
-            font-size: 0.875rem;
-            color: var(--text-muted);
+            font-size: 0.9rem;
+            opacity: 0.9;
         }
 
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
+        .stat-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+            opacity: 0.7;
         }
 
-        .feature-card {
-            background: var(--surface-light);
-            padding: 2rem;
-            border-radius: 1rem;
-            text-align: center;
+        /* Progress Bar */
+        .progress-container {
+            margin: 1rem 0;
         }
 
-        .feature-icon {
-            width: 32px;
-            height: 32px;
-            margin: 0 auto 1rem;
-            color: var(--primary);
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
         }
 
-        .feature-title {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+            border-radius: 6px;
+            transition: width 1s ease;
+            position: relative;
         }
 
-        .feature-description {
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            line-height: 1.5;
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: progress-shimmer 2s infinite;
         }
 
-        .actions {
+        @keyframes progress-shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Notifications */
+        .notification {
             display: flex;
             gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 3rem;
+            padding: 1rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid var(--secondary);
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
         }
 
+        .notification:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .notification-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .notification-content h4 {
+            margin-bottom: 0.25rem;
+            color: var(--secondary);
+        }
+
+        .notification-time {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+        }
+
+        /* Courses Grid */
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .course-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .course-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .course-difficulty {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .difficulty-iniciante {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .difficulty-intermediario {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .difficulty-avancado {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+        }
+
+        /* Badges */
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+
+        .badge-item {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .badge-item.locked {
+            opacity: 0.5;
+            filter: grayscale(1);
+        }
+
+        .badge-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .badge-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .badge-description {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .courses-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading Animation */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--secondary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Button Styles */
         .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.875rem 2rem;
-            border-radius: 0.75rem;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.875rem;
-            transition: all 0.2s ease;
-            border: none;
-            cursor: pointer;
-            min-width: 180px;
-            justify-content: center;
         }
 
         .btn-primary {
-            background: var(--gradient-primary);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
         }
 
-        .btn-secondary {
-            background: var(--surface-light);
-            color: var(--text-primary);
-            border: 1px solid var(--surface-light);
-        }
-
-        .btn:hover {
+        .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
         }
 
-        .status-panel {
-            background: rgba(79, 70, 229, 0.1);
-            border: 1px solid var(--primary);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
+        /* Animation Classes */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
         }
 
-        .status-title {
-            color: var(--primary);
-            font-weight: 600;
-            margin-bottom: 1rem;
-            font-size: 1rem;
+        .slide-up {
+            animation: slideUp 0.6s ease-out;
         }
 
-        .status-indicators {
-            display: flex;
-            gap: 2rem;
-            justify-content: center;
-            flex-wrap: wrap;
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        .status-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--success);
-            transition: background-color 0.3s ease;
-        }
-
-        .loading {
-            color: var(--text-muted);
-        }
-
-        .skeleton {
-            background: linear-gradient(90deg, var(--surface-light) 25%, var(--surface) 50%, var(--surface-light) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-            border-radius: 0.25rem;
-            height: 1.5rem;
-            width: 60px;
-        }
-
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-
-        @media (max-width: 768px) {
-            .app-container { padding: 1rem; }
-            .main-card { padding: 2rem; }
-            .logo-title { font-size: 2rem; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
-            .stat-card { padding: 1rem; }
-            .features-grid { grid-template-columns: 1fr; }
-            .actions { flex-direction: column; align-items: center; }
-            .btn { width: 100%; max-width: 300px; }
-            .status-indicators { flex-direction: column; gap: 0.75rem; }
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <div class="main-card">
-            <div class="logo-section">
-                <svg class="logo-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                </svg>
-                <h1 class="logo-title">CodyVerse</h1>
-                <p class="logo-subtitle">Plataforma Educacional Gamificada com IA</p>
-            </div>
+    <div id="root"></div>
 
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon level">🏗️</div>
-                    <div class="stat-value" id="userLevel"><div class="skeleton"></div></div>
-                    <div class="stat-label">Nível</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon xp">XP</div>
-                    <div class="stat-value" id="userXP"><div class="skeleton"></div></div>
-                    <div class="stat-label">Experience</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon coins">💰</div>
-                    <div class="stat-value" id="userCoins"><div class="skeleton"></div></div>
-                    <div class="stat-label">Moedas</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon streak">🔥</div>
-                    <div class="stat-value" id="userStreak"><div class="skeleton"></div></div>
-                    <div class="stat-label">Sequência</div>
-                </div>
-            </div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { motion, AnimatePresence } = Motion;
 
-            <div class="features-grid">
-                <div class="feature-card">
-                    <svg class="feature-icon" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-                    </svg>
-                    <h3 class="feature-title">Cursos Interativos</h3>
-                    <p class="feature-description">Aprenda programação com exercícios práticos e projetos reais</p>
-                </div>
-                <div class="feature-card">
-                    <svg class="feature-icon" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M7 4V2C7 1.45 7.45 1 8 1S9 1.45 9 2V4H15V2C15 1.45 15.45 1 16 1S17 1.45 17 2V4H20C21.1 4 22 4.9 22 6V20C22 21.1 21.1 22 20 22H4C2.9 22 2 21.1 2 20V6C2 4.9 2.9 4 4 4H7Z"/>
-                    </svg>
-                    <h3 class="feature-title">Sistema de Gamificação</h3>
-                    <p class="feature-description">XP, níveis, badges e conquistas para motivar seu aprendizado</p>
-                </div>
-            </div>
-
-            <div class="actions">
-                <a href="/app" class="btn btn-primary">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M8 5v14l11-7z"/>
-                    </svg>
-                    Acessar Plataforma
-                </a>
-                <a href="/dashboard" class="btn btn-secondary">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    Ver Dashboard
-                </a>
-            </div>
-
-            <div class="status-panel">
-                <h4 class="status-title">Status do Sistema</h4>
-                <div class="status-indicators">
-                    <div class="status-item">
-                        <div class="status-dot" id="backendStatus"></div>
-                        <span>Backend: <span id="backendText">Online</span></span>
-                    </div>
-                    <div class="status-item">
-                        <div class="status-dot" id="databaseStatus"></div>
-                        <span>Database: <span id="databaseText">Conectado</span></span>
-                    </div>
-                    <div class="status-item">
-                        <div class="status-dot" id="apiStatus"></div>
-                        <span>APIs: <span id="apiText">Carregando...</span></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Optimized data loading with performance improvements
-        let dataCache = {};
-        let loadingPromises = {};
-
-        function updateStatus(element, textElement, status, text) {
-            const dot = document.getElementById(element);
-            const label = document.getElementById(textElement);
-            if (dot && label) {
-                dot.style.background = status === 'success' ? '#10B981' : '#EF4444';
-                label.textContent = text;
-            }
-        }
-
-        function updateStatValue(id, value) {
-            const element = document.getElementById(id);
-            if (element) {
-                element.innerHTML = value;
-            }
-        }
-
-        async function loadDashboardData() {
-            if (loadingPromises.dashboard) return loadingPromises.dashboard;
-            
-            loadingPromises.dashboard = (async () => {
-                try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 2000);
-                    
-                    const response = await fetch('/api/gamification/dashboard/1', {
-                        signal: controller.signal,
-                        headers: { 'Cache-Control': 'max-age=30' }
-                    });
-                    
-                    clearTimeout(timeoutId);
-                    
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                    
-                    const data = await response.json();
-                    
-                    if (data.success && data.data) {
-                        dataCache.dashboard = data.data;
-                        
-                        updateStatValue('userLevel', data.data.user.level || 'N/A');
-                        updateStatValue('userXP', (data.data.user.totalXP || 0).toLocaleString());
-                        updateStatValue('userCoins', data.data.wallet?.coins || 0);
-                        updateStatValue('userStreak', data.data.streak?.current_streak || 0);
-                        
-                        updateStatus('apiStatus', 'apiText', 'success', 'Funcionando');
-                    } else {
-                        throw new Error('Invalid response format');
-                    }
-                } catch (error) {
-                    console.warn('Dashboard API unavailable:', error.message);
-                    
-                    // Use cached data if available
-                    if (dataCache.dashboard) {
-                        const data = dataCache.dashboard;
-                        updateStatValue('userLevel', data.user.level);
-                        updateStatValue('userXP', data.user.totalXP.toLocaleString());
-                        updateStatValue('userCoins', data.wallet.coins);
-                        updateStatValue('userStreak', data.streak.current_streak);
-                        updateStatus('apiStatus', 'apiText', 'success', 'Cache');
-                    } else {
-                        // Fallback values
-                        updateStatValue('userLevel', '8');
-                        updateStatValue('userXP', '3,550');
-                        updateStatValue('userCoins', '768');
-                        updateStatValue('userStreak', '1');
-                        updateStatus('apiStatus', 'apiText', 'error', 'Offline');
-                    }
-                }
-            })();
-            
-            return loadingPromises.dashboard;
-        }
-
-        async function checkSystemHealth() {
-            try {
-                const response = await fetch('/health', {
-                    headers: { 'Cache-Control': 'max-age=10' }
+        // API Service
+        const api = {
+            async get(endpoint) {
+                const response = await fetch(`/api${endpoint}`);
+                return response.json();
+            },
+            async post(endpoint, data) {
+                const response = await fetch(`/api${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
                 });
-                
-                if (response.ok) {
-                    updateStatus('backendStatus', 'backendText', 'success', 'Online');
-                    updateStatus('databaseStatus', 'databaseText', 'success', 'Conectado');
-                } else {
-                    throw new Error('Health check failed');
+                return response.json();
+            }
+        };
+
+        // Loading Component
+        const LoadingSkeleton = ({ className = "h-20" }) => (
+            <div className={`skeleton ${className}`}></div>
+        );
+
+        // Stats Card Component
+        const StatCard = ({ title, value, icon, loading = false }) => (
+            <motion.div 
+                className="stat-card"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+            >
+                <div className="stat-icon">{icon}</div>
+                {loading ? (
+                    <LoadingSkeleton className="h-12 w-24 mb-2" />
+                ) : (
+                    <div className="stat-value">{value}</div>
+                )}
+                <div className="stat-label">{title}</div>
+            </motion.div>
+        );
+
+        // Progress Bar Component
+        const ProgressBar = ({ progress, max, label, loading = false }) => (
+            <div className="progress-container">
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                    <span>{label}</span>
+                    {loading ? (
+                        <LoadingSkeleton className="h-4 w-12" />
+                    ) : (
+                        <span>{progress}/{max}</span>
+                    )}
+                </div>
+                <div className="progress-bar">
+                    {!loading && (
+                        <motion.div 
+                            className="progress-fill"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${Math.min((progress / max) * 100, 100)}%` }}
+                            transition={{ duration: 1.5, ease: "easeOut" }}
+                        />
+                    )}
+                </div>
+            </div>
+        );
+
+        // Notification Component
+        const NotificationItem = ({ notification, loading = false }) => (
+            <motion.div 
+                className="notification"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3 }}
+            >
+                {loading ? (
+                    <>
+                        <LoadingSkeleton className="h-8 w-8 rounded-full" />
+                        <div className="flex-1">
+                            <LoadingSkeleton className="h-4 w-32 mb-2" />
+                            <LoadingSkeleton className="h-3 w-48" />
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        <div className="notification-icon">{notification.icon}</div>
+                        <div className="notification-content">
+                            <h4>{notification.title}</h4>
+                            <p>{notification.message}</p>
+                            <div className="notification-time">{notification.timeAgo}</div>
+                        </div>
+                    </>
+                )}
+            </motion.div>
+        );
+
+        // Course Card Component
+        const CourseCard = ({ course, loading = false }) => (
+            <motion.div 
+                className="course-card"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
+                whileHover={{ scale: 1.02 }}
+            >
+                {loading ? (
+                    <>
+                        <LoadingSkeleton className="h-6 w-20 mb-4" />
+                        <LoadingSkeleton className="h-6 w-full mb-2" />
+                        <LoadingSkeleton className="h-16 w-full mb-4" />
+                        <LoadingSkeleton className="h-4 w-24" />
+                    </>
+                ) : (
+                    <>
+                        <div className={`course-difficulty difficulty-${course.difficulty.toLowerCase()}`}>
+                            {course.difficulty}
+                        </div>
+                        <h3 style={{ marginBottom: '1rem', fontSize: '1.25rem', fontWeight: '600' }}>
+                            {course.title}
+                        </h3>
+                        <p style={{ opacity: 0.8, marginBottom: '1rem' }}>
+                            {course.description}
+                        </p>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
+                            <span>{course.lesson_count} lições</span>
+                            <span>{course.total_xp} XP</span>
+                        </div>
+                    </>
+                )}
+            </motion.div>
+        );
+
+        // Badge Component
+        const BadgeItem = ({ badge, loading = false }) => (
+            <motion.div 
+                className={`badge-item ${badge?.is_locked ? 'locked' : ''}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+            >
+                {loading ? (
+                    <>
+                        <LoadingSkeleton className="h-10 w-10 rounded-full mx-auto mb-2" />
+                        <LoadingSkeleton className="h-4 w-full mb-1" />
+                        <LoadingSkeleton className="h-3 w-20 mx-auto" />
+                    </>
+                ) : (
+                    <>
+                        <span className="badge-icon">{badge.icon}</span>
+                        <div className="badge-name">{badge.name}</div>
+                        <div className="badge-description">{badge.description}</div>
+                    </>
+                )}
+            </motion.div>
+        );
+
+        // Navigation Component
+        const Navigation = ({ activeTab, setActiveTab }) => (
+            <nav className="navbar">
+                <div className="nav-content">
+                    <div className="logo">
+                        🚀 CodyVerse
+                    </div>
+                    <ul className="nav-links">
+                        {['dashboard', 'courses', 'achievements'].map(tab => (
+                            <li key={tab}>
+                                <a 
+                                    href="#"
+                                    className={`nav-link ${activeTab === tab ? 'active' : ''}`}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setActiveTab(tab);
+                                    }}
+                                >
+                                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </nav>
+        );
+
+        // Dashboard Tab
+        const DashboardTab = () => {
+            const [dashboardData, setDashboardData] = useState(null);
+            const [loading, setLoading] = useState(true);
+
+            useEffect(() => {
+                const loadDashboard = async () => {
+                    try {
+                        const data = await api.get('/gamification/dashboard/1');
+                        if (data.success) {
+                            setDashboardData(data.data);
+                        }
+                    } catch (error) {
+                        console.error('Failed to load dashboard:', error);
+                    } finally {
+                        setLoading(false);
+                    }
+                };
+
+                loadDashboard();
+            }, []);
+
+            return (
+                <div className="dashboard">
+                    <div className="main-content">
+                        <div className="stats-grid">
+                            <StatCard 
+                                title="Nível Atual" 
+                                value={loading ? "" : `${dashboardData?.user?.level || 1}`}
+                                icon={dashboardData?.user?.levelIcon || "🌱"}
+                                loading={loading}
+                            />
+                            <StatCard 
+                                title="Total XP" 
+                                value={loading ? "" : (dashboardData?.user?.totalXP || 0).toLocaleString()}
+                                icon="⚡"
+                                loading={loading}
+                            />
+                            <StatCard 
+                                title="Moedas" 
+                                value={loading ? "" : (dashboardData?.wallet?.coins || 0).toLocaleString()}
+                                icon="🪙"
+                                loading={loading}
+                            />
+                            <StatCard 
+                                title="Sequência" 
+                                value={loading ? "" : `${dashboardData?.streak?.current_streak || 0} dias`}
+                                icon="🔥"
+                                loading={loading}
+                            />
+                        </div>
+
+                        <div className="card">
+                            <h2 style={{ marginBottom: '1rem' }}>Progresso do Nível</h2>
+                            <ProgressBar 
+                                progress={dashboardData?.user?.xpProgress || 0}
+                                max={dashboardData?.user?.xpToNext || 100}
+                                label={`${dashboardData?.user?.levelName || 'Iniciante'}`}
+                                loading={loading}
+                            />
+                        </div>
+
+                        <div className="card">
+                            <h2 style={{ marginBottom: '1rem' }}>Objetivos Diários</h2>
+                            {loading ? (
+                                <div>
+                                    <LoadingSkeleton className="h-6 w-full mb-4" />
+                                    <LoadingSkeleton className="h-6 w-full mb-4" />
+                                </div>
+                            ) : (
+                                dashboardData?.goals?.map((goal, index) => (
+                                    <ProgressBar 
+                                        key={index}
+                                        progress={goal.current_progress}
+                                        max={goal.target_value}
+                                        label={goal.goal_type === 'daily_xp' ? 'XP Diário' : 'Lições Diárias'}
+                                        loading={false}
+                                    />
+                                ))
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="sidebar">
+                        <div className="card">
+                            <h3 style={{ marginBottom: '1rem' }}>Notificações</h3>
+                            {loading ? (
+                                <div>
+                                    <NotificationItem loading={true} />
+                                    <NotificationItem loading={true} />
+                                </div>
+                            ) : (
+                                dashboardData?.notifications?.slice(0, 3).map((notification, index) => (
+                                    <NotificationItem key={index} notification={notification} />
+                                ))
+                            )}
+                        </div>
+
+                        <div className="card">
+                            <h3 style={{ marginBottom: '1rem' }}>Conquistas Recentes</h3>
+                            <div className="badges-grid">
+                                {loading ? (
+                                    <>
+                                        <BadgeItem loading={true} />
+                                        <BadgeItem loading={true} />
+                                    </>
+                                ) : (
+                                    dashboardData?.badges?.slice(0, 4).map((badge, index) => (
+                                        <BadgeItem key={index} badge={badge} />
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Courses Tab
+        const CoursesTab = () => {
+            const [courses, setCourses] = useState([]);
+            const [loading, setLoading] = useState(true);
+
+            useEffect(() => {
+                const loadCourses = async () => {
+                    try {
+                        const data = await api.get('/courses');
+                        if (data.success) {
+                            setCourses(data.data);
+                        }
+                    } catch (error) {
+                        console.error('Failed to load courses:', error);
+                    } finally {
+                        setLoading(false);
+                    }
+                };
+
+                loadCourses();
+            }, []);
+
+            return (
+                <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem' }}>
+                    <h1 style={{ marginBottom: '2rem', fontSize: '2.5rem', fontWeight: '700' }}>
+                        Cursos Disponíveis
+                    </h1>
+                    <div className="courses-grid">
+                        {loading ? (
+                            <>
+                                <CourseCard loading={true} />
+                                <CourseCard loading={true} />
+                                <CourseCard loading={true} />
+                                <CourseCard loading={true} />
+                            </>
+                        ) : (
+                            courses.map(course => (
+                                <CourseCard key={course.id} course={course} />
+                            ))
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        // Achievements Tab
+        const AchievementsTab = () => {
+            const [badges, setBadges] = useState([]);
+            const [loading, setLoading] = useState(true);
+
+            useEffect(() => {
+                const loadBadges = async () => {
+                    try {
+                        const data = await api.get('/gamification/badges/1');
+                        if (data.success) {
+                            setBadges(data.data);
+                        }
+                    } catch (error) {
+                        console.error('Failed to load badges:', error);
+                    } finally {
+                        setLoading(false);
+                    }
+                };
+
+                loadBadges();
+            }, []);
+
+            return (
+                <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem' }}>
+                    <h1 style={{ marginBottom: '2rem', fontSize: '2.5rem', fontWeight: '700' }}>
+                        Conquistas
+                    </h1>
+                    <div className="badges-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+                        {loading ? (
+                            <>
+                                <BadgeItem loading={true} />
+                                <BadgeItem loading={true} />
+                                <BadgeItem loading={true} />
+                                <BadgeItem loading={true} />
+                                <BadgeItem loading={true} />
+                                <BadgeItem loading={true} />
+                            </>
+                        ) : (
+                            badges.map(badge => (
+                                <BadgeItem key={badge.id} badge={badge} />
+                            ))
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        // Main App Component
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('dashboard');
+
+            const renderActiveTab = () => {
+                switch (activeTab) {
+                    case 'dashboard':
+                        return <DashboardTab />;
+                    case 'courses':
+                        return <CoursesTab />;
+                    case 'achievements':
+                        return <AchievementsTab />;
+                    default:
+                        return <DashboardTab />;
                 }
-            } catch (error) {
-                updateStatus('backendStatus', 'backendText', 'error', 'Offline');
-                updateStatus('databaseStatus', 'databaseText', 'error', 'Desconectado');
-            }
-        }
+            };
 
-        // Initialize immediately when DOM is ready
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set initial status
-            updateStatus('backendStatus', 'backendText', 'success', 'Online');
-            updateStatus('databaseStatus', 'databaseText', 'success', 'Conectado');
-            
-            // Load data in parallel
-            Promise.allSettled([
-                loadDashboardData(),
-                checkSystemHealth()
-            ]);
-            
-            // Preload critical pages
-            const criticalLinks = ['/app', '/dashboard'];
-            criticalLinks.forEach(link => {
-                const linkElement = document.createElement('link');
-                linkElement.rel = 'prefetch';
-                linkElement.href = link;
-                document.head.appendChild(linkElement);
-            });
-        });
+            return (
+                <div className="app">
+                    <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={activeTab}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {renderActiveTab()}
+                        </motion.div>
+                    </AnimatePresence>
+                </div>
+            );
+        };
 
-        // Refresh data periodically but less frequently
-        setInterval(() => {
-            if (document.visibilityState === 'visible') {
-                loadDashboardData();
-            }
-        }, 30000);
+        // Render the app
+        ReactDOM.render(<App />, document.getElementById('root'));
     </script>
 </body>
 </html>

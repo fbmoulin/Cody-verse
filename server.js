@@ -139,9 +139,9 @@ class CodyVerseServer {
       res.sendFile(path.join(__dirname, 'codyverse-responsive-app.html'));
     });
 
-    // Optimized API routes with faster response times
-    const optimizedApiRoutes = require('./server/optimizedApiRoutes');
-    this.app.use('/api', optimizedApiRoutes);
+    // High-performance API routes for instant responses
+    const simpleApiRoutes = require('./server/simpleApiRoutes');
+    this.app.use('/api', simpleApiRoutes);
     
     // Fallback to original API routes if needed
     this.app.use('/api', RequestMiddleware.createCacheMiddleware(180000)); // 3 minutes cache
