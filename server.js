@@ -122,6 +122,19 @@ class CodyVerseServer {
       }
     }));
 
+    // Responsive Design System Routes
+    this.app.get('/design-system', (req, res) => {
+      res.sendFile(path.join(__dirname, 'codyverse-design-system.html'));
+    });
+
+    this.app.get('/app', (req, res) => {
+      res.sendFile(path.join(__dirname, 'codyverse-responsive-app.html'));
+    });
+
+    this.app.get('/dashboard', (req, res) => {
+      res.sendFile(path.join(__dirname, 'codyverse-responsive-app.html'));
+    });
+
     // Cache middleware for API routes
     this.app.use('/api', RequestMiddleware.createCacheMiddleware(180000)); // 3 minutes cache
     
