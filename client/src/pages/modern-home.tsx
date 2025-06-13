@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BookOpen, Trophy, Target, TrendingUp, Play, Clock, Award } from 'lucide-react';
+import { BookOpen, Trophy, Target, TrendingUp, Play, Award } from 'lucide-react';
 
 interface Course {
   id: number;
