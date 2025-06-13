@@ -6,22 +6,114 @@
     <title>CodyVerse - Educational Platform</title>
     <style>
         :root {
-            --primary: #4F46E5;
-            --secondary: #22D3EE;
-            --accent: #FACC15;
-            --dark: #1F2937;
-            --dark-light: #374151;
-            --text-light: #F9FAFB;
-            --success: #10B981;
-            --warning: #F59E0B;
-            --error: #EF4444;
-            --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            --gradient-dark: linear-gradient(135deg, var(--dark) 0%, var(--dark-light) 100%);
+            /* Base Theme Colors */
+            --primary: 79 70 229;        /* #4F46E5 */
+            --secondary: 34 211 238;     /* #22D3EE */
+            --accent: 250 204 21;        /* #FACC15 */
+            --background: 31 41 55;      /* #1F2937 */
+            --background-secondary: 55 65 81;  /* #374151 */
+            --foreground: 249 250 251;   /* #F9FAFB */
+            --muted: 107 114 128;        /* #6B7280 */
+            --muted-foreground: 156 163 175; /* #9CA3AF */
+            
+            /* Status Colors */
+            --success: 16 185 129;       /* #10B981 */
+            --warning: 245 158 11;       /* #F59E0B */
+            --error: 239 68 68;          /* #EF4444 */
+            --info: 59 130 246;          /* #3B82F6 */
+            
+            /* Card and Surface Colors */
+            --card: 31 41 55;            /* #1F2937 */
+            --card-foreground: 249 250 251; /* #F9FAFB */
+            --popover: 31 41 55;         /* #1F2937 */
+            --popover-foreground: 249 250 251; /* #F9FAFB */
+            
+            /* Border and Input Colors */
+            --border: 75 85 99;          /* #4B5563 */
+            --input: 55 65 81;           /* #374151 */
+            --ring: 79 70 229;           /* #4F46E5 */
+            
+            /* Derived Values */
+            --gradient-primary: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
+            --gradient-background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--background-secondary)) 100%);
+            
+            /* Layout Variables */
+            --border-radius: 16px;
+            --border-radius-lg: 16px;
+            --border-radius-md: 12px;
+            --border-radius-sm: 8px;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+            
+            /* Animation and Effects */
+            --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.1);
             --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.2);
             --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.3);
-            --border-radius: 16px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --blur-backdrop: 20px;
+            
+            /* Typography */
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 1.875rem;
+            --font-size-4xl: 2.25rem;
+        }
+
+        /* Cyberpunk Theme */
+        [data-theme="cyberpunk"] {
+            --primary: 236 72 153;       /* #EC4899 - Neon Pink */
+            --secondary: 6 182 212;      /* #06B6D4 - Cyan */
+            --accent: 168 85 247;        /* #A855F7 - Purple */
+            --background: 15 23 42;      /* #0F172A - Deep Dark */
+            --background-secondary: 30 41 59; /* #1E293B */
+            --foreground: 248 250 252;   /* #F8FAFC */
+            --success: 34 197 94;        /* #22C55E */
+            --warning: 251 191 36;       /* #FBBF24 */
+            --error: 248 113 113;        /* #F87171 */
+            --card: 15 23 42;            /* #0F172A */
+            --border: 51 65 85;          /* #334155 */
+            --input: 30 41 59;           /* #1E293B */
+        }
+
+        /* Ocean Theme */
+        [data-theme="ocean"] {
+            --primary: 14 165 233;       /* #0EA5E9 - Ocean Blue */
+            --secondary: 6 182 212;      /* #06B6D4 - Cyan */
+            --accent: 34 211 238;        /* #22D3EE - Light Blue */
+            --background: 12 74 110;     /* #0C4A6E */
+            --background-secondary: 7 89 133; /* #075985 */
+            --foreground: 240 249 255;   /* #F0F9FF */
+            --success: 5 150 105;        /* #059669 */
+            --warning: 217 119 6;        /* #D97706 */
+            --error: 220 38 38;          /* #DC2626 */
+            --card: 12 74 110;           /* #0C4A6E */
+            --border: 30 64 175;         /* #1E40AF */
+            --input: 7 89 133;           /* #075985 */
+        }
+
+        /* Forest Theme */
+        [data-theme="forest"] {
+            --primary: 34 197 94;        /* #22C55E - Forest Green */
+            --secondary: 132 204 22;     /* #84CC16 - Lime */
+            --accent: 250 204 21;        /* #FACC15 - Yellow */
+            --background: 20 83 45;      /* #14532D */
+            --background-secondary: 22 101 52; /* #166534 */
+            --foreground: 240 253 244;   /* #F0FDF4 */
+            --success: 34 197 94;        /* #22C55E */
+            --warning: 245 158 11;       /* #F59E0B */
+            --error: 239 68 68;          /* #EF4444 */
+            --card: 20 83 45;            /* #14532D */
+            --border: 34 197 94;         /* #22C55E */
+            --input: 22 101 52;          /* #166534 */
         }
 
         * {
@@ -32,27 +124,28 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: var(--gradient-dark);
-            color: var(--text-light);
+            background: var(--gradient-background);
+            color: hsl(var(--foreground));
             min-height: 100vh;
             line-height: 1.6;
             overflow-x: hidden;
+            transition: var(--transition-normal);
         }
 
         /* Enhanced Navigation */
         .navbar {
-            background: rgba(31, 41, 55, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 1rem 2rem;
+            background: hsla(var(--background), 0.95);
+            backdrop-filter: blur(var(--blur-backdrop));
+            border-bottom: 1px solid hsla(var(--border), 0.3);
+            padding: var(--spacing-sm) var(--spacing-lg);
             position: sticky;
             top: 0;
             z-index: 1000;
-            transition: var(--transition);
+            transition: var(--transition-normal);
         }
 
         .navbar.scrolled {
-            background: rgba(31, 41, 55, 0.98);
+            background: hsla(var(--background), 0.98);
             box-shadow: var(--shadow-md);
         }
 
@@ -65,7 +158,7 @@
         }
 
         .logo {
-            font-size: 1.75rem;
+            font-size: var(--font-size-2xl);
             font-weight: 800;
             background: var(--gradient-primary);
             -webkit-background-clip: text;
@@ -73,22 +166,22 @@
             background-clip: text;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: var(--spacing-xs);
         }
 
         .nav-links {
             display: flex;
-            gap: 0.5rem;
+            gap: var(--spacing-xs);
             list-style: none;
         }
 
         .nav-link {
-            color: var(--text-light);
+            color: hsl(var(--foreground));
             text-decoration: none;
             font-weight: 500;
             padding: 0.75rem 1.5rem;
-            border-radius: 12px;
-            transition: var(--transition);
+            border-radius: var(--border-radius-md);
+            transition: var(--transition-normal);
             position: relative;
             overflow: hidden;
         }
@@ -141,12 +234,12 @@
 
         /* Enhanced Cards */
         .card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: hsla(var(--card), 0.05);
+            border: 1px solid hsla(var(--border), 0.3);
             border-radius: var(--border-radius);
-            padding: 2rem;
-            backdrop-filter: blur(20px);
-            transition: var(--transition);
+            padding: var(--spacing-lg);
+            backdrop-filter: blur(var(--blur-backdrop));
+            transition: var(--transition-normal);
             position: relative;
             overflow: hidden;
         }
@@ -160,7 +253,7 @@
             height: 3px;
             background: var(--gradient-primary);
             transform: scaleX(0);
-            transition: var(--transition);
+            transition: var(--transition-normal);
         }
 
         .card:hover::before {
@@ -170,7 +263,7 @@
         .card:hover {
             transform: translateY(-4px);
             box-shadow: var(--shadow-lg);
-            border-color: rgba(255, 255, 255, 0.2);
+            border-color: hsla(var(--border), 0.5);
         }
 
         /* Enhanced Stats Grid */
@@ -184,11 +277,11 @@
         .stat-card {
             background: var(--gradient-primary);
             border-radius: var(--border-radius);
-            padding: 2rem;
+            padding: var(--spacing-lg);
             color: white;
             position: relative;
             overflow: hidden;
-            transition: var(--transition);
+            transition: var(--transition-normal);
             cursor: pointer;
         }
 
@@ -578,6 +671,95 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Theme Switcher Styles */
+        .theme-switcher {
+            position: relative;
+        }
+
+        .theme-btn {
+            background: hsla(var(--card), 0.1);
+            border: 1px solid hsla(var(--border), 0.3);
+            border-radius: var(--border-radius-sm);
+            padding: 0.75rem;
+            font-size: var(--font-size-lg);
+            cursor: pointer;
+            transition: var(--transition-normal);
+            color: hsl(var(--foreground));
+        }
+
+        .theme-btn:hover {
+            background: hsla(var(--card), 0.2);
+            transform: scale(1.05);
+        }
+
+        .theme-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: hsl(var(--card));
+            border: 1px solid hsla(var(--border), 0.3);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-sm);
+            min-width: 200px;
+            box-shadow: var(--shadow-lg);
+            backdrop-filter: blur(var(--blur-backdrop));
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: var(--transition-normal);
+            z-index: 1000;
+        }
+
+        .theme-menu.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm);
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            color: hsl(var(--foreground));
+        }
+
+        .theme-option:hover {
+            background: hsla(var(--primary), 0.1);
+        }
+
+        .theme-option.active {
+            background: hsla(var(--primary), 0.2);
+            color: hsl(var(--primary));
+        }
+
+        .theme-preview {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid hsla(var(--border), 0.3);
+        }
+
+        .theme-preview-default {
+            background: linear-gradient(135deg, hsl(79 70 229) 0%, hsl(34 211 238) 100%);
+        }
+
+        .theme-preview-cyberpunk {
+            background: linear-gradient(135deg, hsl(236 72 153) 0%, hsl(6 182 212) 100%);
+        }
+
+        .theme-preview-ocean {
+            background: linear-gradient(135deg, hsl(14 165 233) 0%, hsl(6 182 212) 100%);
+        }
+
+        .theme-preview-forest {
+            background: linear-gradient(135deg, hsl(34 197 94) 0%, hsl(132 204 22) 100%);
+        }
+
         /* Enhanced Responsive Design */
         @media (max-width: 1200px) {
             .dashboard {
@@ -658,6 +840,29 @@
                 <li><a class="nav-link active" onclick="showTab('dashboard')" data-tab="dashboard">Dashboard</a></li>
                 <li><a class="nav-link" onclick="showTab('courses')" data-tab="courses">Cursos</a></li>
                 <li><a class="nav-link" onclick="showTab('achievements')" data-tab="achievements">Conquistas</a></li>
+                <li class="theme-switcher">
+                    <button class="theme-btn" onclick="toggleThemeMenu()" title="Trocar Tema">
+                        🎨
+                    </button>
+                    <div class="theme-menu" id="themeMenu">
+                        <div class="theme-option" data-theme="default" onclick="switchTheme('default')">
+                            <div class="theme-preview theme-preview-default"></div>
+                            <span>Padrão</span>
+                        </div>
+                        <div class="theme-option" data-theme="cyberpunk" onclick="switchTheme('cyberpunk')">
+                            <div class="theme-preview theme-preview-cyberpunk"></div>
+                            <span>Cyberpunk</span>
+                        </div>
+                        <div class="theme-option" data-theme="ocean" onclick="switchTheme('ocean')">
+                            <div class="theme-preview theme-preview-ocean"></div>
+                            <span>Ocean</span>
+                        </div>
+                        <div class="theme-option" data-theme="forest" onclick="switchTheme('forest')">
+                            <div class="theme-preview theme-preview-forest"></div>
+                            <span>Forest</span>
+                        </div>
+                    </div>
+                </li>
             </ul>
         </div>
     </nav>
@@ -913,6 +1118,87 @@
                 requestAnimationFrame(updateValue);
             }
         };
+
+        // Theme Management
+        class ThemeManager {
+            constructor() {
+                this.currentTheme = localStorage.getItem('codyverse-theme') || 'default';
+                this.init();
+            }
+
+            init() {
+                this.applyTheme(this.currentTheme);
+                this.updateThemeUI();
+            }
+
+            applyTheme(themeName) {
+                const body = document.body;
+                
+                // Remove all theme classes
+                body.removeAttribute('data-theme');
+                
+                // Apply new theme if not default
+                if (themeName !== 'default') {
+                    body.setAttribute('data-theme', themeName);
+                }
+                
+                this.currentTheme = themeName;
+                localStorage.setItem('codyverse-theme', themeName);
+                
+                // Add smooth transition for theme change
+                body.style.transition = 'all 0.3s ease';
+                setTimeout(() => {
+                    body.style.transition = '';
+                }, 300);
+            }
+
+            updateThemeUI() {
+                document.querySelectorAll('.theme-option').forEach(option => {
+                    option.classList.toggle('active', option.dataset.theme === this.currentTheme);
+                });
+            }
+
+            switchTheme(themeName) {
+                this.applyTheme(themeName);
+                this.updateThemeUI();
+                this.hideThemeMenu();
+                
+                // Trigger a custom event for theme change
+                window.dispatchEvent(new CustomEvent('themeChanged', { 
+                    detail: { theme: themeName } 
+                }));
+            }
+
+            toggleThemeMenu() {
+                const menu = document.getElementById('themeMenu');
+                menu.classList.toggle('visible');
+            }
+
+            hideThemeMenu() {
+                const menu = document.getElementById('themeMenu');
+                menu.classList.remove('visible');
+            }
+        }
+
+        // Initialize theme manager
+        const themeManager = new ThemeManager();
+
+        // Global theme functions
+        function switchTheme(themeName) {
+            themeManager.switchTheme(themeName);
+        }
+
+        function toggleThemeMenu() {
+            themeManager.toggleThemeMenu();
+        }
+
+        // Close theme menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const themeSwitcher = document.querySelector('.theme-switcher');
+            if (!themeSwitcher.contains(e.target)) {
+                themeManager.hideThemeMenu();
+            }
+        });
 
         // Enhanced Tab Management
         function showTab(tabName) {
