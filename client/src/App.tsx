@@ -6,6 +6,9 @@ import AchievementsPage from './pages/achievements';
 import ChallengePage from './pages/challenge';
 import LoginPage from './pages/login';
 import RegisterPage from './pages/register';
+import CoursesPage from './pages/courses';
+import LessonsPage from './pages/lessons';
+import SettingsPage from './pages/settings';
 // Import other pages as needed
 
 function App() {
