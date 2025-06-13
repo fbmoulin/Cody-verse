@@ -1490,17 +1490,45 @@
             }
 
             setTheme(theme) {
-                this.currentTheme = theme;
-                document.getElementById('app-body').className = `theme-${theme}`;
+                const button = event.target;
                 
-                // Update button states
-                document.querySelectorAll('.sidebar-section button').forEach(btn => {
-                    btn.className = 'btn btn-secondary';
-                });
+                // Add loading state
+                button.classList.add('btn-loading');
+                button.disabled = true;
                 
-                event.target.className = 'btn btn-primary';
-                
-                this.showNotification('success', 'Tema Alterado', `Tema ${theme} aplicado com sucesso!`);
+                setTimeout(() => {
+                    this.currentTheme = theme;
+                    
+                    // Apply theme with fade animation
+                    const body = document.getElementById('app-body');
+                    body.style.opacity = '0.7';
+                    body.style.transition = 'opacity 0.3s ease';
+                    
+                    setTimeout(() => {
+                        body.className = `theme-${theme}`;
+                        body.style.opacity = '1';
+                        
+                        // Update button states with animations
+                        document.querySelectorAll('.sidebar-section button').forEach(btn => {
+                            btn.className = 'btn btn-secondary';
+                            btn.style.transform = 'scale(1)';
+                        });
+                        
+                        button.className = 'btn btn-primary';
+                        button.style.transform = 'scale(1.05)';
+                        
+                        // Remove loading state
+                        button.classList.remove('btn-loading');
+                        button.disabled = false;
+                        
+                        // Animate theme change confirmation
+                        setTimeout(() => {
+                            button.style.transform = 'scale(1)';
+                        }, 200);
+                        
+                        this.showNotification('success', 'Tema Alterado', `Tema ${theme} aplicado com sucesso!`);
+                    }, 150);
+                }, 300);
             }
 
             async openCourse(courseId) {
@@ -1509,13 +1537,69 @@
             }
 
             async refreshCourses() {
-                document.getElementById('courseGrid').innerHTML = '<div class="loading"><div class="spinner"></div><span>Atualizando cursos...</span></div>';
+                const refreshButton = event.target;
+                const courseGrid = document.getElementById('courseGrid');
+                
+                // Add loading state to button
+                refreshButton.classList.add('btn-loading');
+                refreshButton.disabled = true;
+                
+                // Create enhanced loading skeleton
+                courseGrid.innerHTML = `
+                    <div class="loading-enhanced" style="grid-column: 1 / -1;">
+                        <div class="loading-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <span style="margin-left: 12px;">Atualizando cursos...</span>
+                    </div>
+                `;
+                
+                // Add skeleton cards for better UX
+                setTimeout(() => {
+                    courseGrid.innerHTML = Array(6).fill().map(() => `
+                        <div class="course-card skeleton loading-enhanced">
+                            <div style="height: 120px; background: var(--gray-200);"></div>
+                            <div style="padding: var(--space-5);">
+                                <div class="skeleton-text"></div>
+                                <div class="skeleton-text"></div>
+                                <div class="skeleton-text" style="width: 60%;"></div>
+                            </div>
+                        </div>
+                    `).join('');
+                }, 200);
+                
                 await this.loadCourses();
+                
+                // Remove loading state
+                refreshButton.classList.remove('btn-loading');
+                refreshButton.disabled = false;
+                
                 this.showNotification('success', 'Atualizado', 'Cursos atualizados com sucesso!');
             }
 
             async simulateAchievement() {
-                // Simulate lesson completion
+                const button = event.target;
+                
+                // Add loading animation to button
+                button.classList.add('btn-loading');
+                button.disabled = true;
+                
+                // Add visual feedback to achievement grid
+                const achievementsGrid = document.getElementById('achievementsGrid');
+                const achievements = achievementsGrid.querySelectorAll('.achievement-item');
+                
+                // Animate existing achievements
+                achievements.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.style.transform = 'scale(1.1)';
+                        setTimeout(() => {
+                            item.style.transform = 'scale(1)';
+                        }, 200);
+                    }, index * 100);
+                });
+                
                 try {
                     const response = await fetch(`/api/gamification/lesson-complete/${this.userId}`, {
                         method: 'POST',
@@ -1529,15 +1613,40 @@
 
                     const data = await response.json();
                     if (data.success) {
-                        this.showNotification('success', `+${data.data.xpAwarded} XP!`, 'Lição completada com sucesso!');
+                        // Animate XP gain
+                        const xpFill = document.getElementById('xpFill');
+                        if (xpFill) {
+                            xpFill.style.animation = 'progressShine 1s ease-out';
+                            setTimeout(() => {
+                                xpFill.style.animation = '';
+                            }, 1000);
+                        }
                         
-                        // Refresh user data
+                        // Show success notification with enhanced animation
+                        this.showNotification('success', `🎉 +${data.data.xpAwarded} XP!`, 'Lição completada com sucesso!');
+                        
+                        // Animate stats update
+                        const statNumbers = document.querySelectorAll('.stat-number');
+                        statNumbers.forEach(stat => {
+                            stat.style.animation = 'iconBounce 0.8s ease-out';
+                            setTimeout(() => {
+                                stat.style.animation = '';
+                            }, 800);
+                        });
+                        
+                        // Refresh user data with delay for better UX
                         setTimeout(() => {
                             this.loadUserData();
-                        }, 1000);
+                        }, 1500);
                     }
                 } catch (error) {
                     this.showNotification('error', 'Erro', 'Falha ao completar lição');
+                } finally {
+                    // Remove loading state
+                    setTimeout(() => {
+                        button.classList.remove('btn-loading');
+                        button.disabled = false;
+                    }, 1000);
                 }
             }
 
