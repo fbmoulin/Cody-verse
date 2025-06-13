@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodyVerse - Notificações Animadas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 20px 30px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .action-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .action-btn.xp-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .action-btn.level-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .action-btn.badge-btn {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            color: #2c3e50;
+        }
+
+        .action-btn.coin-btn {
+            background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
+            color: #2c3e50;
+        }
+
+        /* SMS-Style Notifications */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .notification {
+            background: white;
+            border-radius: 20px;
+            padding: 15px 25px;
+            margin-bottom: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: translateX(400px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border-left: 5px solid #4facfe;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 280px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .notification.hide {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+
+        .notification::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            animation: progress-bar 3s ease-out forwards;
+        }
+
+        @keyframes progress-bar {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+
+        .notification.xp {
+            border-left-color: #4facfe;
+        }
+
+        .notification.level-up {
+            border-left-color: #f5576c;
+            background: linear-gradient(135deg, #fff 0%, #ffe6e6 100%);
+        }
+
+        .notification.level-up::before {
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .notification.badge {
+            border-left-color: #fcb69f;
+            background: linear-gradient(135deg, #fff 0%, #fff8f0 100%);
+        }
+
+        .notification.badge::before {
+            background: linear-gradient(90deg, #ffecd2 0%, #fcb69f 100%);
+        }
+
+        .notification.coins {
+            border-left-color: #ffd700;
+            background: linear-gradient(135deg, #fff 0%, #fffbf0 100%);
+        }
+
+        .notification.coins::before {
+            background: linear-gradient(90deg, #ffd700 0%, #ffb347 100%);
+        }
+
+        .notification-icon {
+            font-size: 1.8rem;
+            filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 2px;
+            font-size: 1rem;
+        }
+
+        .notification-message {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        /* Floating XP Animation */
+        .floating-xp {
+            position: fixed;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #4facfe;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            pointer-events: none;
+            z-index: 1001;
+            animation: float-up 2s ease-out forwards;
+        }
+
+        @keyframes float-up {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(-50px) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) scale(1);
+            }
+        }
+
+        /* Level Up Celebration */
+        .level-up-celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #4facfe;
+            animation: confetti-fall 3s ease-out forwards;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Badge Unlock Animation */
+        .badge-unlock-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1002;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .badge-unlock-modal.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .badge-unlock-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            transform: scale(0.5);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .badge-unlock-modal.show .badge-unlock-content {
+            transform: scale(1);
+        }
+
+        .badge-unlock-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: badge-bounce 0.6s ease-out;
+        }
+
+        @keyframes badge-bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .badge-unlock-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .badge-unlock-description {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .badge-unlock-close {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Progress Bar with Animation */
+        .progress-demo {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 20px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 1s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        /* Sound Wave Animation */
+        .sound-wave {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sound-wave.active {
+            opacity: 1;
+        }
+
+        .wave-bar {
+            width: 4px;
+            background: #4facfe;
+            border-radius: 2px;
+            animation: wave 0.8s infinite ease-in-out;
+        }
+
+        .wave-bar:nth-child(1) { height: 20px; animation-delay: 0s; }
+        .wave-bar:nth-child(2) { height: 30px; animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { height: 25px; animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { height: 35px; animation-delay: 0.3s; }
+        .wave-bar:nth-child(5) { height: 20px; animation-delay: 0.4s; }
+
+        @keyframes wave {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.3); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .notification-container {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+            }
+
+            .notification {
+                min-width: auto;
+                width: 100%;
+                transform: translateY(-100px);
+            }
+
+            .notification.show {
+                transform: translateY(0);
+            }
+
+            .notification.hide {
+                transform: translateY(-100px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎉 Notificações Animadas</h1>
+            <p>Experimente os efeitos SMS-like para ações gamificadas</p>
+        </div>
+
+        <div class="progress-demo">
+            <div class="progress-title">Progresso do Nível</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="levelProgress"></div>
+            </div>
+            <div class="progress-text">
+                <span id="currentXP">750 XP</span>
+                <span id="nextLevel">Próximo nível: 1000 XP</span>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="action-btn xp-btn" onclick="gainXP()">
+                🎯 Completar Lição (+150 XP)
+            </button>
+            <button class="action-btn level-btn" onclick="levelUp()">
+                🚀 Level Up!
+            </button>
+            <button class="action-btn badge-btn" onclick="unlockBadge()">
+                🏆 Desbloquear Medalha
+            </button>
+            <button class="action-btn coin-btn" onclick="earnCoins()">
+                💰 Ganhar Moedas (+50)
+            </button>
+        </div>
+
+        <div class="action-buttons">
+            <button class="action-btn" onclick="completeQuest()">
+                ⚔️ Completar Missão
+            </button>
+            <button class="action-btn" onclick="streakBonus()">
+                🔥 Bônus de Sequência
+            </button>
+            <button class="action-btn" onclick="perfectScore()">
+                ⭐ Pontuação Perfeita
+            </button>
+            <button class="action-btn" onclick="speedBonus()">
+                ⚡ Bônus de Velocidade
+            </button>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- Level Up Celebration -->
+    <div class="level-up-celebration" id="celebration"></div>
+
+    <!-- Badge Unlock Modal -->
+    <div class="badge-unlock-modal" id="badgeModal">
+        <div class="badge-unlock-content">
+            <div class="badge-unlock-icon" id="badgeIcon">🏆</div>
+            <div class="badge-unlock-title" id="badgeTitle">Nova Medalha Desbloqueada!</div>
+            <div class="badge-unlock-description" id="badgeDescription">Você conquistou uma nova medalha!</div>
+            <button class="badge-unlock-close" onclick="closeBadgeModal()">Continuar</button>
+        </div>
+    </div>
+
+    <!-- Sound Wave Indicator -->
+    <div class="sound-wave" id="soundWave">
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+    </div>
+
+    <script>
+        class NotificationSystem {
+            constructor() {
+                this.currentXP = 750;
+                this.currentLevel = 5;
+                this.nextLevelXP = 1000;
+                this.coins = 125;
+                this.notificationQueue = [];
+                this.isShowingNotification = false;
+                this.updateProgress();
+            }
+
+            showNotification(type, icon, title, message, duration = 3000) {
+                this.notificationQueue.push({ type, icon, title, message, duration });
+                if (!this.isShowingNotification) {
+                    this.processNotificationQueue();
+                }
+            }
+
+            processNotificationQueue() {
+                if (this.notificationQueue.length === 0) {
+                    this.isShowingNotification = false;
+                    return;
+                }
+
+                this.isShowingNotification = true;
+                const notification = this.notificationQueue.shift();
+                this.displayNotification(notification);
+            }
+
+            displayNotification({ type, icon, title, message, duration }) {
+                const container = document.getElementById('notificationContainer');
+                
+                const notificationEl = document.createElement('div');
+                notificationEl.className = `notification ${type}`;
+                notificationEl.innerHTML = `
+                    <div class="notification-icon">${icon}</div>
+                    <div class="notification-content">
+                        <div class="notification-title">${title}</div>
+                        <div class="notification-message">${message}</div>
+                    </div>
+                `;
+
+                container.appendChild(notificationEl);
+
+                // Show animation
+                setTimeout(() => {
+                    notificationEl.classList.add('show');
+                }, 100);
+
+                // Play sound effect
+                this.playSound();
+
+                // Hide animation
+                setTimeout(() => {
+                    notificationEl.classList.add('hide');
+                    setTimeout(() => {
+                        container.removeChild(notificationEl);
+                        this.processNotificationQueue();
+                    }, 500);
+                }, duration);
+            }
+
+            createFloatingXP(amount, x, y) {
+                const floatingEl = document.createElement('div');
+                floatingEl.className = 'floating-xp';
+                floatingEl.textContent = `+${amount} XP`;
+                floatingEl.style.left = `${x}px`;
+                floatingEl.style.top = `${y}px`;
+
+                document.body.appendChild(floatingEl);
+
+                setTimeout(() => {
+                    document.body.removeChild(floatingEl);
+                }, 2000);
+            }
+
+            createConfetti() {
+                const celebration = document.getElementById('celebration');
+                const colors = ['#4facfe', '#f093fb', '#ffd700', '#ff6b6b', '#4ecdc4'];
+                
+                for (let i = 0; i < 50; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 2 + 's';
+                    confetti.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                    
+                    celebration.appendChild(confetti);
+                }
+
+                setTimeout(() => {
+                    celebration.innerHTML = '';
+                }, 5000);
+            }
+
+            showBadgeModal(icon, title, description) {
+                const modal = document.getElementById('badgeModal');
+                document.getElementById('badgeIcon').textContent = icon;
+                document.getElementById('badgeTitle').textContent = title;
+                document.getElementById('badgeDescription').textContent = description;
+                
+                modal.classList.add('show');
+            }
+
+            playSound() {
+                const soundWave = document.getElementById('soundWave');
+                soundWave.classList.add('active');
+                
+                setTimeout(() => {
+                    soundWave.classList.remove('active');
+                }, 800);
+            }
+
+            updateProgress() {
+                const progressPercentage = (this.currentXP / this.nextLevelXP) * 100;
+                const progressBar = document.getElementById('levelProgress');
+                const currentXPEl = document.getElementById('currentXP');
+                const nextLevelEl = document.getElementById('nextLevel');
+                
+                if (progressBar) {
+                    progressBar.style.width = `${progressPercentage}%`;
+                }
+                
+                if (currentXPEl) {
+                    currentXPEl.textContent = `${this.currentXP} XP`;
+                }
+                
+                if (nextLevelEl) {
+                    nextLevelEl.textContent = `Próximo nível: ${this.nextLevelXP} XP`;
+                }
+            }
+        }
+
+        const notifications = new NotificationSystem();
+
+        function gainXP() {
+            const xpAmount = 150;
+            notifications.currentXP += xpAmount;
+            
+            // Create floating XP animation
+            const rect = event.target.getBoundingClientRect();
+            notifications.createFloatingXP(xpAmount, rect.left + rect.width/2, rect.top);
+            
+            // Show notification
+            notifications.showNotification(
+                'xp',
+                '🎯',
+                `+${xpAmount} XP Ganhos!`,
+                'Lição completada com sucesso!'
+            );
+            
+            notifications.updateProgress();
+            
+            // Check for level up
+            if (notifications.currentXP >= notifications.nextLevelXP) {
+                setTimeout(() => levelUp(), 1000);
+            }
+        }
+
+        function levelUp() {
+            notifications.currentLevel++;
+            const oldNextLevel = notifications.nextLevelXP;
+            notifications.nextLevelXP = oldNextLevel + 500;
+            
+            // Create confetti
+            notifications.createConfetti();
+            
+            // Show level up notification
+            setTimeout(() => {
+                notifications.showNotification(
+                    'level-up',
+                    '🚀',
+                    'LEVEL UP!',
+                    `Parabéns! Você alcançou o nível ${notifications.currentLevel}!`,
+                    4000
+                );
+            }, 500);
+            
+            notifications.updateProgress();
+        }
+
+        function unlockBadge() {
+            // Show notification first
+            notifications.showNotification(
+                'badge',
+                '🏆',
+                'Nova Medalha!',
+                'Medalha "Explorador" desbloqueada!'
+            );
+            
+            // Show detailed modal after notification
+            setTimeout(() => {
+                notifications.showBadgeModal(
+                    '🗺️',
+                    'Medalha Explorador Desbloqueada!',
+                    'Você completou 10 lições e explorou novos horizontes de conhecimento!'
+                );
+            }, 2000);
+        }
+
+        function earnCoins() {
+            const coinAmount = 50;
+            notifications.coins += coinAmount;
+            
+            // Create floating animation
+            const rect = event.target.getBoundingClientRect();
+            const floatingEl = document.createElement('div');
+            floatingEl.className = 'floating-xp';
+            floatingEl.textContent = `+${coinAmount} 💰`;
+            floatingEl.style.left = `${rect.left + rect.width/2}px`;
+            floatingEl.style.top = `${rect.top}px`;
+            floatingEl.style.color = '#ffd700';
+            
+            document.body.appendChild(floatingEl);
+            setTimeout(() => document.body.removeChild(floatingEl), 2000);
+            
+            notifications.showNotification(
+                'coins',
+                '💰',
+                `+${coinAmount} Moedas!`,
+                `Total: ${notifications.coins} moedas`
+            );
+        }
+
+        function completeQuest() {
+            notifications.showNotification(
+                'xp',
+                '⚔️',
+                'Missão Completada!',
+                'Bônus de +200 XP pela missão especial!'
+            );
+            
+            notifications.currentXP += 200;
+            notifications.updateProgress();
+        }
+
+        function streakBonus() {
+            notifications.showNotification(
+                'xp',
+                '🔥',
+                'Sequência de 7 Dias!',
+                'Bônus de +100 XP por consistência!'
+            );
+            
+            notifications.currentXP += 100;
+            notifications.updateProgress();
+        }
+
+        function perfectScore() {
+            notifications.showNotification(
+                'badge',
+                '⭐',
+                'Pontuação Perfeita!',
+                '100% de acertos! +300 XP de bônus!'
+            );
+            
+            notifications.currentXP += 300;
+            notifications.updateProgress();
+        }
+
+        function speedBonus() {
+            notifications.showNotification(
+                'xp',
+                '⚡',
+                'Velocista!',
+                'Completou em tempo recorde! +75 XP!'
+            );
+            
+            notifications.currentXP += 75;
+            notifications.updateProgress();
+        }
+
+        function closeBadgeModal() {
+            document.getElementById('badgeModal').classList.remove('show');
+        }
+
+        // Demo auto-trigger
+        setTimeout(() => {
+            notifications.showNotification(
+                'xp',
+                '👋',
+                'Bem-vindo!',
+                'Experimente os botões para ver as animações!'
+            );
+        }, 1000);
+    </script>
+</body>
+</html>
