@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Play, Lock, CheckCircle, Clock, BookOpen, ArrowLeft, Star } from 'lucide-react';
 

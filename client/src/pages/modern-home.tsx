@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { BookOpen, Trophy, Target, TrendingUp, Play, Award } from 'lucide-react';
 
 interface Course {
@@ -19,7 +19,7 @@ interface UserStats {
 
 export default function ModernHomePage() {
   const [courses, setCourses] = useState<Course[]>([]);
-  const [userStats, setUserStats] = useState<UserStats>({
+  const [userStats] = useState<UserStats>({
     totalXp: 2450,
     level: 12,
     streak: 7,
