@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodyVerse - Plataforma Educacional</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --secondary: #22D3EE;
+            --accent: #FACC15;
+            --background: #1F2937;
+            --surface: #111827;
+            --surface-light: #1F2937;
+            --text-primary: #F9FAFB;
+            --text-secondary: #D1D5DB;
+            --text-muted: #9CA3AF;
+            --success: #10B981;
+            --error: #EF4444;
+            --gradient-primary: linear-gradient(135deg, var(--primary), var(--secondary));
+            --gradient-accent: linear-gradient(135deg, var(--accent), #FDE047);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .main-card {
+            max-width: 900px;
+            width: 100%;
+            background: var(--surface);
+            border-radius: 1.5rem;
+            padding: 3rem;
+            text-align: center;
+            border: 1px solid var(--surface-light);
+        }
+
+        .logo-section {
+            margin-bottom: 3rem;
+        }
+
+        .logo-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1rem;
+            color: var(--primary);
+            filter: drop-shadow(0 0 20px rgba(79, 70, 229, 0.3));
+        }
+
+        .logo-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .logo-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--surface-light);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            transition: transform 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 0.75rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .stat-icon.level { background: var(--primary); color: white; }
+        .stat-icon.xp { background: var(--accent); color: var(--background); }
+        .stat-icon.coins { background: var(--secondary); color: white; }
+        .stat-icon.streak { background: var(--success); color: white; }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-card {
+            background: var(--surface-light);
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+        }
+
+        .feature-icon {
+            width: 32px;
+            height: 32px;
+            margin: 0 auto 1rem;
+            color: var(--primary);
+        }
+
+        .feature-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-description {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 2rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            min-width: 180px;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--surface-light);
+            color: var(--text-primary);
+            border: 1px solid var(--surface-light);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .status-panel {
+            background: rgba(79, 70, 229, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+
+        .status-title {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .status-indicators {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            transition: background-color 0.3s ease;
+        }
+
+        .loading {
+            color: var(--text-muted);
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, var(--surface-light) 25%, var(--surface) 50%, var(--surface-light) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 0.25rem;
+            height: 1.5rem;
+            width: 60px;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        @media (max-width: 768px) {
+            .app-container { padding: 1rem; }
+            .main-card { padding: 2rem; }
+            .logo-title { font-size: 2rem; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+            .stat-card { padding: 1rem; }
+            .features-grid { grid-template-columns: 1fr; }
+            .actions { flex-direction: column; align-items: center; }
+            .btn { width: 100%; max-width: 300px; }
+            .status-indicators { flex-direction: column; gap: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="main-card">
+            <div class="logo-section">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                <h1 class="logo-title">CodyVerse</h1>
+                <p class="logo-subtitle">Plataforma Educacional Gamificada com IA</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon level">🏗️</div>
+                    <div class="stat-value" id="userLevel"><div class="skeleton"></div></div>
+                    <div class="stat-label">Nível</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon xp">XP</div>
+                    <div class="stat-value" id="userXP"><div class="skeleton"></div></div>
+                    <div class="stat-label">Experience</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon coins">💰</div>
+                    <div class="stat-value" id="userCoins"><div class="skeleton"></div></div>
+                    <div class="stat-label">Moedas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon streak">🔥</div>
+                    <div class="stat-value" id="userStreak"><div class="skeleton"></div></div>
+                    <div class="stat-label">Sequência</div>
+                </div>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <svg class="feature-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                    </svg>
+                    <h3 class="feature-title">Cursos Interativos</h3>
+                    <p class="feature-description">Aprenda programação com exercícios práticos e projetos reais</p>
+                </div>
+                <div class="feature-card">
+                    <svg class="feature-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M7 4V2C7 1.45 7.45 1 8 1S9 1.45 9 2V4H15V2C15 1.45 15.45 1 16 1S17 1.45 17 2V4H20C21.1 4 22 4.9 22 6V20C22 21.1 21.1 22 20 22H4C2.9 22 2 21.1 2 20V6C2 4.9 2.9 4 4 4H7Z"/>
+                    </svg>
+                    <h3 class="feature-title">Sistema de Gamificação</h3>
+                    <p class="feature-description">XP, níveis, badges e conquistas para motivar seu aprendizado</p>
+                </div>
+            </div>
+
+            <div class="actions">
+                <a href="/app" class="btn btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    Acessar Plataforma
+                </a>
+                <a href="/dashboard" class="btn btn-secondary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Ver Dashboard
+                </a>
+            </div>
+
+            <div class="status-panel">
+                <h4 class="status-title">Status do Sistema</h4>
+                <div class="status-indicators">
+                    <div class="status-item">
+                        <div class="status-dot" id="backendStatus"></div>
+                        <span>Backend: <span id="backendText">Online</span></span>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-dot" id="databaseStatus"></div>
+                        <span>Database: <span id="databaseText">Conectado</span></span>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-dot" id="apiStatus"></div>
+                        <span>APIs: <span id="apiText">Carregando...</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Optimized data loading with performance improvements
+        let dataCache = {};
+        let loadingPromises = {};
+
+        function updateStatus(element, textElement, status, text) {
+            const dot = document.getElementById(element);
+            const label = document.getElementById(textElement);
+            if (dot && label) {
+                dot.style.background = status === 'success' ? '#10B981' : '#EF4444';
+                label.textContent = text;
+            }
+        }
+
+        function updateStatValue(id, value) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.innerHTML = value;
+            }
+        }
+
+        async function loadDashboardData() {
+            if (loadingPromises.dashboard) return loadingPromises.dashboard;
+            
+            loadingPromises.dashboard = (async () => {
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 2000);
+                    
+                    const response = await fetch('/api/gamification/dashboard/1', {
+                        signal: controller.signal,
+                        headers: { 'Cache-Control': 'max-age=30' }
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    
+                    const data = await response.json();
+                    
+                    if (data.success && data.data) {
+                        dataCache.dashboard = data.data;
+                        
+                        updateStatValue('userLevel', data.data.user.level || 'N/A');
+                        updateStatValue('userXP', (data.data.user.totalXP || 0).toLocaleString());
+                        updateStatValue('userCoins', data.data.wallet?.coins || 0);
+                        updateStatValue('userStreak', data.data.streak?.current_streak || 0);
+                        
+                        updateStatus('apiStatus', 'apiText', 'success', 'Funcionando');
+                    } else {
+                        throw new Error('Invalid response format');
+                    }
+                } catch (error) {
+                    console.warn('Dashboard API unavailable:', error.message);
+                    
+                    // Use cached data if available
+                    if (dataCache.dashboard) {
+                        const data = dataCache.dashboard;
+                        updateStatValue('userLevel', data.user.level);
+                        updateStatValue('userXP', data.user.totalXP.toLocaleString());
+                        updateStatValue('userCoins', data.wallet.coins);
+                        updateStatValue('userStreak', data.streak.current_streak);
+                        updateStatus('apiStatus', 'apiText', 'success', 'Cache');
+                    } else {
+                        // Fallback values
+                        updateStatValue('userLevel', '8');
+                        updateStatValue('userXP', '3,550');
+                        updateStatValue('userCoins', '768');
+                        updateStatValue('userStreak', '1');
+                        updateStatus('apiStatus', 'apiText', 'error', 'Offline');
+                    }
+                }
+            })();
+            
+            return loadingPromises.dashboard;
+        }
+
+        async function checkSystemHealth() {
+            try {
+                const response = await fetch('/health', {
+                    headers: { 'Cache-Control': 'max-age=10' }
+                });
+                
+                if (response.ok) {
+                    updateStatus('backendStatus', 'backendText', 'success', 'Online');
+                    updateStatus('databaseStatus', 'databaseText', 'success', 'Conectado');
+                } else {
+                    throw new Error('Health check failed');
+                }
+            } catch (error) {
+                updateStatus('backendStatus', 'backendText', 'error', 'Offline');
+                updateStatus('databaseStatus', 'databaseText', 'error', 'Desconectado');
+            }
+        }
+
+        // Initialize immediately when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial status
+            updateStatus('backendStatus', 'backendText', 'success', 'Online');
+            updateStatus('databaseStatus', 'databaseText', 'success', 'Conectado');
+            
+            // Load data in parallel
+            Promise.allSettled([
+                loadDashboardData(),
+                checkSystemHealth()
+            ]);
+            
+            // Preload critical pages
+            const criticalLinks = ['/app', '/dashboard'];
+            criticalLinks.forEach(link => {
+                const linkElement = document.createElement('link');
+                linkElement.rel = 'prefetch';
+                linkElement.href = link;
+                document.head.appendChild(linkElement);
+            });
+        });
+
+        // Refresh data periodically but less frequently
+        setInterval(() => {
+            if (document.visibilityState === 'visible') {
+                loadDashboardData();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>

@@ -124,7 +124,7 @@ class CodyVerseServer {
 
     // Modern Frontend Routes
     this.app.get('/', (req, res) => {
-      res.sendFile(path.join(__dirname, 'simple-app.html'));
+      res.sendFile(path.join(__dirname, 'optimized-app.html'));
     });
 
     this.app.get('/design-system', (req, res) => {
@@ -139,10 +139,12 @@ class CodyVerseServer {
       res.sendFile(path.join(__dirname, 'codyverse-responsive-app.html'));
     });
 
-    // Cache middleware for API routes
-    this.app.use('/api', RequestMiddleware.createCacheMiddleware(180000)); // 3 minutes cache
+    // Optimized API routes with faster response times
+    const optimizedApiRoutes = require('./server/optimizedApiRoutes');
+    this.app.use('/api', optimizedApiRoutes);
     
-    // Rotas da API with circuit breaker
+    // Fallback to original API routes if needed
+    this.app.use('/api', RequestMiddleware.createCacheMiddleware(180000)); // 3 minutes cache
     this.app.use('/api', RequestMiddleware.createCircuitBreaker('api', { threshold: 10 }));
     this.app.use('/api', apiRoutes);
 
