@@ -1,0 +1,272 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Base Theme Colors */
+    --background: 222 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 263 70% 50.4%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 217 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 32.6% 17.5%;
+    --input: 217 32.6% 17.5%;
+    --ring: 263 70% 50.4%;
+    --radius: 0.5rem;
+    
+    /* Additional CodyVerse Colors */
+    --success: 142 76% 36%;
+    --warning: 48 96% 53%;
+    --info: 199 89% 48%;
+    --cyan: 188 95% 68%;
+    --purple: 271 81% 56%;
+    --pink: 336 84% 57%;
+    --orange: 25 95% 53%;
+    --yellow: 54 91% 68%;
+    --green: 142 76% 36%;
+    --blue: 221 83% 53%;
+    --indigo: 243 75% 59%;
+    --violet: 263 70% 50.4%;
+    --slate: 215 28% 17%;
+    --gray: 217 32.6% 17.5%;
+    --zinc: 240 10% 3.9%;
+    --neutral: 0 0% 15%;
+    --stone: 60 9% 18%;
+  }
+
+  /* Cyberpunk Theme */
+  [data-theme="cyberpunk"] {
+    --background: 237 100% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 237 100% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 237 100% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 328 86% 70%;
+    --primary-foreground: 237 100% 4.9%;
+    --secondary: 204 94% 94%;
+    --secondary-foreground: 237 100% 4.9%;
+    --muted: 237 100% 10%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 271 81% 56%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 237 100% 10%;
+    --input: 237 100% 10%;
+    --ring: 328 86% 70%;
+    --success: 142 76% 36%;
+    --warning: 48 96% 53%;
+    --info: 199 89% 48%;
+  }
+
+  /* Ocean Theme */
+  [data-theme="ocean"] {
+    --background: 221 39% 11%;
+    --foreground: 210 40% 98%;
+    --card: 221 39% 11%;
+    --card-foreground: 210 40% 98%;
+    --popover: 221 39% 11%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 204 94% 94%;
+    --secondary-foreground: 221 39% 11%;
+    --muted: 215 25% 27%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 188 95% 68%;
+    --accent-foreground: 221 39% 11%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 215 25% 27%;
+    --input: 215 25% 27%;
+    --ring: 199 89% 48%;
+    --success: 142 76% 36%;
+    --warning: 48 96% 53%;
+    --info: 199 89% 48%;
+  }
+
+  /* Forest Theme */
+  [data-theme="forest"] {
+    --background: 150 100% 6%;
+    --foreground: 0 0% 98%;
+    --card: 150 100% 6%;
+    --card-foreground: 0 0% 98%;
+    --popover: 150 100% 6%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 142 76% 36%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 84 81% 44%;
+    --secondary-foreground: 150 100% 6%;
+    --muted: 150 100% 10%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 54 91% 68%;
+    --accent-foreground: 150 100% 6%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 150 100% 10%;
+    --input: 150 100% 10%;
+    --ring: 142 76% 36%;
+    --success: 142 76% 36%;
+    --warning: 48 96% 53%;
+    --info: 199 89% 48%;
+  }
+
+  /* Neon Theme */
+  [data-theme="neon"] {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 271 81% 56%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 336 84% 57%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 54 91% 68%;
+    --accent-foreground: 0 0% 3.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 271 81% 56%;
+    --success: 142 76% 36%;
+    --warning: 48 96% 53%;
+    --info: 199 89% 48%;
+  }
+
+  .dark {
+    /* Dark theme overrides can be added here if needed */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Smooth transitions for theme changes */
+  * {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-muted;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-border rounded-md;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-accent;
+}
+
+/* Focus states */
+:focus-visible {
+  @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+}
+
+/* Selection styling */
+::selection {
+  @apply bg-primary/20 text-primary-foreground;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Utility classes for CodyVerse */
+.gradient-primary {
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--cyan)) 100%);
+}
+
+.gradient-secondary {
+  background: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--accent)) 100%);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--cyan)) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glass-effect {
+  backdrop-filter: blur(20px);
+  background: hsla(var(--card), 0.1);
+  border: 1px solid hsla(var(--border), 0.2);
+}
+
+.shadow-glow {
+  box-shadow: 0 0 20px hsla(var(--primary), 0.3);
+}
+
+.shadow-neon {
+  box-shadow: 0 0 30px hsla(var(--primary), 0.5), 0 0 60px hsla(var(--primary), 0.3);
+}
