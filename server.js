@@ -16,6 +16,7 @@ const RequestMiddleware = require('./server/requestMiddleware');
 const configManager = require('./core/ConfigManager');
 const dataAccessLayer = require('./core/DataAccessLayer');
 const apiDocGenerator = require('./core/APIDocGenerator');
+const PerformanceOptimizer = require('./core/PerformanceOptimizer');
 
 // Middleware
 const {
@@ -34,6 +35,7 @@ class CodyVerseServer {
   constructor() {
     this.app = express();
     this.server = null;
+    this.performanceOptimizer = new PerformanceOptimizer();
   }
 
   async initialize() {
@@ -103,6 +105,9 @@ class CodyVerseServer {
     // Enhanced request tracking and monitoring
     this.app.use(RequestMiddleware.createRequestTracker());
     this.app.use(RequestMiddleware.createRateLimiter(60000, 200)); // 200 requests per minute
+    
+    // Performance optimization middleware
+    this.app.use(this.performanceOptimizer.createOptimizedMiddleware());
   }
 
   setupRoutes() {

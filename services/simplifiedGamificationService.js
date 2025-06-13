@@ -225,13 +225,6 @@ class SimplifiedGamificationService {
   }
 
   async getCachedUserBadges(userId, client) {
-    const cacheKey = `user_badges_${userId}`;
-    const cached = this.cache.get(cacheKey);
-    
-    if (cached) {
-      return cached;
-    }
-
     const result = await client.query(`
       SELECT 
         id, badge_name as "badgeName", badge_description as "badgeDescription",
@@ -243,9 +236,7 @@ class SimplifiedGamificationService {
       LIMIT 10
     `, [userId]);
 
-    const badges = result.rows;
-    this.cache.set(cacheKey, badges, 300000); // 5 minutes
-    return badges;
+    return result.rows;
   }
 
   async processLessonCompletion(userId, lessonId, timeSpent = 15, score = 100) {
