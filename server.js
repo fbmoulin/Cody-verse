@@ -17,9 +17,6 @@ const configManager = require('./core/ConfigManager');
 const dataAccessLayer = require('./core/DataAccessLayer');
 const apiDocGenerator = require('./core/APIDocGenerator');
 const PerformanceOptimizer = require('./core/PerformanceOptimizer');
-const OptimizedPerformanceManager = require('./core/OptimizedPerformanceManager');
-const EnhancedCacheManager = require('./core/EnhancedCacheManager');
-const OptimizedQueryBuilder = require('./database/OptimizedQueryBuilder');
 
 // Middleware
 const {
@@ -39,9 +36,6 @@ class CodyVerseServer {
     this.app = express();
     this.server = null;
     this.performanceOptimizer = new PerformanceOptimizer();
-    this.optimizedPerformanceManager = new OptimizedPerformanceManager();
-    this.enhancedCacheManager = new EnhancedCacheManager();
-    this.optimizedQueryBuilder = null;
   }
 
   async initialize() {
@@ -59,10 +53,6 @@ class CodyVerseServer {
         
         await dbManager.initialize();
         console.log('Database initialized with migrations');
-        
-        // Initialize optimized query builder with connection pool
-        this.optimizedQueryBuilder = new OptimizedQueryBuilder(connectionPool.pool);
-        console.log('Optimized query builder initialized');
         
         const dbConnected = await testConnection();
         if (!dbConnected) {
@@ -132,11 +122,7 @@ class CodyVerseServer {
       }
     }));
 
-    // Refined Frontend Routes
-    this.app.get('/', (req, res) => {
-      res.sendFile(path.join(__dirname, 'codyverse-refined.html'));
-    });
-
+    // Responsive Design System Routes
     this.app.get('/design-system', (req, res) => {
       res.sendFile(path.join(__dirname, 'codyverse-design-system.html'));
     });
@@ -149,12 +135,10 @@ class CodyVerseServer {
       res.sendFile(path.join(__dirname, 'codyverse-responsive-app.html'));
     });
 
-    // High-performance API routes with working endpoints
-    const simpleApiRoutes = require('./server/simpleApiRoutes');
-    this.app.use('/api', simpleApiRoutes);
-    
-    // Fallback to original API routes if needed
+    // Cache middleware for API routes
     this.app.use('/api', RequestMiddleware.createCacheMiddleware(180000)); // 3 minutes cache
+    
+    // Rotas da API with circuit breaker
     this.app.use('/api', RequestMiddleware.createCircuitBreaker('api', { threshold: 10 }));
     this.app.use('/api', apiRoutes);
 
@@ -216,7 +200,10 @@ class CodyVerseServer {
       });
     });
 
-    // Remove duplicate homepage route - handled above
+    // Fallback para SPA (rotas específicas)
+    this.app.get('/', (req, res) => {
+      res.sendFile(path.join(__dirname, 'index.html'));
+    });
 
     // Enhanced error handling middleware (deve ser o último)
     this.app.use(RequestMiddleware.createErrorHandler());

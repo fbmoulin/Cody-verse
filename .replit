@@ -16,10 +16,6 @@ author = "agent"
 task = "workflow.run"
 args = "Educational Platform"
 
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Client Development Server"
-
 [[workflows.workflow]]
 name = "Educational Platform"
 author = "agent"
@@ -29,21 +25,8 @@ task = "shell.exec"
 args = "node server.js"
 waitForPort = 5000
 
-[[workflows.workflow]]
-name = "Client Development Server"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd client && npm run dev -- --port 3000 --host 0.0.0.0"
-waitForPort = 3000
-
 [deployment]
 run = ["sh", "-c", "flutter pub get && flutter run -d web-server --web-hostname 0.0.0.0 --web-port 5000"]
-
-[[ports]]
-localPort = 3000
-externalPort = 3000
 
 [[ports]]
 localPort = 5000
