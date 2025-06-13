@@ -24,8 +24,10 @@ function App() {
           <Route path="/" element={<ModernHomePage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/achievements" element={<AchievementsPage />} />
+          <Route path="/courses" element={<CoursesPage />} />
+          <Route path="/courses/:courseId/lessons" element={<LessonsPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
           <Route path="/challenge/:id" element={<ChallengePage />} />
-          {/* Add other protected routes here */}
         </Route>
       </Routes>
     </Router>
