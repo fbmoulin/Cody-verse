@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Trophy, Target, Calendar, BookOpen, Award, Settings, Edit3 } from 'lucide-react';
+import { User, Trophy, Target, BookOpen, Award, Settings, Edit3 } from 'lucide-react';
 
 interface UserProfile {
   id: string;

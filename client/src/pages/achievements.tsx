@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Trophy, Lock, Star, Calendar, Award, Target, Zap } from 'lucide-react';
+import { Trophy, Lock, Star, Calendar, Award, Target } from 'lucide-react';
 
 interface Achievement {
   id: string;

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { BookOpen, Clock, Star, Users, Play, Lock, CheckCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { BookOpen, Clock, Star, Users, Play, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface Course {

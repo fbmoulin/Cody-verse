@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Clock, CheckCircle, XCircle, ArrowLeft, ArrowRight, Award, Target } from 'lucide-react';
+import { Clock, CheckCircle, XCircle, ArrowLeft, ArrowRight, Award } from 'lucide-react';
 
 interface Challenge {
   id: string;

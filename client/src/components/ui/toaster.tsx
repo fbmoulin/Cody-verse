@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Toast, ToastProvider, ToastViewport } from './toast';
 import { useToast } from '@/hooks/use-toast';
 
