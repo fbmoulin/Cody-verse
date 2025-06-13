@@ -17,16 +17,16 @@ class SimplifiedGamificationController extends BaseController {
         async () => {
           const baseDashboard = await gamificationService.getUserDashboard(userId);
           
-          // Get user's age group and adapt content
+          // Simplified age adaptation to improve performance
           const userAgeGroup = baseDashboard.user?.age_group || 'adult';
-          const adaptedContent = this.ageAdaptationService.adaptContent(baseDashboard, userAgeGroup);
           const languageTemplates = this.ageAdaptationService.getLanguageTemplates(userAgeGroup);
           const uiAdaptations = this.ageAdaptationService.getUIAdaptations(userAgeGroup);
           
+          // Return lightweight response without heavy content adaptation
           return {
             ...baseDashboard,
-            ...adaptedContent,
             ageGroup: userAgeGroup,
+            originalContent: baseDashboard, // Keep original for reference
             languageTemplates,
             uiAdaptations,
             adaptedMessages: {
@@ -36,7 +36,7 @@ class SimplifiedGamificationController extends BaseController {
             }
           };
         },
-        180000
+        300000 // Increased cache time to 5 minutes
       );
       
       return this.createResponse(dashboard, 'Dashboard retrieved successfully');

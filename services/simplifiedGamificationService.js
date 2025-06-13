@@ -104,57 +104,59 @@ class SimplifiedGamificationService {
     const client = await dbManager.pool.connect();
     
     try {
-      // Single optimized query to get/create user and initialize gamification data
-      const userResult = await client.query(`
-        WITH user_upsert AS (
-          INSERT INTO users (id, email, name, total_xp, is_active, profile_data) 
-          VALUES ($1, $2, $3, 0, true, $4)
-          ON CONFLICT (id) DO NOTHING
-          RETURNING *
+      // Optimized single query to get all dashboard data
+      const dashboardQuery = `
+        WITH user_data AS (
+          SELECT u.id, u.name, u.total_xp, u.email
+          FROM users u 
+          WHERE u.id = $1
+          UNION ALL
+          SELECT $1 as id, $2 as name, 0 as total_xp, $3 as email
+          WHERE NOT EXISTS (SELECT 1 FROM users WHERE id = $1)
         ),
-        wallet_upsert AS (
-          INSERT INTO user_wallet (user_id, coins, gems)
-          VALUES ($1, 0, 0)
-          ON CONFLICT (user_id) DO NOTHING
-          RETURNING *
+        wallet_data AS (
+          SELECT * FROM user_wallet WHERE user_id = $1
+          UNION ALL
+          SELECT null as id, $1 as user_id, 0 as coins, 0 as gems, 0 as total_coins_earned, 0 as total_coins_spent, NOW() as last_updated
+          WHERE NOT EXISTS (SELECT 1 FROM user_wallet WHERE user_id = $1)
         ),
-        streak_upsert AS (
-          INSERT INTO user_streaks (user_id, streak_type, current_streak, longest_streak)
-          VALUES ($1, 'daily_lesson', 0, 0)
-          ON CONFLICT (user_id, streak_type) DO NOTHING
-          RETURNING *
+        streak_data AS (
+          SELECT * FROM user_streaks WHERE user_id = $1 AND streak_type = 'daily_lesson'
+          UNION ALL
+          SELECT null as id, $1 as user_id, 'daily_lesson' as streak_type, 0 as current_streak, 0 as longest_streak, NOW() as last_activity_date
+          WHERE NOT EXISTS (SELECT 1 FROM user_streaks WHERE user_id = $1 AND streak_type = 'daily_lesson')
         )
-        SELECT * FROM users WHERE id = $1
-      `, [userId, `user${userId}@codyverse.edu`, `User ${userId}`, '{"preferences": {"language": "pt-BR"}}']);
+        SELECT 
+          (SELECT row_to_json(user_data) FROM user_data LIMIT 1) as user_info,
+          (SELECT row_to_json(wallet_data) FROM wallet_data LIMIT 1) as wallet_info,
+          (SELECT row_to_json(streak_data) FROM streak_data LIMIT 1) as streak_info
+      `;
       
-      const user = userResult.rows[0];
+      const result = await client.query(dashboardQuery, [userId, `User ${userId}`, `user${userId}@codyverse.edu`]);
+      const data = result.rows[0];
+      
+      const user = data.user_info;
+      const wallet = data.wallet_info;
+      const streak = data.streak_info;
 
-      // Optimized parallel queries for better performance
-      const [walletResult, streakResult, goalsResult] = await Promise.all([
-        client.query('SELECT * FROM user_wallet WHERE user_id = $1', [userId]),
-        client.query('SELECT * FROM user_streaks WHERE user_id = $1 AND streak_type = $2', [userId, 'daily_lesson']),
-        client.query('SELECT * FROM daily_goals WHERE user_id = $1 AND goal_date = CURRENT_DATE', [userId])
+      // Get goals and notifications in parallel
+      const [goalsResult, notificationsResult] = await Promise.all([
+        client.query('SELECT * FROM daily_goals WHERE user_id = $1 AND goal_date = CURRENT_DATE ORDER BY id DESC LIMIT 5', [userId]),
+        client.query(`
+          SELECT id, user_id, notification_type, title, message, icon, is_read, created_at
+          FROM gamification_notifications 
+          WHERE user_id = $1 
+          ORDER BY created_at DESC 
+          LIMIT 10
+        `, [userId])
       ]);
 
-      const wallet = walletResult.rows[0] || { coins: 0, gems: 0, total_coins_earned: 0, total_coins_spent: 0 };
-      const streak = streakResult.rows[0] || { current_streak: 0, longest_streak: 0, last_activity_date: new Date() };
       let goals = goalsResult.rows;
-
-      // Create default goals if none exist (optimized)
+      
+      // Create default goals only if needed
       if (goals.length === 0) {
         goals = await this.createDailyGoalsOptimized(userId, client);
       }
-
-      // Get notifications efficiently
-      const notificationsResult = await client.query(`
-        SELECT id, user_id, notification_type, title, message, icon, is_read, created_at
-        FROM gamification_notifications 
-        WHERE user_id = $1 
-        ORDER BY created_at DESC 
-        LIMIT 10
-      `, [userId]);
-      
-      const notifications = notificationsResult.rows;
 
       // Calculate level based on XP
       const currentXP = user.total_xp || 0;
@@ -172,10 +174,10 @@ class SimplifiedGamificationService {
           xpProgress: level.progress
         },
         wallet,
-        badges: await this.getCachedUserBadges(userId, client),
+        badges: [], // Empty for performance - load separately if needed
         streak,
         goals,
-        notifications: notifications.map(n => ({
+        notifications: notificationsResult.rows.map(n => ({
           ...n,
           timeAgo: this.getTimeAgo(n.created_at)
         }))
