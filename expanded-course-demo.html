@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodyVerse - Currículo Completo de Programação</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .curriculum-path {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .path-title {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .difficulty-section {
+            margin-bottom: 40px;
+        }
+
+        .difficulty-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .difficulty-header.beginner {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+        }
+
+        .difficulty-header.intermediate {
+            background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);
+        }
+
+        .difficulty-header.advanced {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        }
+
+        .difficulty-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .difficulty-info {
+            margin-left: 15px;
+            opacity: 0.9;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .module-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .module-card.beginner {
+            border-left-color: #4ecdc4;
+        }
+
+        .module-card.intermediate {
+            border-left-color: #feca57;
+        }
+
+        .module-card.advanced {
+            border-left-color: #ff6b6b;
+        }
+
+        .module-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .module-description {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .module-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .age-adaptations {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .age-groups-demo {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .age-demo-card {
+            padding: 20px;
+            border-radius: 15px;
+            color: white;
+        }
+
+        .age-demo-card.child {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 100%);
+        }
+
+        .age-demo-card.teen {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+        }
+
+        .age-demo-card.adult {
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+        }
+
+        .age-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .age-example {
+            background: rgba(255,255,255,0.2);
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-style: italic;
+        }
+
+        .learning-progress {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            background: #f0f0f0;
+            border-radius: 25px;
+            padding: 3px;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            height: 30px;
+            border-radius: 25px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .test-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .response-area {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .lesson-preview {
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #1976d2;
+        }
+
+        .lesson-title {
+            font-weight: bold;
+            color: #1976d2;
+            margin-bottom: 5px;
+        }
+
+        .lesson-info {
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CodyVerse - Currículo Completo</h1>
+            <p>Do básico ao avançado: aprenda programação adaptada à sua idade</p>
+        </div>
+
+        <div class="stats-overview">
+            <div class="stat-card">
+                <div class="stat-value" id="totalModules">20</div>
+                <div class="stat-label">Módulos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalLessons">29+</div>
+                <div class="stat-label">Lições</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">3</div>
+                <div class="stat-label">Faixas Etárias</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">150+</div>
+                <div class="stat-label">Horas de Conteúdo</div>
+            </div>
+        </div>
+
+        <div class="curriculum-path">
+            <h2 class="path-title">Trilha de Aprendizado Completa</h2>
+            
+            <div class="difficulty-section">
+                <div class="difficulty-header beginner">
+                    <div class="difficulty-title">Iniciante</div>
+                    <div class="difficulty-info">Fundamentos da programação</div>
+                </div>
+                <div class="modules-grid" id="beginnerModules">
+                    <!-- Módulos iniciantes serão carregados aqui -->
+                </div>
+            </div>
+
+            <div class="difficulty-section">
+                <div class="difficulty-header intermediate">
+                    <div class="difficulty-title">Intermediário</div>
+                    <div class="difficulty-info">Conceitos avançados e estruturas</div>
+                </div>
+                <div class="modules-grid" id="intermediateModules">
+                    <!-- Módulos intermediários serão carregados aqui -->
+                </div>
+            </div>
+
+            <div class="difficulty-section">
+                <div class="difficulty-header advanced">
+                    <div class="difficulty-title">Avançado</div>
+                    <div class="difficulty-info">Especialização e tecnologias modernas</div>
+                </div>
+                <div class="modules-grid" id="advancedModules">
+                    <!-- Módulos avançados serão carregados aqui -->
+                </div>
+            </div>
+        </div>
+
+        <div class="age-adaptations">
+            <h2 class="path-title">Adaptações por Idade</h2>
+            <div class="age-groups-demo">
+                <div class="age-demo-card child">
+                    <div class="age-title">Crianças (7-12 anos)</div>
+                    <div class="age-example" id="childExample">
+                        "Imagine caixinhas coloridas onde você guarda seus brinquedos"
+                    </div>
+                    <button class="test-button" onclick="testAgeContent('child')">
+                        Ver Exemplo Infantil
+                    </button>
+                </div>
+                <div class="age-demo-card teen">
+                    <div class="age-title">Adolescentes (13-18 anos)</div>
+                    <div class="age-example" id="teenExample">
+                        "Espaços na memória do computador para guardar dados"
+                    </div>
+                    <button class="test-button" onclick="testAgeContent('teen')">
+                        Ver Exemplo Adolescente
+                    </button>
+                </div>
+                <div class="age-demo-card adult">
+                    <div class="age-title">Adultos (19+ anos)</div>
+                    <div class="age-example" id="adultExample">
+                        "Conceitos fundamentais de alocação de memória e tipagem"
+                    </div>
+                    <button class="test-button" onclick="testAgeContent('adult')">
+                        Ver Exemplo Adulto
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="learning-progress">
+            <h2 class="path-title">Teste o Sistema Expandido</h2>
+            
+            <button class="test-button" onclick="loadAllModules()">
+                Carregar Todos os Módulos
+            </button>
+            
+            <button class="test-button" onclick="testLessonsByModule()">
+                Testar Lições por Módulo
+            </button>
+            
+            <button class="test-button" onclick="generateAgeExercises()">
+                Gerar Exercícios Adaptados
+            </button>
+            
+            <div class="response-area" id="testResults" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const moduleStructure = {
+            beginner: [
+                { id: 1, title: "Introdução à Programação", description: "Primeiros passos no mundo da programação", duration: "1.5 horas", xp: 150 },
+                { id: 7, title: "Variáveis e Tipos de Dados", description: "Aprenda a armazenar e manipular informações", duration: "2 horas", xp: 200 },
+                { id: 8, title: "Estruturas de Decisão", description: "Faça programas que tomam decisões", duration: "2.5 horas", xp: 250 },
+                { id: 9, title: "Laços de Repetição", description: "Automatize tarefas repetitivas", duration: "3 horas", xp: 300 }
+            ],
+            intermediate: [
+                { id: 10, title: "Funções e Modularização", description: "Organize código em blocos reutilizáveis", duration: "3.5 horas", xp: 400 },
+                { id: 11, title: "Estruturas de Dados Básicas", description: "Trabalhe com listas e dicionários", duration: "4 horas", xp: 450 },
+                { id: 12, title: "Programação Orientada a Objetos", description: "Entenda classes e objetos", duration: "5 horas", xp: 500 },
+                { id: 13, title: "Tratamento de Erros", description: "Identifique e corrija erros", duration: "3 horas", xp: 350 },
+                { id: 21, title: "Versionamento e Git", description: "Controle versões e colabore", duration: "3 horas", xp: 350 }
+            ],
+            advanced: [
+                { id: 14, title: "Algoritmos e Complexidade", description: "Algoritmos fundamentais", duration: "6 horas", xp: 600 },
+                { id: 15, title: "Desenvolvimento Web Frontend", description: "Crie interfaces web interativas", duration: "8 horas", xp: 700 },
+                { id: 16, title: "APIs e Integração", description: "Conecte aplicações", duration: "6 horas", xp: 650 },
+                { id: 17, title: "Banco de Dados e SQL", description: "Gerencie dados persistentes", duration: "7 horas", xp: 750 },
+                { id: 18, title: "Segurança em Programação", description: "Proteja suas aplicações", duration: "5 horas", xp: 550 },
+                { id: 19, title: "Inteligência Artificial", description: "IA e Machine Learning", duration: "8 horas", xp: 800 },
+                { id: 20, title: "Metodologias Ágeis", description: "Desenvolvimento ágil", duration: "4 horas", xp: 450 }
+            ]
+        };
+
+        function renderModules() {
+            Object.keys(moduleStructure).forEach(difficulty => {
+                const container = document.getElementById(`${difficulty}Modules`);
+                container.innerHTML = '';
+                
+                moduleStructure[difficulty].forEach(module => {
+                    const moduleCard = document.createElement('div');
+                    moduleCard.className = `module-card ${difficulty}`;
+                    moduleCard.onclick = () => showModuleLessons(module.id);
+                    
+                    moduleCard.innerHTML = `
+                        <div class="module-title">${module.title}</div>
+                        <div class="module-description">${module.description}</div>
+                        <div class="module-meta">
+                            <span>${module.duration}</span>
+                            <span>${module.xp} XP</span>
+                        </div>
+                    `;
+                    
+                    container.appendChild(moduleCard);
+                });
+            });
+        }
+
+        async function loadAllModules() {
+            const resultsArea = document.getElementById('testResults');
+            resultsArea.style.display = 'block';
+            resultsArea.innerHTML = '<div>Carregando todos os módulos...</div>';
+            
+            try {
+                const response = await fetch('/api/courses');
+                const data = await response.json();
+                
+                if (data.success) {
+                    let html = '<h3>Módulos Carregados:</h3>';
+                    data.data.forEach(course => {
+                        html += `
+                            <div class="lesson-preview">
+                                <div class="lesson-title">${course.title}</div>
+                                <div class="lesson-info">
+                                    Dificuldade: ${course.difficulty} | 
+                                    Duração: ${course.duration} | 
+                                    XP: ${course.total_xp}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    document.getElementById('totalModules').textContent = data.data.length;
+                    resultsArea.innerHTML = html;
+                } else {
+                    resultsArea.innerHTML = '<div style="color: red;">Erro ao carregar módulos</div>';
+                }
+            } catch (error) {
+                resultsArea.innerHTML = '<div style="color: red;">Erro: ' + error.message + '</div>';
+            }
+        }
+
+        async function testLessonsByModule() {
+            const resultsArea = document.getElementById('testResults');
+            resultsArea.style.display = 'block';
+            resultsArea.innerHTML = '<div>Testando lições por módulo...</div>';
+            
+            const moduleIds = [7, 8, 9, 10, 11, 12, 15];
+            let html = '<h3>Lições por Módulo:</h3>';
+            let totalLessons = 0;
+            
+            for (const moduleId of moduleIds) {
+                try {
+                    const response = await fetch(`/api/courses/${moduleId}/lessons`);
+                    const data = await response.json();
+                    
+                    if (data.success && data.data.length > 0) {
+                        html += `<h4>Módulo ${moduleId}:</h4>`;
+                        data.data.forEach(lesson => {
+                            html += `
+                                <div class="lesson-preview">
+                                    <div class="lesson-title">${lesson.title}</div>
+                                    <div class="lesson-info">
+                                        Tipo: ${lesson.lesson_type} | 
+                                        Duração: ${lesson.duration} | 
+                                        XP: ${lesson.xp_reward}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        totalLessons += data.data.length;
+                    }
+                } catch (error) {
+                    console.error(`Erro ao carregar módulo ${moduleId}:`, error);
+                }
+            }
+            
+            document.getElementById('totalLessons').textContent = totalLessons;
+            resultsArea.innerHTML = html;
+        }
+
+        async function testAgeContent(ageGroup) {
+            const topics = {
+                child: 'variáveis',
+                teen: 'funções',
+                adult: 'algoritmos'
+            };
+            
+            try {
+                const response = await fetch(`/api/age-adaptation/content/1?topic=${topics[ageGroup]}&ageGroup=${ageGroup}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const example = data.data.adaptedContent.adaptedLanguage || 
+                                  `Conteúdo adaptado para ${ageGroup}`;
+                    document.getElementById(`${ageGroup}Example`).textContent = example;
+                }
+            } catch (error) {
+                console.error('Erro ao testar conteúdo por idade:', error);
+            }
+        }
+
+        async function generateAgeExercises() {
+            const resultsArea = document.getElementById('testResults');
+            resultsArea.style.display = 'block';
+            resultsArea.innerHTML = '<div>Gerando exercícios adaptados...</div>';
+            
+            const ageGroups = ['child', 'teen', 'adult'];
+            const topics = ['programação básica', 'desenvolvimento web', 'algoritmos'];
+            
+            let html = '<h3>Exercícios Adaptados por Idade:</h3>';
+            
+            for (let i = 0; i < ageGroups.length; i++) {
+                try {
+                    const response = await fetch('/api/age-adaptation/exercises', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            topic: topics[i],
+                            ageGroup: ageGroups[i],
+                            difficulty: 'medium'
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        html += `
+                            <h4>${ageGroups[i].charAt(0).toUpperCase() + ageGroups[i].slice(1)} (${topics[i]}):</h4>
+                            <div class="lesson-preview">
+                                <div class="lesson-title">Exercícios: ${data.data.exercises.length}</div>
+                                <div class="lesson-info">
+                                    Tempo estimado: ${data.data.metadata.estimatedTime} min |
+                                    Tipos: ${data.data.exercises.map(e => e.type).join(', ')}
+                                </div>
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error(`Erro para ${ageGroups[i]}:`, error);
+                }
+            }
+            
+            resultsArea.innerHTML = html;
+        }
+
+        async function showModuleLessons(moduleId) {
+            try {
+                const response = await fetch(`/api/courses/${moduleId}/lessons`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`Módulo ${moduleId} tem ${data.data.length} lições disponíveis!`);
+                } else {
+                    alert(`Módulo ${moduleId}: Lições em desenvolvimento`);
+                }
+            } catch (error) {
+                alert('Erro ao carregar lições do módulo');
+            }
+        }
+
+        // Initialize the page
+        renderModules();
+        console.log('CodyVerse Expanded Curriculum Demo loaded successfully');
+    </script>
+</body>
+</html>
