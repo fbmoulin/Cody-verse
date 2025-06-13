@@ -139,13 +139,9 @@ class CodyVerseServer {
       res.sendFile(path.join(__dirname, 'codyverse-responsive-app.html'));
     });
 
-    // Refactored high-performance API routes
+    // Unified high-performance API routes
     const refactoredApiRoutes = require('./server/refactoredApiRoutes');
-    this.app.use('/api/gamification', refactoredApiRoutes);
-    
-    // Fallback simple API routes
-    const simpleApiRoutes = require('./server/simpleApiRoutes');
-    this.app.use('/api', simpleApiRoutes);
+    this.app.use('/api', refactoredApiRoutes);
     
     // Fallback to original API routes if needed
     this.app.use('/api', RequestMiddleware.createCacheMiddleware(180000)); // 3 minutes cache
