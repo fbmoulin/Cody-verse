@@ -131,6 +131,10 @@ class CodyVerseServer {
       res.sendFile(path.join(__dirname, 'codyverse-responsive-app.html'));
     });
 
+    this.app.get('/react', (req, res) => {
+      res.sendFile(path.join(__dirname, 'codyverse-react-app.html'));
+    });
+
     this.app.get('/dashboard', (req, res) => {
       res.sendFile(path.join(__dirname, 'codyverse-responsive-app.html'));
     });

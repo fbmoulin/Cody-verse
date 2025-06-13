@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodyVerse - Plataforma Educacional Gamer</title>
+    <meta name="description" content="Plataforma educacional com gamificação avançada e design gamer moderno">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- React and React DOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel for JSX transformation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Framer Motion -->
+    <script src="https://unpkg.com/framer-motion@10/dist/framer-motion.js"></script>
+    
+    <!-- Lucide React Icons -->
+    <script src="https://unpkg.com/lucide-react@latest/dist/umd/lucide-react.js"></script>
+    
+    <!-- React Hot Toast -->
+    <script src="https://unpkg.com/react-hot-toast@2/dist/index.umd.js"></script>
+    
+    <!-- Design System CSS -->
+    <style>
+        /* Cody Verse - Modern Gamer-Educational Design System */
+        
+        /* CSS Variables - Design System */
+        :root {
+            /* Gamer-Educational Color Palette */
+            --primary: #4F46E5;         /* Vibrant Blue-Violet */
+            --primary-light: #6366F1;
+            --primary-dark: #3730A3;
+            
+            --secondary: #22D3EE;       /* Vibrant Cyan */
+            --secondary-light: #38BDF8;
+            --secondary-dark: #0EA5E9;
+            
+            --accent: #FACC15;          /* Gold Yellow */
+            --accent-light: #FDE047;
+            --accent-dark: #EAB308;
+            
+            --background: #1F2937;      /* Dark Gray */
+            --background-light: #374151;
+            --background-lighter: #4B5563;
+            
+            --surface: #111827;         /* Darker Surface */
+            --surface-light: #1F2937;
+            --surface-lighter: #374151;
+            
+            --text-primary: #F9FAFB;    /* Soft White */
+            --text-secondary: #D1D5DB;
+            --text-muted: #9CA3AF;
+            
+            /* Status Colors */
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --info: #3B82F6;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, var(--primary), var(--secondary));
+            --gradient-accent: linear-gradient(135deg, var(--accent), var(--accent-light));
+            --gradient-surface: linear-gradient(135deg, var(--surface), var(--surface-light));
+            
+            /* Spacing Scale */
+            --space-1: 0.25rem;   /* 4px */
+            --space-2: 0.5rem;    /* 8px */
+            --space-3: 0.75rem;   /* 12px */
+            --space-4: 1rem;      /* 16px */
+            --space-5: 1.25rem;   /* 20px */
+            --space-6: 1.5rem;    /* 24px */
+            --space-8: 2rem;      /* 32px */
+            --space-10: 2.5rem;   /* 40px */
+            --space-12: 3rem;     /* 48px */
+            --space-16: 4rem;     /* 64px */
+            
+            /* Typography Scale */
+            --text-xs: 0.75rem;    /* 12px */
+            --text-sm: 0.875rem;   /* 14px */
+            --text-base: 1rem;     /* 16px */
+            --text-lg: 1.125rem;   /* 18px */
+            --text-xl: 1.25rem;    /* 20px */
+            --text-2xl: 1.5rem;    /* 24px */
+            --text-3xl: 1.875rem;  /* 30px */
+            --text-4xl: 2.25rem;   /* 36px */
+            
+            /* Border Radius */
+            --radius-sm: 0.375rem;  /* 6px */
+            --radius-md: 0.5rem;    /* 8px */
+            --radius-lg: 0.75rem;   /* 12px */
+            --radius-xl: 1rem;      /* 16px */
+            --radius-2xl: 1.5rem;   /* 24px */
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-glow: 0 0 20px rgba(79, 70, 229, 0.3);
+            
+            /* Transitions */
+            --transition-fast: 0.15s ease-out;
+            --transition-normal: 0.3s ease-out;
+            --transition-slow: 0.5s ease-out;
+            
+            /* Z-Index Scale */
+            --z-dropdown: 1000;
+            --z-sticky: 1020;
+            --z-fixed: 1030;
+            --z-modal: 1040;
+            --z-popover: 1050;
+            --z-tooltip: 1060;
+        }
+
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: var(--text-base);
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--background);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: var(--space-4);
+            color: var(--text-primary);
+        }
+
+        h1 { font-size: var(--text-4xl); font-weight: 800; }
+        h2 { font-size: var(--text-3xl); font-weight: 700; }
+        h3 { font-size: var(--text-2xl); font-weight: 600; }
+        h4 { font-size: var(--text-xl); font-weight: 600; }
+        h5 { font-size: var(--text-lg); font-weight: 500; }
+        h6 { font-size: var(--text-base); font-weight: 500; }
+
+        p {
+            margin-bottom: var(--space-4);
+            color: var(--text-secondary);
+        }
+
+        /* Button System */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            padding: var(--space-3) var(--space-6);
+            font-family: 'Poppins', sans-serif;
+            font-size: var(--text-sm);
+            font-weight: 500;
+            border: none;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+        }
+
+        .btn-secondary {
+            background: var(--surface-light);
+            color: var(--text-primary);
+            border: 1px solid var(--surface-lighter);
+        }
+
+        .btn-secondary:hover {
+            background: var(--surface-lighter);
+            transform: translateY(-1px);
+        }
+
+        /* Card System */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--surface-light);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary);
+        }
+
+        .card-interactive {
+            cursor: pointer;
+        }
+
+        .card-interactive:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: var(--shadow-xl), 0 0 30px rgba(79, 70, 229, 0.2);
+        }
+
+        /* Loading States */
+        .skeleton {
+            background: linear-gradient(90deg, var(--surface) 25%, var(--surface-light) 50%, var(--surface) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: var(--radius-md);
+        }
+
+        /* Animations */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* App Layout */
+        .cody-verse-app {
+            display: flex;
+            min-height: 100vh;
+            background: var(--background);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: var(--space-6);
+            transition: margin-left var(--transition-normal);
+            min-height: 100vh;
+            background: linear-gradient(135deg, 
+                var(--background) 0%, 
+                var(--surface-light) 100%);
+        }
+
+        .main-content.sidebar-collapsed {
+            margin-left: 80px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: var(--space-4);
+                padding-top: 120px;
+            }
+            
+            .main-content.sidebar-collapsed {
+                margin-left: 0;
+            }
+        }
+
+        /* Utility Classes */
+        .text-center { text-align: center; }
+        .font-bold { font-weight: 700; }
+        .font-semibold { font-weight: 600; }
+        .opacity-0 { opacity: 0; }
+        .opacity-100 { opacity: 1; }
+
+        /* Grid System */
+        .grid {
+            display: grid;
+            gap: var(--space-6);
+        }
+
+        .grid-cols-1 { grid-template-columns: 1fr; }
+        .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+        @media (max-width: 1024px) {
+            .grid-cols-4 { grid-template-columns: repeat(2, 1fr); }
+            .grid-cols-3 { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 640px) {
+            .grid-cols-4,
+            .grid-cols-3,
+            .grid-cols-2 { 
+                grid-template-columns: 1fr; 
+            }
+        }
+
+        /* Loading Screen Styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--background) 0%, var(--surface-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-content {
+            text-align: center;
+            max-width: 400px;
+            padding: var(--space-8);
+        }
+
+        .logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-4);
+            margin-bottom: var(--space-8);
+        }
+
+        .logo-icon {
+            color: var(--primary);
+            filter: drop-shadow(0 0 20px rgba(79, 70, 229, 0.5));
+        }
+
+        .logo-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: var(--text-3xl);
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .spinner {
+            color: var(--primary);
+            animation: spin 1s linear infinite;
+            margin-bottom: var(--space-6);
+        }
+
+        .loading-text p {
+            font-size: var(--text-lg);
+            color: var(--text-secondary);
+            margin: 0 0 var(--space-8) 0;
+        }
+
+        .progress-container {
+            width: 100%;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--surface-light);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-lg);
+            animation: progressFill 2s ease-out forwards;
+        }
+
+        @keyframes progressFill {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+
+        /* Dashboard Styles */
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--space-6);
+        }
+
+        .welcome-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-8);
+            padding: var(--space-6);
+            background: var(--gradient-surface);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--surface-light);
+        }
+
+        .welcome-title {
+            font-size: var(--text-3xl);
+            font-weight: 700;
+            margin-bottom: var(--space-2);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .welcome-subtitle {
+            color: var(--text-secondary);
+            font-size: var(--text-lg);
+            margin: 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
+        }
+
+        .stat-card {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            padding: var(--space-6);
+            background: var(--surface);
+            border: 1px solid var(--surface-light);
+            border-radius: var(--radius-xl);
+            transition: all var(--transition-normal);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-lg);
+            background: rgba(79, 70, 229, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-value {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .stat-label {
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-1);
+        }
+
+        .stat-change {
+            font-size: var(--text-xs);
+            color: var(--success);
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .welcome-header {
+                flex-direction: column;
+                gap: var(--space-4);
+                text-align: center;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Focus states for accessibility */
+        button:focus-visible,
+        a:focus-visible,
+        input:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <!-- Loading state while React initializes -->
+        <div class="loading-screen">
+            <div class="loading-content">
+                <div class="logo">
+                    <svg class="logo-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"></polygon>
+                    </svg>
+                    <h1 class="logo-text">CodyVerse</h1>
+                </div>
+                
+                <svg class="spinner" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12a9 9 0 11-6.219-8.56"/>
+                </svg>
+                
+                <div class="loading-text">
+                    <p>Inicializando sua jornada de aprendizado...</p>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- React Application -->
+    <script type="text/babel">
+        const { useState, useEffect, createContext, useContext } = React;
+        const { motion, AnimatePresence } = Motion;
+        const { Zap, Home, BookOpen, TrendingUp, Trophy, Medal, User, Play, Star, Coins, Flame } = LucideReact;
+        const toast = reactHotToast.toast;
+
+        // Language Context
+        const LanguageContext = createContext();
+
+        const translations = {
+            pt: {
+                nav: {
+                    dashboard: 'Dashboard',
+                    courses: 'Cursos',
+                    progress: 'Progresso',
+                    achievements: 'Conquistas',
+                    leaderboard: 'Ranking',
+                    profile: 'Perfil'
+                },
+                dashboard: {
+                    welcome: 'Bem-vindo de volta!',
+                    level: 'Nível',
+                    xp: 'XP',
+                    coins: 'Moedas',
+                    streak: 'Sequência'
+                }
+            },
+            en: {
+                nav: {
+                    dashboard: 'Dashboard',
+                    courses: 'Courses',
+                    progress: 'Progress',
+                    achievements: 'Achievements',
+                    leaderboard: 'Leaderboard',
+                    profile: 'Profile'
+                },
+                dashboard: {
+                    welcome: 'Welcome back!',
+                    level: 'Level',
+                    xp: 'XP',
+                    coins: 'Coins',
+                    streak: 'Streak'
+                }
+            }
+        };
+
+        const LanguageProvider = ({ children }) => {
+            const [currentLanguage, setCurrentLanguage] = useState('pt');
+            
+            const t = (key) => {
+                const keys = key.split('.');
+                let value = translations[currentLanguage];
+                for (const k of keys) {
+                    value = value?.[k];
+                }
+                return value || key;
+            };
+
+            const changeLanguage = (lng) => setCurrentLanguage(lng);
+
+            return React.createElement(LanguageContext.Provider, {
+                value: { currentLanguage, changeLanguage, t }
+            }, children);
+        };
+
+        const useLanguage = () => useContext(LanguageContext);
+
+        // Dashboard Component
+        const Dashboard = () => {
+            const { t } = useLanguage();
+            const [userData, setUserData] = useState(null);
+            const [dashboardData, setDashboardData] = useState(null);
+            const [loading, setLoading] = useState(true);
+
+            useEffect(() => {
+                loadDashboardData();
+            }, []);
+
+            const loadDashboardData = async () => {
+                try {
+                    setLoading(true);
+                    
+                    const [userResponse, dashResponse] = await Promise.all([
+                        fetch('/api/users/1'),
+                        fetch('/api/gamification/dashboard/1')
+                    ]);
+
+                    if (userResponse.ok && dashResponse.ok) {
+                        const user = await userResponse.json();
+                        const dashboard = await dashResponse.json();
+                        
+                        setUserData(user.data);
+                        setDashboardData(dashboard.data);
+                    }
+                } catch (error) {
+                    console.error('Dashboard load error:', error);
+                    toast.error('Erro ao carregar dados do dashboard');
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            const simulateAction = async () => {
+                try {
+                    const response = await fetch('/api/gamification/lesson-complete/1', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            lessonId: Math.floor(Math.random() * 20) + 1,
+                            timeSpent: Math.floor(Math.random() * 30) + 10,
+                            score: Math.floor(Math.random() * 20) + 80
+                        })
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        toast.success(`🎉 +${data.data.xpAwarded} XP ganho!`);
+                        loadDashboardData();
+                    }
+                } catch (error) {
+                    toast.error('Erro ao simular ação');
+                }
+            };
+
+            if (loading) {
+                return React.createElement('div', { className: 'dashboard' },
+                    React.createElement('div', { 
+                        className: 'skeleton', 
+                        style: { height: '120px', marginBottom: 'var(--space-8)' } 
+                    }),
+                    React.createElement('div', { className: 'stats-grid' },
+                        [1, 2, 3, 4].map(i => 
+                            React.createElement('div', { 
+                                key: i, 
+                                className: 'skeleton', 
+                                style: { height: '100px' } 
+                            })
+                        )
+                    )
+                );
+            }
+
+            const stats = [
+                {
+                    label: t('dashboard.level'),
+                    value: userData?.level || 12,
+                    icon: Star,
+                    color: 'var(--accent)',
+                    change: '+2 esta semana'
+                },
+                {
+                    label: t('dashboard.xp'),
+                    value: userData?.totalXp || 2340,
+                    icon: Zap,
+                    color: 'var(--primary)',
+                    change: '+450 hoje'
+                },
+                {
+                    label: t('dashboard.coins'),
+                    value: dashboardData?.wallet?.coins || 750,
+                    icon: Coins,
+                    color: 'var(--accent)',
+                    change: '+85 hoje'
+                },
+                {
+                    label: t('dashboard.streak'),
+                    value: dashboardData?.streaks?.current || 7,
+                    icon: Flame,
+                    color: 'var(--error)',
+                    change: 'dias consecutivos'
+                }
+            ];
+
+            return React.createElement('div', { className: 'dashboard' },
+                React.createElement(motion.div, {
+                    className: 'welcome-header',
+                    initial: { opacity: 0, y: -20 },
+                    animate: { opacity: 1, y: 0 },
+                    transition: { duration: 0.5 }
+                },
+                    React.createElement('div', { className: 'welcome-content' },
+                        React.createElement('h1', { className: 'welcome-title' }, t('dashboard.welcome')),
+                        React.createElement('p', { className: 'welcome-subtitle' }, 
+                            'Continue sua jornada de aprendizado e conquiste novos desafios!'
+                        )
+                    ),
+                    React.createElement(motion.button, {
+                        className: 'btn btn-primary',
+                        onClick: simulateAction,
+                        whileHover: { scale: 1.05 },
+                        whileTap: { scale: 0.95 }
+                    },
+                        React.createElement(Play, { size: 16 }),
+                        'Simular Lição'
+                    )
+                ),
+                React.createElement(motion.div, {
+                    className: 'stats-grid',
+                    initial: { opacity: 0, y: 20 },
+                    animate: { opacity: 1, y: 0 },
+                    transition: { duration: 0.5, delay: 0.1 }
+                },
+                    stats.map((stat, index) => 
+                        React.createElement(StatCard, { key: stat.label, stat, index })
+                    )
+                )
+            );
+        };
+
+        const StatCard = ({ stat, index }) => {
+            const Icon = stat.icon;
+
+            return React.createElement(motion.div, {
+                className: 'stat-card card-interactive',
+                initial: { opacity: 0, y: 20 },
+                animate: { opacity: 1, y: 0 },
+                transition: { duration: 0.5, delay: index * 0.1 },
+                whileHover: { y: -4 }
+            },
+                React.createElement('div', { className: 'stat-icon' },
+                    React.createElement(Icon, { size: 24, style: { color: stat.color } })
+                ),
+                React.createElement('div', { className: 'stat-content' },
+                    React.createElement('div', { className: 'stat-value' }, 
+                        stat.value.toLocaleString()
+                    ),
+                    React.createElement('div', { className: 'stat-label' }, stat.label),
+                    React.createElement('div', { className: 'stat-change' }, stat.change)
+                )
+            );
+        };
+
+        // Main App Component
+        const App = () => {
+            const [isLoading, setIsLoading] = useState(true);
+
+            useEffect(() => {
+                const timer = setTimeout(() => {
+                    setIsLoading(false);
+                }, 2000);
+
+                return () => clearTimeout(timer);
+            }, []);
+
+            if (isLoading) {
+                return null; // Keep the static loading screen
+            }
+
+            return React.createElement(LanguageProvider, null,
+                React.createElement('div', { className: 'cody-verse-app' },
+                    React.createElement('main', { className: 'main-content' },
+                        React.createElement(Dashboard, null)
+                    ),
+                    React.createElement(reactHotToast.Toaster, {
+                        position: 'top-right',
+                        toastOptions: {
+                            duration: 4000,
+                            style: {
+                                background: 'var(--surface)',
+                                color: 'var(--text-primary)',
+                                border: '1px solid var(--surface-light)',
+                                borderRadius: 'var(--radius-lg)',
+                                boxShadow: 'var(--shadow-xl)'
+                            }
+                        }
+                    })
+                )
+            );
+        };
+
+        // Initialize React App
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(App));
+    </script>
+</body>
+</html>
