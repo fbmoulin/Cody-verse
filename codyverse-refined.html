@@ -1235,7 +1235,7 @@
             appState.setLoading('dashboard', true);
 
             try {
-                const result = await api.get('/dashboard/1');
+                const result = await api.get('/gamification/dashboard/1');
 
                 if (result.success) {
                     appState.set('dashboard', result.data);
@@ -1399,7 +1399,7 @@
             UI.showLoading('all-badges');
 
             try {
-                const result = await api.get('/badges/1');
+                const result = await api.get('/gamification/badges/1');
 
                 if (result.success) {
                     appState.set('badges', result.data);
