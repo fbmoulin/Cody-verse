@@ -1,118 +1,36 @@
-# Cody Verse - AI-Powered Educational Platform
+<div align="center"> <img src="https://img.shields.io/github/languages/top/fbmoulin/Cody-verse?style=for-the-badge"/> <img src="https://img.shields.io/github/stars/fbmoulin/Cody-verse?style=for-the-badge"/> <img src="https://img.shields.io/github/forks/fbmoulin/Cody-verse?style=for-the-badge"/> <img src="https://img.shields.io/github/issues/fbmoulin/Cody-verse?style=for-the-badge"/> <img src="https://img.shields.io/badge/educacional-app-blueviolet?style=for-the-badge"/>
+Cody-verse 🚀
+Universo interativo de aprendizado em programação
 
-An advanced educational platform delivering personalized, adaptive learning experiences through intelligent content generation and comprehensive gamification technologies.
+</div>
+🌟 Por que o Cody-verse?
+Imagine aprender programação de forma divertida, descomplicada e cheia de desafios!
+O Cody-verse torna o estudo de lógica e tecnologia envolvente para todos os níveis.
 
-## Features
+🎯 Gamificação Total: Missões, conquistas e ranking!
+📚 Aulas Interativas e diretas ao ponto
+🧩 Pratique com desafios reais
+👾 Ambiente imersivo: Aprenda brincando
+🚀 Gratuito, aberto e colaborativo
+🖥️ Preview
+<p align="center"> <img src="caminho/para/screenshot1.png" width="350" alt="Screenshot 1"/> <img src="caminho/para/screenshot2.png" width="350" alt="Screenshot 2"/> </p>
+🚀 Primeiros Passos
+Clone o repositório:
+bash
+git clone https://github.com/fbmoulin/Cody-verse.git
+Instale as dependências (detalhe comandos se quiser)
+Divirta-se aprendendo!
+💡 Quer Contribuir?
+Dê um fork, abra um PR ou sugira ideias!
+Toda contribuição é bem-vinda — juntos, vamos revolucionar o ensino de programação!
+🏷️ Tags
+educação programação javascript html dart gamificação challenge interativo open-source iniciante tecnologia app-educacional
 
-### Core Educational System
-- **AI-Driven Content Generation**: Dynamic, personalized educational content using OpenAI integration
-- **Intelligent Study Techniques**: Advanced learning optimization with personalized study plans
-- **Adaptive Learning Analytics**: Real-time progress tracking and performance insights
-- **Multilingual Support**: Comprehensive internationalization for global accessibility
+📬 Contato
+Dúvidas, ideias ou feedback?
+Entre em contato: [Seu Email ou LinkedIn]
 
-### Gamification Engine
-- **User Progression System**: Levels, XP tracking, and achievement milestones
-- **Digital Wallet**: Coins, gems, and rewards management
-- **Badge System**: Achievement recognition and accomplishment tracking
-- **Goal Setting**: Daily objectives and progress monitoring
-- **Streak Tracking**: Engagement consistency rewards
-- **Leaderboards**: Community competition and motivation
+<div align="center">
+⭐ Curtiu? Deixe sua estrela e compartilhe com amigos! ⭐
 
-### Technical Architecture
-- **Production-Ready Backend**: Node.js/Express with PostgreSQL database
-- **Enhanced Performance**: Sub-60ms response times with intelligent caching
-- **Robust Monitoring**: Real-time health checks and performance metrics
-- **Comprehensive Documentation**: OpenAPI 3.0 specification with interactive Swagger UI
-- **Security & Resilience**: Rate limiting, circuit breakers, and graceful error handling
-
-## Quick Start
-
-### Prerequisites
-- Node.js 20+
-- PostgreSQL database
-- OpenAI API key
-
-### Installation
-```bash
-npm install
-npm run db:push
-npm start
-```
-
-### Environment Variables
-```bash
-DATABASE_URL=your_postgresql_url
-OPENAI_API_KEY=your_openai_key
-PORT=5000
-```
-
-## API Documentation
-
-Access interactive API documentation at:
-- **Swagger UI**: `http://localhost:5000/docs`
-- **OpenAPI Spec**: `http://localhost:5000/api-spec.json`
-
-## Monitoring & Analytics
-
-### Real-Time Dashboards
-- **System Health**: `http://localhost:5000/health`
-- **Performance Metrics**: `http://localhost:5000/metrics`
-- **Performance Dashboard**: `http://localhost:5000/performance-optimization-dashboard.html`
-- **System Monitoring**: `http://localhost:5000/system-monitoring-dashboard.html`
-
-### Key Endpoints
-- **Gamification Dashboard**: `GET /api/gamification/dashboard/{userId}`
-- **Lesson Completion**: `POST /api/gamification/lesson-complete/{userId}`
-- **User Progress**: `GET /api/progress/user/{userId}`
-- **Course Management**: `GET /api/courses`
-
-## Architecture Overview
-
-### Core Components
-- **BaseService**: Standardized service layer with metrics and caching
-- **BaseController**: Unified request handling and error management  
-- **ConfigManager**: Centralized configuration with validation
-- **DataAccessLayer**: Optimized database operations with query caching
-- **APIDocGenerator**: Automated OpenAPI specification generation
-
-### Performance Optimizations
-- Intelligent caching system with TTL management
-- Connection pooling with circuit breaker patterns
-- Rate limiting and request throttling
-- Graceful shutdown and error recovery
-- Query optimization and batch processing
-
-## Development
-
-### Database Management
-```bash
-# Push schema changes
-npm run db:push
-
-# View database status
-curl http://localhost:5000/health
-```
-
-### Testing
-```bash
-# Run performance tests
-curl http://localhost:5000/metrics
-
-# Test gamification system
-curl -X POST http://localhost:5000/api/gamification/lesson-complete/1 \
-  -H "Content-Type: application/json" \
-  -d '{"lessonId": 1, "timeSpent": 30, "score": 95}'
-```
-
-## Production Deployment
-
-The platform is optimized for production with:
-- Comprehensive error handling and logging
-- Real-time performance monitoring
-- Database connection pooling
-- Automatic health checks
-- Security middleware and rate limiting
-
-## License
-
-This project is proprietary software for educational purposes.
+</div>
