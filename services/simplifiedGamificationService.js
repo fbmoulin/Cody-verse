@@ -489,16 +489,16 @@ class SimplifiedGamificationService {
 
   calculateLevel(xp) {
     const levels = [
-      { level: 1, name: 'Novice', icon: '🌱', xpRequired: 0 },
-      { level: 2, name: 'Apprentice', icon: '📖', xpRequired: 100 },
-      { level: 3, name: 'Student', icon: '🎒', xpRequired: 300 },
-      { level: 4, name: 'Learner', icon: '📚', xpRequired: 600 },
-      { level: 5, name: 'Scholar', icon: '🎓', xpRequired: 1000 },
-      { level: 6, name: 'Expert', icon: '🔬', xpRequired: 1500 },
-      { level: 7, name: 'Master', icon: '👨‍🏫', xpRequired: 2200 },
-      { level: 8, name: 'Guru', icon: '🧙‍♂️', xpRequired: 3000 },
-      { level: 9, name: 'Sage', icon: '👨‍🎓', xpRequired: 4000 },
-      { level: 10, name: 'Legend', icon: '👑', xpRequired: 5500 }
+      { level: 1, name: 'Iniciante Curioso', icon: '🌱', xpRequired: 0 },
+      { level: 2, name: 'Explorador Digital', icon: '🔍', xpRequired: 100 },
+      { level: 3, name: 'Aprendiz de Código', icon: '📝', xpRequired: 300 },
+      { level: 4, name: 'Programador Novato', icon: '💻', xpRequired: 600 },
+      { level: 5, name: 'Desenvolvedor Iniciante', icon: '🚀', xpRequired: 1000 },
+      { level: 6, name: 'Codificador Experiente', icon: '⚡', xpRequired: 1500 },
+      { level: 7, name: 'Mestre do Algoritmo', icon: '🧠', xpRequired: 2100 },
+      { level: 8, name: 'Arquiteto de Software', icon: '🏗️', xpRequired: 2800 },
+      { level: 9, name: 'Ninja do Código', icon: '🥷', xpRequired: 3600 },
+      { level: 10, name: 'Lenda da Programação', icon: '👑', xpRequired: 4500 }
     ];
 
     let currentLevel = levels[0];
@@ -516,16 +516,20 @@ class SimplifiedGamificationService {
       }
     }
 
-    const xpToNext = nextLevel.xpRequired - xp;
-    const progress = nextLevel.xpRequired > currentLevel.xpRequired ? 
-      ((xp - currentLevel.xpRequired) / (nextLevel.xpRequired - currentLevel.xpRequired)) * 100 : 100;
+    const xpToNext = nextLevel ? nextLevel.xpRequired - xp : 0;
+    const xpInCurrentLevel = xp - currentLevel.xpRequired;
+    const xpForCurrentLevel = nextLevel ? nextLevel.xpRequired - currentLevel.xpRequired : 1;
+    const progress = nextLevel ? Math.round((xpInCurrentLevel / xpForCurrentLevel) * 100) : 100;
 
     return {
       level: currentLevel.level,
       name: currentLevel.name,
       icon: currentLevel.icon,
       xpToNext: Math.max(0, xpToNext),
-      progress: Math.min(100, Math.max(0, progress))
+      progress: Math.max(0, Math.min(100, progress)),
+      currentLevelXP: xpInCurrentLevel,
+      nextLevelXP: nextLevel ? nextLevel.xpRequired : xp,
+      totalXP: xp
     };
   }
 
