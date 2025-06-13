@@ -122,9 +122,9 @@ class CodyVerseServer {
       }
     }));
 
-    // Modern Frontend Routes
+    // Refined Frontend Routes
     this.app.get('/', (req, res) => {
-      res.sendFile(path.join(__dirname, 'app.html'));
+      res.sendFile(path.join(__dirname, 'codyverse-refined.html'));
     });
 
     this.app.get('/design-system', (req, res) => {
@@ -139,7 +139,11 @@ class CodyVerseServer {
       res.sendFile(path.join(__dirname, 'codyverse-responsive-app.html'));
     });
 
-    // High-performance API routes for instant responses
+    // Refactored high-performance API routes
+    const refactoredApiRoutes = require('./server/refactoredApiRoutes');
+    this.app.use('/api/gamification', refactoredApiRoutes);
+    
+    // Fallback simple API routes
     const simpleApiRoutes = require('./server/simpleApiRoutes');
     this.app.use('/api', simpleApiRoutes);
     
