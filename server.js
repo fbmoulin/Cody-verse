@@ -124,7 +124,7 @@ class CodyVerseServer {
 
     // Modern Frontend Routes
     this.app.get('/', (req, res) => {
-      res.sendFile(path.join(__dirname, 'optimized-app.html'));
+      res.sendFile(path.join(__dirname, 'standalone-app.html'));
     });
 
     this.app.get('/design-system', (req, res) => {
@@ -206,10 +206,7 @@ class CodyVerseServer {
       });
     });
 
-    // Fallback para SPA (rotas específicas)
-    this.app.get('/', (req, res) => {
-      res.sendFile(path.join(__dirname, 'index.html'));
-    });
+    // Remove duplicate homepage route - handled above
 
     // Enhanced error handling middleware (deve ser o último)
     this.app.use(RequestMiddleware.createErrorHandler());

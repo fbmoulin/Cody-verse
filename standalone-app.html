@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodyVerse - Educational Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --secondary: #22D3EE;
+            --accent: #FACC15;
+            --dark: #1F2937;
+            --dark-light: #374151;
+            --text-light: #F9FAFB;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--dark-light) 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+        }
+
+        .app {
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(31, 41, 55, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--secondary);
+            background: rgba(34, 211, 238, 0.1);
+        }
+
+        /* Dashboard Layout */
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 16px;
+            padding: 1.5rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .stat-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+            opacity: 0.7;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin: 1rem 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+            border-radius: 6px;
+            transition: width 1s ease;
+        }
+
+        /* Notifications */
+        .notification {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid var(--secondary);
+            margin-bottom: 1rem;
+        }
+
+        .notification-icon {
+            font-size: 1.5rem;
+        }
+
+        .notification-content h4 {
+            margin-bottom: 0.25rem;
+            color: var(--secondary);
+        }
+
+        .notification-time {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+        }
+
+        /* Courses Grid */
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .course-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .course-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .course-difficulty {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .difficulty-iniciante {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .difficulty-intermediario {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        /* Badges */
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+
+        .badge-item {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .badge-item.locked {
+            opacity: 0.5;
+            filter: grayscale(1);
+        }
+
+        .badge-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .badge-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .badge-description {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            font-size: 1.1rem;
+            opacity: 0.7;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--secondary);
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Hidden state for content switching */
+        .hidden {
+            display: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .courses-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animation classes */
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <nav class="navbar">
+            <div class="nav-content">
+                <div class="logo">
+                    🚀 CodyVerse
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#" class="nav-link active" data-tab="dashboard">Dashboard</a></li>
+                    <li><a href="#" class="nav-link" data-tab="courses">Courses</a></li>
+                    <li><a href="#" class="nav-link" data-tab="achievements">Achievements</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard-tab" class="tab-content">
+            <div class="dashboard">
+                <div class="main-content">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">🌱</div>
+                            <div class="stat-value" id="user-level">-</div>
+                            <div class="stat-label">Nível Atual</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">⚡</div>
+                            <div class="stat-value" id="user-xp">-</div>
+                            <div class="stat-label">Total XP</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🪙</div>
+                            <div class="stat-value" id="user-coins">-</div>
+                            <div class="stat-label">Moedas</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🔥</div>
+                            <div class="stat-value" id="user-streak">-</div>
+                            <div class="stat-label">Sequência</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2 style="margin-bottom: 1rem;">Progresso do Nível</h2>
+                        <div class="progress-container">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span id="level-name">Iniciante</span>
+                                <span id="xp-progress">0/100</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="level-progress" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2 style="margin-bottom: 1rem;">Objetivos Diários</h2>
+                        <div id="daily-goals">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                Carregando objetivos...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <div class="card">
+                        <h3 style="margin-bottom: 1rem;">Notificações</h3>
+                        <div id="notifications-list">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                Carregando notificações...
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="margin-bottom: 1rem;">Conquistas Recentes</h3>
+                        <div class="badges-grid" id="recent-badges">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                Carregando conquistas...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Courses Tab -->
+        <div id="courses-tab" class="tab-content hidden">
+            <div style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
+                <h1 style="margin-bottom: 2rem; font-size: 2.5rem; font-weight: 700;">
+                    Cursos Disponíveis
+                </h1>
+                <div class="courses-grid" id="courses-list">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Carregando cursos...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Achievements Tab -->
+        <div id="achievements-tab" class="tab-content hidden">
+            <div style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
+                <h1 style="margin-bottom: 2rem; font-size: 2.5rem; font-weight: 700;">
+                    Conquistas
+                </h1>
+                <div class="badges-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));" id="all-badges">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Carregando conquistas...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // App State
+        let currentTab = 'dashboard';
+        let dashboardData = null;
+        let coursesData = null;
+        let badgesData = null;
+
+        // API Functions
+        async function fetchData(endpoint) {
+            try {
+                const response = await fetch(`/api${endpoint}`);
+                return await response.json();
+            } catch (error) {
+                console.error('API Error:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Update Dashboard
+        async function updateDashboard() {
+            const data = await fetchData('/gamification/dashboard/1');
+            
+            if (data.success) {
+                dashboardData = data.data;
+                
+                // Update stats
+                document.getElementById('user-level').textContent = dashboardData.user.level;
+                document.getElementById('user-xp').textContent = dashboardData.user.totalXP.toLocaleString();
+                document.getElementById('user-coins').textContent = dashboardData.wallet.coins.toLocaleString();
+                document.getElementById('user-streak').textContent = `${dashboardData.streak.current_streak} dias`;
+                
+                // Update level progress
+                document.getElementById('level-name').textContent = dashboardData.user.levelName;
+                document.getElementById('xp-progress').textContent = `${dashboardData.user.xpProgress}/${dashboardData.user.xpToNext}`;
+                const progressPercent = Math.min((dashboardData.user.xpProgress / dashboardData.user.xpToNext) * 100, 100);
+                document.getElementById('level-progress').style.width = `${progressPercent}%`;
+                
+                // Update level icon
+                document.querySelector('.stat-card .stat-icon').textContent = dashboardData.user.levelIcon;
+                
+                // Update daily goals
+                updateDailyGoals(dashboardData.goals);
+                
+                // Update notifications
+                updateNotifications(dashboardData.notifications);
+                
+                // Update recent badges
+                updateRecentBadges(dashboardData.badges);
+            }
+        }
+
+        // Update Daily Goals
+        function updateDailyGoals(goals) {
+            const container = document.getElementById('daily-goals');
+            
+            if (!goals || goals.length === 0) {
+                container.innerHTML = '<p style="opacity: 0.7;">Nenhum objetivo diário encontrado.</p>';
+                return;
+            }
+            
+            container.innerHTML = goals.map(goal => {
+                const progressPercent = Math.min((goal.current_progress / goal.target_value) * 100, 100);
+                const goalType = goal.goal_type === 'daily_xp' ? 'XP Diário' : 'Lições Diárias';
+                
+                return `
+                    <div class="progress-container">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>${goalType}</span>
+                            <span>${goal.current_progress}/${goal.target_value}</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${progressPercent}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update Notifications
+        function updateNotifications(notifications) {
+            const container = document.getElementById('notifications-list');
+            
+            if (!notifications || notifications.length === 0) {
+                container.innerHTML = '<p style="opacity: 0.7;">Nenhuma notificação.</p>';
+                return;
+            }
+            
+            container.innerHTML = notifications.slice(0, 3).map(notification => `
+                <div class="notification">
+                    <div class="notification-icon">${notification.icon}</div>
+                    <div class="notification-content">
+                        <h4>${notification.title}</h4>
+                        <p>${notification.message}</p>
+                        <div class="notification-time">${notification.timeAgo}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update Recent Badges
+        function updateRecentBadges(badges) {
+            const container = document.getElementById('recent-badges');
+            
+            if (!badges || badges.length === 0) {
+                container.innerHTML = '<p style="opacity: 0.7; grid-column: 1/-1; text-align: center;">Nenhuma conquista ainda.</p>';
+                return;
+            }
+            
+            container.innerHTML = badges.slice(0, 4).map(badge => `
+                <div class="badge-item ${badge.is_locked ? 'locked' : ''}">
+                    <span class="badge-icon">${badge.icon}</span>
+                    <div class="badge-name">${badge.name}</div>
+                    <div class="badge-description">${badge.description}</div>
+                </div>
+            `).join('');
+        }
+
+        // Update Courses
+        async function updateCourses() {
+            if (coursesData) return; // Already loaded
+            
+            const data = await fetchData('/courses');
+            
+            if (data.success) {
+                coursesData = data.data;
+                const container = document.getElementById('courses-list');
+                
+                container.innerHTML = coursesData.map(course => `
+                    <div class="course-card">
+                        <div class="course-difficulty difficulty-${course.difficulty.toLowerCase()}">
+                            ${course.difficulty}
+                        </div>
+                        <h3 style="margin-bottom: 1rem; font-size: 1.25rem; font-weight: 600;">
+                            ${course.title}
+                        </h3>
+                        <p style="opacity: 0.8; margin-bottom: 1rem;">
+                            ${course.description}
+                        </p>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                            <span>${course.lesson_count} lições</span>
+                            <span>${course.total_xp} XP</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Update All Badges
+        async function updateAllBadges() {
+            if (badgesData) return; // Already loaded
+            
+            const data = await fetchData('/gamification/badges/1');
+            
+            if (data.success) {
+                badgesData = data.data;
+                const container = document.getElementById('all-badges');
+                
+                container.innerHTML = badgesData.map(badge => `
+                    <div class="badge-item ${badge.is_locked ? 'locked' : ''}">
+                        <span class="badge-icon">${badge.icon}</span>
+                        <div class="badge-name">${badge.name}</div>
+                        <div class="badge-description">${badge.description}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Tab Switching
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            
+            // Show selected tab
+            document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            
+            currentTab = tabName;
+            
+            // Load tab-specific data
+            if (tabName === 'dashboard') {
+                updateDashboard();
+            } else if (tabName === 'courses') {
+                updateCourses();
+            } else if (tabName === 'achievements') {
+                updateAllBadges();
+            }
+        }
+
+        // Initialize App
+        function initApp() {
+            // Setup navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const tabName = e.target.getAttribute('data-tab');
+                    switchTab(tabName);
+                });
+            });
+            
+            // Load initial dashboard data
+            updateDashboard();
+        }
+
+        // Start the app when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
+    </script>
+</body>
+</html>
