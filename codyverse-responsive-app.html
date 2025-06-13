@@ -464,13 +464,38 @@
             border-radius: var(--radius-xl);
             overflow: hidden;
             box-shadow: var(--shadow);
-            transition: all var(--transition);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
+            position: relative;
+        }
+
+        .course-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(14, 165, 233, 0.05), 
+                rgba(168, 85, 247, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: inherit;
         }
 
         .course-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-xl);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .course-card:hover::before {
+            opacity: 1;
+        }
+
+        .course-card:active {
+            transform: translateY(-4px) scale(1.01);
+            transition-duration: 0.1s;
         }
 
         .course-header {
@@ -522,7 +547,23 @@
             height: 100%;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
             border-radius: var(--radius);
-            transition: width 0.8s ease-out;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.4), 
+                transparent);
+            animation: progressShine 2s infinite;
         }
 
         .course-meta {
@@ -566,17 +607,53 @@
             padding: var(--space-4);
             background: var(--gray-50);
             border-radius: var(--radius-lg);
-            transition: all var(--transition);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .achievement-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, 
+                rgba(14, 165, 233, 0.1), 
+                transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: inherit;
         }
 
         .achievement-item:hover {
-            transform: translateY(-2px);
+            transform: translateY(-4px) scale(1.05);
             background: var(--gray-100);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .achievement-item:hover::before {
+            opacity: 1;
+        }
+
+        .achievement-item:hover .achievement-icon {
+            animation: iconBounce 0.6s ease-in-out;
         }
 
         .achievement-item.unlocked {
             background: linear-gradient(135deg, #fef3c7, #fde68a);
+            animation: unlockPulse 2s ease-in-out infinite;
+        }
+
+        .achievement-item.unlocked::after {
+            content: '✨';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 12px;
+            animation: sparkle 1.5s ease-in-out infinite;
         }
 
         .achievement-icon {
@@ -598,7 +675,7 @@
             line-height: 1.4;
         }
 
-        /* Buttons */
+        /* Enhanced Button System with Animations */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -612,26 +689,79 @@
             font-size: var(--text-sm);
             text-decoration: none;
             cursor: pointer;
-            transition: all var(--transition);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateZ(0);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:active::before {
+            width: 300px;
+            height: 300px;
         }
 
         .btn-primary {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
+            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
         }
 
         .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0) scale(0.98);
+            transition-duration: 0.1s;
         }
 
         .btn-secondary {
             background: var(--gray-100);
             color: var(--gray-700);
+            border: 2px solid transparent;
         }
 
         .btn-secondary:hover {
             background: var(--gray-200);
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary:active {
+            transform: scale(0.95);
+        }
+
+        /* Loading Button State */
+        .btn-loading {
+            pointer-events: none;
+            position: relative;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: buttonSpin 1s linear infinite;
         }
 
         /* Notification System */
@@ -683,7 +813,7 @@
             font-size: var(--text-sm);
         }
 
-        /* Loading States */
+        /* Enhanced Loading States */
         .loading {
             display: flex;
             align-items: center;
@@ -702,10 +832,50 @@
             margin-right: var(--space-3);
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        /* Loading Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, 
+                var(--gray-200) 25%, 
+                var(--gray-100) 50%, 
+                var(--gray-200) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: var(--radius);
         }
+
+        .skeleton-text {
+            height: 1rem;
+            margin-bottom: var(--space-2);
+        }
+
+        .skeleton-text:last-child {
+            width: 60%;
+        }
+
+        .skeleton-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-xl);
+        }
+
+        /* Loading Dots */
+        .loading-dots {
+            display: inline-flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .loading-dots span {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: loadingDots 1.4s ease-in-out infinite both;
+        }
+
+        .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0s; }
 
         /* Responsive Design */
         @media (max-width: 640px) {
@@ -745,12 +915,254 @@
             }
         }
 
+        /* Comprehensive Keyframe Animations */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes buttonSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        @keyframes loadingDots {
+            0%, 80%, 100% {
+                transform: scale(0);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @keyframes iconBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        @keyframes unlockPulse {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 0 rgba(255, 193, 7, 0.4);
+            }
+            50% { 
+                transform: scale(1.02);
+                box-shadow: 0 0 20px rgba(255, 193, 7, 0.6);
+            }
+        }
+
+        @keyframes sparkle {
+            0%, 100% { 
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+            50% { 
+                opacity: 0.7;
+                transform: scale(1.2) rotate(180deg);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes notificationSlide {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes successPop {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 15px rgba(14, 165, 233, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 25px rgba(14, 165, 233, 0.6);
+            }
+        }
+
+        /* Enhanced Notification Animations */
+        .notification-enhanced {
+            animation: notificationSlide 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .notification-success {
+            border-left-color: var(--success);
+            animation: successPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .notification-error {
+            border-left-color: var(--error);
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* User Avatar Animation */
+        .user-avatar {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* XP Fill Animation Enhancement */
+        .xp-fill {
+            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .xp-fill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.6), 
+                transparent);
+            animation: progressShine 2.5s infinite;
+        }
+
+        /* Level Icon Animation */
+        .level-icon {
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .level-icon:hover {
+            animation: float 2s ease-in-out infinite;
+        }
+
+        /* Stat Card Enhancements */
+        .stat-item {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(14, 165, 233, 0.05), 
+                rgba(168, 85, 247, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: inherit;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-item:hover::before {
+            opacity: 1;
+        }
+
+        .stat-item:hover .stat-number {
+            animation: iconBounce 0.6s ease-in-out;
+        }
+
+        /* Loading Enhancement */
+        .loading-enhanced {
+            position: relative;
+        }
+
+        .loading-enhanced::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.8), 
+                transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
         /* Reduced Motion */
         @media (prefers-reduced-motion: reduce) {
             * {
                 animation-duration: 0.01ms !important;
                 animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important;
+            }
+            
+            .progress-fill::after,
+            .xp-fill::before {
+                animation: none !important;
             }
         }
 
@@ -1135,7 +1547,7 @@
 
             showNotification(type, title, message) {
                 const notification = document.createElement('div');
-                notification.className = 'notification';
+                notification.className = `notification notification-${type} notification-enhanced`;
                 
                 const icons = {
                     success: '✅',
@@ -1154,16 +1566,18 @@
 
                 document.getElementById('notificationContainer').appendChild(notification);
 
+                // Add show class with enhanced animation
                 setTimeout(() => {
                     notification.classList.add('show');
                 }, 100);
 
+                // Auto-remove with slide-out animation
                 setTimeout(() => {
-                    notification.classList.remove('show');
+                    notification.style.animation = 'notificationSlideOut 0.3s ease-in forwards';
                     setTimeout(() => {
                         notification.remove();
-                    }, 500);
-                }, 3000);
+                    }, 300);
+                }, type === 'success' ? 4000 : 6000);
             }
 
             setupEventListeners() {
