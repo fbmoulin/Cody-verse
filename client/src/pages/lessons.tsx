@@ -40,12 +40,57 @@ export default function LessonsPage() {
     try {
       const response = await fetch(`/api/courses/${id}/lessons`);
       if (response.ok) {
-        const data = await response.json();
-        setCourse(data.course);
+        const lessonsData = await response.json();
+        
+        // Get course info
+        const courseResponse = await fetch(`/api/courses/${id}`);
+        let courseInfo = { title: 'Course', description: 'Loading...', instructor: 'CodyVerse' };
+        
+        if (courseResponse.ok) {
+          const courseData = await courseResponse.json();
+          if (courseData.success && courseData.data) {
+            courseInfo = {
+              title: courseData.data.title,
+              description: courseData.data.description,
+              instructor: 'CodyVerse Instructor'
+            };
+          }
+        }
+        
+        if (lessonsData.success && lessonsData.data) {
+          const lessons = lessonsData.data.map((lesson: any) => ({
+            id: lesson.id.toString(),
+            title: lesson.title,
+            description: lesson.content?.sections?.[0]?.content || lesson.content?.activities?.[0]?.content || 'Interactive lesson',
+            duration: lesson.estimatedDurationMinutes || 15,
+            type: lesson.type === 'quiz' ? 'quiz' : lesson.type === 'theory' ? 'reading' : 'interactive',
+            isCompleted: false,
+            isLocked: lesson.orderIndex > 1,
+            progress: 0,
+            xpReward: lesson.xpReward || 10
+          }));
+          
+          const totalLessons = lessons.length;
+          const completedLessons = lessons.filter((l: any) => l.isCompleted).length;
+          
+          setCourse({
+            id,
+            title: courseInfo.title,
+            description: courseInfo.description,
+            instructor: courseInfo.instructor,
+            totalLessons,
+            completedLessons,
+            progress: totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0,
+            lessons
+          });
+        } else {
+          setCourse(getSampleCourse(id));
+        }
       } else {
         setCourse(getSampleCourse(id));
       }
     } catch (error) {
+      console.error('Error loading course:', error);
       setCourse(getSampleCourse(id));
     } finally {
       setLoading(false);
