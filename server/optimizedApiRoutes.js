@@ -34,25 +34,23 @@ router.get('/gamification/dashboard/:userId', async (req, res) => {
       return res.json(cached);
     }
 
-    // Optimized single query for all dashboard data
+    // Optimized query using actual database schema
     const query = `
       WITH user_data AS (
         SELECT id, name, 
                COALESCE(total_xp, 0) as total_xp,
-               COALESCE(level, 1) as level,
-               COALESCE(level_name, 'Iniciante') as level_name,
-               COALESCE(level_icon, '🌱') as level_icon,
-               COALESCE(xp_to_next, 100) as xp_to_next,
-               COALESCE(xp_progress, 0) as xp_progress
+               -- Calculate level from XP (simple progression system)
+               LEAST(50, GREATEST(1, FLOOR(SQRT(COALESCE(total_xp, 0)) / 10) + 1)) as level,
+               age_group,
+               current_streak
         FROM users WHERE id = $1
       ),
       wallet_data AS (
-        SELECT COALESCE(coins, 0) as coins,
-               COALESCE(gems, 0) as gems,
-               COALESCE(total_coins_earned, 0) as total_coins_earned,
-               COALESCE(total_coins_spent, 0) as total_coins_spent,
-               last_updated
-        FROM user_wallets WHERE user_id = $1
+        SELECT COALESCE(balance, 0) as coins,
+               COALESCE(total_earned, 0) as total_coins_earned,
+               COALESCE(total_spent, 0) as total_coins_spent,
+               updated_at as last_updated
+        FROM user_wallet WHERE user_id = $1
       ),
       streak_data AS (
         SELECT COALESCE(current_streak, 0) as current_streak,
@@ -62,7 +60,7 @@ router.get('/gamification/dashboard/:userId', async (req, res) => {
         WHERE user_id = $1 AND streak_type = 'daily_lesson'
       ),
       goals_data AS (
-        SELECT json_agg(
+        SELECT COALESCE(json_agg(
           json_build_object(
             'id', id,
             'goal_type', goal_type,
@@ -72,12 +70,12 @@ router.get('/gamification/dashboard/:userId', async (req, res) => {
             'rewards_coins', rewards_coins,
             'rewards_xp', rewards_xp
           )
-        ) as goals
+        ), '[]'::json) as goals
         FROM daily_goals 
         WHERE user_id = $1 AND goal_date = CURRENT_DATE
       ),
       notifications_data AS (
-        SELECT json_agg(
+        SELECT COALESCE(json_agg(
           json_build_object(
             'id', id,
             'notification_type', notification_type,
@@ -87,20 +85,25 @@ router.get('/gamification/dashboard/:userId', async (req, res) => {
             'is_read', is_read,
             'created_at', created_at
           ) ORDER BY created_at DESC
-        ) as notifications
+        ), '[]'::json) as notifications
         FROM (
-          SELECT * FROM notifications 
+          SELECT * FROM gamification_notifications 
           WHERE user_id = $1 
           ORDER BY created_at DESC 
           LIMIT 10
         ) recent_notifications
       )
       SELECT 
-        u.*,
-        w.coins, w.gems, w.total_coins_earned, w.total_coins_spent, w.last_updated,
-        s.current_streak, s.longest_streak, s.last_activity_date,
-        COALESCE(g.goals, '[]'::json) as goals,
-        COALESCE(n.notifications, '[]'::json) as notifications
+        u.id, u.name, u.total_xp, u.level, u.age_group, u.current_streak,
+        COALESCE(w.coins, 0) as coins,
+        COALESCE(w.total_coins_earned, 0) as total_coins_earned,
+        COALESCE(w.total_coins_spent, 0) as total_coins_spent,
+        w.last_updated,
+        COALESCE(s.current_streak, u.current_streak, 0) as streak_current,
+        COALESCE(s.longest_streak, 0) as longest_streak,
+        s.last_activity_date,
+        g.goals,
+        n.notifications
       FROM user_data u
       LEFT JOIN wallet_data w ON true
       LEFT JOIN streak_data s ON true
@@ -119,42 +122,61 @@ router.get('/gamification/dashboard/:userId', async (req, res) => {
 
     const row = result.rows[0];
     
+    // Calculate level progression data
+    const level = parseInt(row.level) || 1;
+    const currentXP = parseInt(row.total_xp) || 0;
+    const xpForCurrentLevel = Math.pow((level - 1) * 10, 2);
+    const xpForNextLevel = Math.pow(level * 10, 2);
+    const xpToNext = xpForNextLevel - currentXP;
+    const xpProgress = Math.max(0, currentXP - xpForCurrentLevel);
+    
+    // Determine level name and icon based on level
+    const getLevelInfo = (level) => {
+      if (level <= 5) return { name: 'Iniciante', icon: '🌱' };
+      if (level <= 15) return { name: 'Explorador', icon: '🔍' };
+      if (level <= 30) return { name: 'Aventureiro', icon: '⚔️' };
+      if (level <= 45) return { name: 'Expert', icon: '🏆' };
+      return { name: 'Mestre', icon: '👑' };
+    };
+    
+    const levelInfo = getLevelInfo(level);
+    
     const dashboardData = {
       success: true,
       data: {
         user: {
           id: parseInt(row.id),
-          name: row.name || 'Test User',
-          totalXP: parseInt(row.total_xp),
-          level: parseInt(row.level),
-          levelName: row.level_name,
-          levelIcon: row.level_icon,
-          xpToNext: parseInt(row.xp_to_next),
-          xpProgress: parseInt(row.xp_progress)
+          name: row.name || 'User',
+          totalXP: currentXP,
+          level: level,
+          levelName: levelInfo.name,
+          levelIcon: levelInfo.icon,
+          xpToNext: Math.max(0, xpToNext),
+          xpProgress: xpProgress
         },
         wallet: {
           id: parseInt(row.id),
           user_id: parseInt(row.id),
           coins: parseInt(row.coins) || 0,
-          gems: parseInt(row.gems) || 0,
+          gems: 0, // Not in current schema
           total_coins_earned: parseInt(row.total_coins_earned) || 0,
           total_coins_spent: parseInt(row.total_coins_spent) || 0,
           last_updated: row.last_updated
         },
-        badges: [],
+        badges: [], // Will be populated separately if needed
         streak: {
           id: parseInt(row.id),
           user_id: parseInt(row.id),
           streak_type: 'daily_lesson',
-          current_streak: parseInt(row.current_streak) || 0,
+          current_streak: parseInt(row.streak_current) || 0,
           longest_streak: parseInt(row.longest_streak) || 0,
           last_activity_date: row.last_activity_date
         },
-        goals: Array.isArray(row.goals) ? row.goals : [],
-        notifications: Array.isArray(row.notifications) ? row.notifications.map(n => ({
+        goals: row.goals || [],
+        notifications: (row.notifications || []).map(n => ({
           ...n,
           timeAgo: getTimeAgo(n.created_at)
-        })) : []
+        }))
       }
     };
 
@@ -226,7 +248,7 @@ router.post('/gamification/lesson-complete/:userId', async (req, res) => {
     });
     
   } catch (error) {
-    await db.query('ROLLBACK');
+    await dbManager.query('ROLLBACK');
     console.error('Lesson completion error:', error);
     res.status(500).json({
       success: false,
@@ -246,7 +268,7 @@ router.get('/courses', async (req, res) => {
       return res.json(cached);
     }
 
-    const result = await db.query(`
+    const result = await dbManager.query(`
       SELECT c.*, 
              COUNT(l.id) as lesson_count,
              COALESCE(AVG(l.difficulty_level), 1) as avg_difficulty
