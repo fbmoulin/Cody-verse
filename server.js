@@ -17,6 +17,9 @@ const configManager = require('./core/ConfigManager');
 const dataAccessLayer = require('./core/DataAccessLayer');
 const apiDocGenerator = require('./core/APIDocGenerator');
 const PerformanceOptimizer = require('./core/PerformanceOptimizer');
+const OptimizedPerformanceManager = require('./core/OptimizedPerformanceManager');
+const EnhancedCacheManager = require('./core/EnhancedCacheManager');
+const OptimizedQueryBuilder = require('./database/OptimizedQueryBuilder');
 
 // Middleware
 const {
@@ -36,6 +39,9 @@ class CodyVerseServer {
     this.app = express();
     this.server = null;
     this.performanceOptimizer = new PerformanceOptimizer();
+    this.optimizedPerformanceManager = new OptimizedPerformanceManager();
+    this.enhancedCacheManager = new EnhancedCacheManager();
+    this.optimizedQueryBuilder = null;
   }
 
   async initialize() {
@@ -53,6 +59,10 @@ class CodyVerseServer {
         
         await dbManager.initialize();
         console.log('Database initialized with migrations');
+        
+        // Initialize optimized query builder with connection pool
+        this.optimizedQueryBuilder = new OptimizedQueryBuilder(connectionPool.pool);
+        console.log('Optimized query builder initialized');
         
         const dbConnected = await testConnection();
         if (!dbConnected) {
