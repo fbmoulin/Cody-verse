@@ -122,9 +122,9 @@ class CodyVerseServer {
       }
     }));
 
-    // Modern React Frontend Routes
+    // Modern Frontend Routes
     this.app.get('/', (req, res) => {
-      res.sendFile(path.join(__dirname, 'index.html'));
+      res.sendFile(path.join(__dirname, 'simple-app.html'));
     });
 
     this.app.get('/design-system', (req, res) => {
