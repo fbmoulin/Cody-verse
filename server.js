@@ -18,6 +18,7 @@ const dataAccessLayer = require('./core/DataAccessLayer');
 const apiDocGenerator = require('./core/APIDocGenerator');
 const EnhancedPerformanceOptimizer = require('./core/EnhancedPerformanceOptimizer');
 const VisualOptimizer = require('./core/VisualOptimizer');
+const ComprehensiveDatabaseOptimizer = require('./services/comprehensiveDatabaseOptimizer');
 
 // Middleware
 const {
@@ -38,6 +39,7 @@ class CodyVerseServer {
     this.server = null;
     this.performanceOptimizer = new EnhancedPerformanceOptimizer();
     this.visualOptimizer = new VisualOptimizer();
+    this.databaseOptimizer = new ComprehensiveDatabaseOptimizer();
   }
 
   async initialize() {
@@ -77,6 +79,9 @@ class CodyVerseServer {
       
       // Preload critical data
       await this.performanceOptimizer.preloadCriticalData();
+      
+      // Optimize database
+      await this.databaseOptimizer.optimizeDatabase();
       
       // Configurar middleware
       this.setupMiddleware();
