@@ -16,7 +16,8 @@ const RequestMiddleware = require('./server/requestMiddleware');
 const configManager = require('./core/ConfigManager');
 const dataAccessLayer = require('./core/DataAccessLayer');
 const apiDocGenerator = require('./core/APIDocGenerator');
-const PerformanceOptimizer = require('./core/PerformanceOptimizer');
+const EnhancedPerformanceOptimizer = require('./core/EnhancedPerformanceOptimizer');
+const VisualOptimizer = require('./core/VisualOptimizer');
 
 // Middleware
 const {
@@ -35,7 +36,8 @@ class CodyVerseServer {
   constructor() {
     this.app = express();
     this.server = null;
-    this.performanceOptimizer = new PerformanceOptimizer();
+    this.performanceOptimizer = new EnhancedPerformanceOptimizer();
+    this.visualOptimizer = new VisualOptimizer();
   }
 
   async initialize() {
@@ -70,6 +72,12 @@ class CodyVerseServer {
       // Start system health monitoring
       systemHealth.startMonitoring();
       
+      // Configure performance optimization for production
+      this.performanceOptimizer.optimizeForProduction();
+      
+      // Preload critical data
+      await this.performanceOptimizer.preloadCriticalData();
+      
       // Configurar middleware
       this.setupMiddleware();
       
@@ -87,6 +95,9 @@ class CodyVerseServer {
   }
 
   setupMiddleware() {
+    // Enhanced performance middleware
+    this.app.use(this.performanceOptimizer.createOptimizedMiddleware());
+    
     // Middleware de logging personalizado
     this.app.use(requestLogger);
     

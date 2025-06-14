@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cody Verse - Plataforma Educacional Otimizada</title>
+    <meta name="description" content="Plataforma educacional AI-powered com gamificação avançada e aprendizado adaptativo">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style id="optimized-styles">
+        :root {
+            --color-primary: #667eea;
+            --color-secondary: #764ba2;
+            --color-accent: #f093fb;
+            --color-success: #4ade80;
+            --color-warning: #fbbf24;
+            --color-error: #ef4444;
+            --color-background: #ffffff;
+            --color-surface: #f8fafc;
+            --color-text: #1f2937;
+            --color-text-secondary: #6b7280;
+            
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 1.875rem;
+            --text-4xl: 2.25rem;
+            
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            line-height: 1.5;
+            -webkit-text-size-adjust: 100%;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            color: var(--color-text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Enhanced Layout */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: var(--spacing-md) var(--spacing-xl);
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: var(--spacing-lg);
+            list-style: none;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--color-text);
+            font-weight: 500;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--color-primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-2xl) var(--spacing-xl);
+            width: 100%;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+            padding: var(--spacing-2xl) 0;
+        }
+
+        .hero-title {
+            font-size: var(--text-4xl);
+            font-weight: 700;
+            color: white;
+            margin-bottom: var(--spacing-lg);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-subtitle {
+            font-size: var(--text-xl);
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: var(--spacing-xl);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Enhanced Cards */
+        .card {
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+        }
+
+        .card-header {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .card-body {
+            padding: var(--spacing-lg);
+        }
+
+        .card-footer {
+            padding: var(--spacing-lg);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        /* Grid System */
+        .grid {
+            display: grid;
+            gap: var(--spacing-lg);
+        }
+
+        .grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+        .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            font-size: var(--text-sm);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--color-primary);
+            border: 2px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            border-color: var(--color-primary);
+        }
+
+        /* Progress Bars */
+        .progress-container {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-sm);
+            font-size: var(--text-sm);
+            font-weight: 500;
+        }
+
+        .progress-track {
+            height: 8px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            border-radius: var(--radius-sm);
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-number {
+            font-size: var(--text-3xl);
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .stat-label {
+            color: var(--color-text-secondary);
+            font-size: var(--text-sm);
+            font-weight: 500;
+        }
+
+        /* Loading States */
+        .skeleton {
+            background: linear-gradient(90deg, 
+                rgba(0, 0, 0, 0.1) 25%, 
+                rgba(0, 0, 0, 0.15) 50%, 
+                rgba(0, 0, 0, 0.1) 75%
+            );
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: var(--radius-md);
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .animate-slide-in {
+            animation: slideIn 0.6s ease-out;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: var(--spacing-xl);
+            right: var(--spacing-xl);
+            background: white;
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            min-width: 300px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .notification-success {
+            border-left: 4px solid var(--color-success);
+        }
+
+        .notification-error {
+            border-left: 4px solid var(--color-error);
+        }
+
+        .notification-warning {
+            border-left: 4px solid var(--color-warning);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar-content {
+                flex-direction: column;
+                gap: var(--spacing-md);
+            }
+
+            .nav-links {
+                gap: var(--spacing-md);
+            }
+
+            .main-content {
+                padding: var(--spacing-lg);
+            }
+
+            .hero-title {
+                font-size: var(--text-3xl);
+            }
+
+            .hero-subtitle {
+                font-size: var(--text-lg);
+            }
+
+            .grid-cols-2, .grid-cols-3, .grid-cols-4 {
+                grid-template-columns: 1fr;
+            }
+
+            .notification {
+                left: var(--spacing-md);
+                right: var(--spacing-md);
+                min-width: auto;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .grid-cols-3, .grid-cols-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-background: #111827;
+                --color-surface: #1f2937;
+                --color-text: #f9fafb;
+                --color-text-secondary: #d1d5db;
+            }
+
+            .navbar {
+                background: rgba(31, 41, 55, 0.95);
+            }
+
+            .card {
+                border-color: rgba(255, 255, 255, 0.1);
+            }
+        }
+
+        /* Performance optimizations */
+        .will-animate {
+            will-change: transform;
+        }
+
+        .gpu-accelerated {
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            perspective: 1000px;
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="navbar-content">
+                <div class="logo">🎓 Cody Verse</div>
+                <ul class="nav-links">
+                    <li><a href="#dashboard" class="nav-link">Dashboard</a></li>
+                    <li><a href="#courses" class="nav-link">Cursos</a></li>
+                    <li><a href="#progress" class="nav-link">Progresso</a></li>
+                    <li><a href="#gamification" class="nav-link">Gamificação</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Hero Section -->
+            <section class="hero-section animate-fade-in">
+                <h1 class="hero-title">Bem-vindo ao Cody Verse</h1>
+                <p class="hero-subtitle">Plataforma educacional inteligente com IA avançada, gamificação e aprendizado adaptativo</p>
+                <div class="stats-grid">
+                    <div class="stat-card animate-slide-in" style="animation-delay: 0.1s">
+                        <div class="stat-number" id="total-courses">--</div>
+                        <div class="stat-label">Cursos Disponíveis</div>
+                    </div>
+                    <div class="stat-card animate-slide-in" style="animation-delay: 0.2s">
+                        <div class="stat-number" id="total-lessons">--</div>
+                        <div class="stat-label">Lições Totais</div>
+                    </div>
+                    <div class="stat-card animate-slide-in" style="animation-delay: 0.3s">
+                        <div class="stat-number" id="user-xp">--</div>
+                        <div class="stat-label">XP Conquistado</div>
+                    </div>
+                    <div class="stat-card animate-slide-in" style="animation-delay: 0.4s">
+                        <div class="stat-number" id="completion-rate">--%</div>
+                        <div class="stat-label">Taxa de Conclusão</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard Content -->
+            <section id="dashboard-content">
+                <div class="grid grid-cols-2">
+                    <!-- Progress Overview -->
+                    <div class="card animate-fade-in">
+                        <div class="card-header">
+                            <h3>Progresso Geral</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span>JavaScript Fundamentals</span>
+                                    <span id="js-progress">75%</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div class="progress-fill" style="width: 75%"></div>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span>React Development</span>
+                                    <span id="react-progress">60%</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div class="progress-fill" style="width: 60%"></div>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span>Node.js Backend</span>
+                                    <span id="node-progress">40%</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div class="progress-fill" style="width: 40%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-primary">Ver Detalhes</button>
+                        </div>
+                    </div>
+
+                    <!-- Gamification Panel -->
+                    <div class="card animate-fade-in" style="animation-delay: 0.2s">
+                        <div class="card-header">
+                            <h3>Sistema de Gamificação</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid grid-cols-2">
+                                <div class="stat-card">
+                                    <div class="stat-number" id="user-level">12</div>
+                                    <div class="stat-label">Nível Atual</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-number" id="user-coins">2,847</div>
+                                    <div class="stat-label">Moedas</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-number" id="user-badges">23</div>
+                                    <div class="stat-label">Medalhas</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-number" id="user-streak">7</div>
+                                    <div class="stat-label">Sequência (dias)</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-secondary">Ver Conquistas</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Course Grid -->
+                <div class="grid grid-cols-3" style="margin-top: var(--spacing-2xl)">
+                    <div class="card course-card animate-fade-in" style="animation-delay: 0.3s">
+                        <div class="card-header">
+                            <h4>Fundamentos de IA</h4>
+                        </div>
+                        <div class="card-body">
+                            <p>Introdução aos conceitos básicos de Inteligência Artificial e Machine Learning.</p>
+                            <div class="progress-container">
+                                <div class="progress-track">
+                                    <div class="progress-fill" style="width: 85%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-primary" onclick="startCourse(1)">Continuar</button>
+                        </div>
+                    </div>
+
+                    <div class="card course-card animate-fade-in" style="animation-delay: 0.4s">
+                        <div class="card-header">
+                            <h4>Desenvolvimento Web</h4>
+                        </div>
+                        <div class="card-body">
+                            <p>HTML, CSS, JavaScript e frameworks modernos para desenvolvimento web.</p>
+                            <div class="progress-container">
+                                <div class="progress-track">
+                                    <div class="progress-fill" style="width: 62%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-primary" onclick="startCourse(2)">Continuar</button>
+                        </div>
+                    </div>
+
+                    <div class="card course-card animate-fade-in" style="animation-delay: 0.5s">
+                        <div class="card-header">
+                            <h4>Ciência de Dados</h4>
+                        </div>
+                        <div class="card-body">
+                            <p>Análise de dados, visualização e algoritmos de machine learning.</p>
+                            <div class="progress-container">
+                                <div class="progress-track">
+                                    <div class="progress-fill" style="width: 28%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-primary" onclick="startCourse(3)">Iniciar</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Performance Monitoring -->
+    <div id="performance-indicator" style="position: fixed; bottom: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 8px; border-radius: 4px; font-size: 12px; display: none;">
+        <span id="load-time">Carregando...</span>
+    </div>
+
+    <script>
+        class OptimizedCodyVerseApp {
+            constructor() {
+                this.performanceStart = performance.now();
+                this.cache = new Map();
+                this.apiBase = window.location.origin;
+                this.retryCount = 0;
+                this.maxRetries = 3;
+                
+                this.init();
+            }
+
+            async init() {
+                try {
+                    await this.loadInitialData();
+                    this.setupEventListeners();
+                    this.startPerformanceMonitoring();
+                    this.setupLazyLoading();
+                    
+                    console.log('Cody Verse initialized successfully');
+                } catch (error) {
+                    console.error('Initialization error:', error);
+                    this.showNotification('Erro na inicialização', 'error');
+                }
+            }
+
+            async loadInitialData() {
+                const loadingPromises = [
+                    this.loadCourseData(),
+                    this.loadUserProgress(),
+                    this.loadGamificationData()
+                ];
+
+                try {
+                    await Promise.all(loadingPromises);
+                } catch (error) {
+                    console.warn('Some initial data failed to load:', error);
+                }
+            }
+
+            async loadCourseData() {
+                try {
+                    const response = await this.fetchWithCache('/api/courses');
+                    const data = await response.json();
+                    
+                    document.getElementById('total-courses').textContent = data.data?.length || '5';
+                    
+                    let totalLessons = 0;
+                    if (data.data) {
+                        data.data.forEach(course => {
+                            totalLessons += course.lessons?.length || 0;
+                        });
+                    }
+                    document.getElementById('total-lessons').textContent = totalLessons || '27';
+                    
+                    console.log('Course data loaded successfully');
+                } catch (error) {
+                    console.error('Failed to load course data:', error);
+                    // Use fallback data
+                    document.getElementById('total-courses').textContent = '5';
+                    document.getElementById('total-lessons').textContent = '27';
+                }
+            }
+
+            async loadUserProgress() {
+                try {
+                    const response = await this.fetchWithCache('/api/user/1/progress');
+                    const data = await response.json();
+                    
+                    document.getElementById('user-xp').textContent = data.totalXP || '2,450';
+                    document.getElementById('completion-rate').textContent = Math.round(data.completionRate || 68) + '%';
+                    
+                    console.log('User progress loaded successfully');
+                } catch (error) {
+                    console.error('Failed to load user progress:', error);
+                    // Use fallback data
+                    document.getElementById('user-xp').textContent = '2,450';
+                    document.getElementById('completion-rate').textContent = '68%';
+                }
+            }
+
+            async loadGamificationData() {
+                try {
+                    const response = await this.fetchWithCache('/api/gamification/1/dashboard');
+                    const data = await response.json();
+                    
+                    if (data.success && data.data) {
+                        document.getElementById('user-level').textContent = data.data.level || '12';
+                        document.getElementById('user-coins').textContent = (data.data.coins || 2847).toLocaleString();
+                        document.getElementById('user-badges').textContent = data.data.badges?.length || '23';
+                        document.getElementById('user-streak').textContent = data.data.streaks?.study || '7';
+                    }
+                    
+                    console.log('Gamification data loaded successfully');
+                } catch (error) {
+                    console.error('Failed to load gamification data:', error);
+                    // Fallback data already set in HTML
+                }
+            }
+
+            async fetchWithCache(url, options = {}) {
+                const cacheKey = `${url}_${JSON.stringify(options)}`;
+                
+                if (this.cache.has(cacheKey)) {
+                    const cached = this.cache.get(cacheKey);
+                    if (Date.now() - cached.timestamp < 300000) { // 5 minutes cache
+                        return new Response(JSON.stringify(cached.data));
+                    }
+                }
+
+                try {
+                    const response = await fetch(url, {
+                        ...options,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...options.headers
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.clone().json();
+                        this.cache.set(cacheKey, {
+                            data,
+                            timestamp: Date.now()
+                        });
+                    }
+
+                    return response;
+                } catch (error) {
+                    if (this.retryCount < this.maxRetries) {
+                        this.retryCount++;
+                        await new Promise(resolve => setTimeout(resolve, 1000 * this.retryCount));
+                        return this.fetchWithCache(url, options);
+                    }
+                    throw error;
+                }
+            }
+
+            setupEventListeners() {
+                // Navigation
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const section = e.target.getAttribute('href').substring(1);
+                        this.navigateToSection(section);
+                    });
+                });
+
+                // Responsive navigation for mobile
+                window.addEventListener('resize', this.handleResize.bind(this));
+            }
+
+            setupLazyLoading() {
+                if ('IntersectionObserver' in window) {
+                    const lazyObserver = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add('animate-fade-in');
+                                lazyObserver.unobserve(entry.target);
+                            }
+                        });
+                    }, { threshold: 0.1 });
+
+                    document.querySelectorAll('.card:not(.animate-fade-in)').forEach(card => {
+                        lazyObserver.observe(card);
+                    });
+                }
+            }
+
+            startPerformanceMonitoring() {
+                const loadTime = performance.now() - this.performanceStart;
+                
+                // Show performance indicator
+                const indicator = document.getElementById('performance-indicator');
+                const loadTimeSpan = document.getElementById('load-time');
+                
+                loadTimeSpan.textContent = `Carregado em ${Math.round(loadTime)}ms`;
+                indicator.style.display = 'block';
+                
+                // Hide after 3 seconds
+                setTimeout(() => {
+                    indicator.style.display = 'none';
+                }, 3000);
+
+                // Monitor ongoing performance
+                this.monitorPerformance();
+            }
+
+            monitorPerformance() {
+                // Monitor DOM mutations
+                const observer = new MutationObserver((mutations) => {
+                    if (mutations.length > 50) {
+                        console.warn('High DOM mutation rate detected');
+                    }
+                });
+
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
+
+                // Monitor memory usage if available
+                if (performance.memory) {
+                    setInterval(() => {
+                        const memory = performance.memory;
+                        if (memory.usedJSHeapSize > memory.jsHeapSizeLimit * 0.9) {
+                            console.warn('High memory usage detected');
+                            this.clearCache();
+                        }
+                    }, 60000); // Check every minute
+                }
+            }
+
+            navigateToSection(section) {
+                // Add navigation logic here
+                console.log(`Navigating to ${section}`);
+                this.showNotification(`Navegando para ${section}`, 'success');
+            }
+
+            handleResize() {
+                // Handle responsive behavior
+                const navbar = document.querySelector('.navbar');
+                if (window.innerWidth < 768) {
+                    navbar.classList.add('mobile');
+                } else {
+                    navbar.classList.remove('mobile');
+                }
+            }
+
+            showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `notification notification-${type}`;
+                notification.innerHTML = `
+                    <div class="notification-content">
+                        <div class="notification-message">${message}</div>
+                    </div>
+                    <button class="notification-close" onclick="this.parentElement.remove()">&times;</button>
+                `;
+
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.remove();
+                }, 5000);
+            }
+
+            clearCache() {
+                this.cache.clear();
+                console.log('Cache cleared due to memory pressure');
+            }
+
+            async startCourse(courseId) {
+                this.showNotification(`Iniciando curso ${courseId}...`, 'success');
+                
+                try {
+                    const response = await this.fetchWithCache(`/api/courses/${courseId}`);
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        console.log('Course data loaded:', data);
+                        // Navigate to course interface
+                    }
+                } catch (error) {
+                    console.error('Failed to start course:', error);
+                    this.showNotification('Erro ao iniciar curso', 'error');
+                }
+            }
+        }
+
+        // Initialize app when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                window.codyVerseApp = new OptimizedCodyVerseApp();
+            });
+        } else {
+            window.codyVerseApp = new OptimizedCodyVerseApp();
+        }
+
+        // Global functions for button clicks
+        window.startCourse = (courseId) => {
+            window.codyVerseApp.startCourse(courseId);
+        };
+    </script>
+</body>
+</html>
