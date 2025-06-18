@@ -1713,38 +1713,25 @@
                 if (result.success) {
                     courseModules = await Promise.all(result.data.map(async (module) => {
                         // Load lessons for each module
-                        try {
-                            const lessonsResponse = await fetch(`/api/courses/${module.id}/lessons`);
-                            const lessonsResult = await lessonsResponse.json();
-                            
-                            return {
-                                id: module.id,
-                                title: module.title,
-                                description: module.description,
-                                difficulty: module.difficulty,
-                                duration: module.duration,
-                                xp: module.totalXP + ' XP',
-                                lessons: lessonsResult.success ? lessonsResult.data.map(lesson => ({
-                                    id: lesson.id,
-                                    title: lesson.title,
-                                    type: lesson.type,
-                                    duration: lesson.duration,
-                                    xp: lesson.xpReward + ' XP',
-                                    content: lesson.content
-                                })) : []
-                            };
-                        } catch (lessonError) {
-                            console.warn('Failed to load lessons for module', module.id);
-                            return {
-                                id: module.id,
-                                title: module.title,
-                                description: module.description,
-                                difficulty: module.difficulty,
-                                duration: module.duration,
-                                xp: module.totalXP + ' XP',
-                                lessons: []
-                            };
-                        }
+                        const lessonsResponse = await fetch(`/api/courses/${module.id}/lessons`);
+                        const lessonsResult = await lessonsResponse.json();
+                        
+                        return {
+                            id: module.id,
+                            title: module.title,
+                            description: module.description,
+                            difficulty: module.difficulty,
+                            duration: module.duration,
+                            xp: module.totalXP + ' XP',
+                            lessons: lessonsResult.success ? lessonsResult.data.map(lesson => ({
+                                id: lesson.id,
+                                title: lesson.title,
+                                type: lesson.type,
+                                duration: lesson.duration,
+                                xp: lesson.xpReward + ' XP',
+                                content: lesson.content
+                            })) : []
+                        };
                     }));
                     
                     renderCourseModules();
