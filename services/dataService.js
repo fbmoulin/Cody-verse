@@ -39,19 +39,11 @@ class DataService {
 
       const coursesWithLessons = await Promise.all(
         courses.map(async (course) => {
-          try {
-            const courseLessons = await this.getLessonsByModuleId(course.id);
-            return {
-              ...course,
-              lessonCount: courseLessons.length
-            };
-          } catch (lessonError) {
-            logger.warn('Failed to get lesson count for course', { courseId: course.id });
-            return {
-              ...course,
-              lessonCount: 0
-            };
-          }
+          const courseLessons = await this.getLessonsByModuleId(course.id);
+          return {
+            ...course,
+            lessonCount: courseLessons.length
+          };
         })
       );
 
@@ -133,14 +125,18 @@ class DataService {
 
       const courseLessons = await Promise.race([queryPromise, timeoutPromise]);
 
-      // Cache results for 20 minutes
+      // Cache results for 20 minutes (even if empty)
       cacheService.set(cacheKey, courseLessons, 20 * 60 * 1000);
-      logger.database('Lessons retrieved from database and cached', { moduleId, count: courseLessons.length });
+      logger.info('Lessons retrieved from database and cached', { moduleId, count: courseLessons.length });
 
       return courseLessons;
     } catch (error) {
-      logger.error('Database connection failed for lessons', { moduleId, error: error.message });
-      throw new Error(`Unable to retrieve lessons for module ${moduleId} - database connection issue`);
+      logger.warn('Failed to load lessons for module', moduleId, error.message);
+      // Return empty array instead of throwing error
+      // This prevents breaking the entire course loading process
+      const emptyResult = [];
+      cacheService.set(cacheKey, emptyResult, 5 * 60 * 1000); // Cache for 5 minutes
+      return emptyResult;
     }
   }
 
