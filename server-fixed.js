@@ -1,31 +1,82 @@
 const express = require('express');
 const path = require('path');
+const compression = require('compression');
+const helmet = require('helmet');
 
-console.log('Starting Cody Verse Backend...');
+// Production optimizers
+const ProductionOptimizer = require('./core/ProductionOptimizer');
+const LoadBalancer = require('./core/LoadBalancer');
+const DatabaseOptimizer = require('./core/DatabaseOptimizer');
+
+console.log('Starting Optimized Cody Verse Backend...');
 
 class CodyVerseServer {
   constructor() {
     this.app = express();
     this.server = null;
+    this.optimizer = new ProductionOptimizer();
+    this.loadBalancer = new LoadBalancer();
+    this.dbOptimizer = new DatabaseOptimizer();
+    this.isProduction = process.env.NODE_ENV === 'production';
   }
 
   setupBasicMiddleware() {
-    // Essential middleware only
-    this.app.use(express.json({ limit: '10mb' }));
-    this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+    // Production security
+    if (this.isProduction) {
+      this.app.use(helmet({
+        contentSecurityPolicy: false, // Allow more flexibility for educational content
+        crossOriginEmbedderPolicy: false
+      }));
+    }
+
+    // Compression for better performance
+    this.app.use(compression({
+      level: 6,
+      threshold: 1024
+    }));
+
+    // Enhanced JSON parsing with error handling
+    this.app.use(express.json({ 
+      limit: '10mb',
+      strict: true,
+      type: 'application/json'
+    }));
     
-    // Basic CORS
+    this.app.use(express.urlencoded({ 
+      extended: true, 
+      limit: '10mb',
+      parameterLimit: 1000
+    }));
+    
+    // Enhanced CORS with production settings
     this.app.use((req, res, next) => {
+      const origin = this.isProduction ? 
+        ['https://*.replit.app', 'https://*.replit.dev'] : '*';
+      
       res.header('Access-Control-Allow-Origin', '*');
       res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
       res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+      res.header('Access-Control-Max-Age', '86400'); // Cache preflight for 24 hours
+      
       if (req.method === 'OPTIONS') {
         return res.sendStatus(200);
       }
       next();
     });
 
-    console.log('Basic middleware configured');
+    // Request metrics middleware
+    this.app.use((req, res, next) => {
+      req.startTime = Date.now();
+      res.on('finish', () => {
+        const duration = Date.now() - req.startTime;
+        if (duration > 1000) {
+          console.log(`Slow request: ${req.method} ${req.path} - ${duration}ms`);
+        }
+      });
+      next();
+    });
+
+    console.log('Enhanced middleware configured');
   }
 
   setupRoutes() {
