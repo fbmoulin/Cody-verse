@@ -15,10 +15,13 @@ class DatabaseConnectionPool {
     try {
       this.pool = new Pool({
         connectionString: process.env.DATABASE_URL,
-        max: 20,
-        idleTimeoutMillis: 30000,
-        connectionTimeoutMillis: 10000,
-        acquireTimeoutMillis: 5000,
+        max: 10,
+        min: 2,
+        idleTimeoutMillis: 60000,
+        connectionTimeoutMillis: 30000,
+        acquireTimeoutMillis: 15000,
+        allowExitOnIdle: true,
+        keepAlive: true,
         ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
       });
 

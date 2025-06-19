@@ -137,6 +137,25 @@ class CodyVerseServer {
     }
   }
 
+  setupBasicMiddleware() {
+    const express = require('express');
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: true }));
+    console.log('Basic middleware configured');
+  }
+
+  setupBasicRoutes() {
+    // Basic health check
+    this.app.get('/health', (req, res) => {
+      res.json({ status: 'ok', timestamp: new Date().toISOString() });
+    });
+    
+    // Basic API routes
+    this.app.use('/api', require('./routes/api'));
+    
+    console.log('Basic routes configured');
+  }
+
   setupMiddleware() {
     // Advanced performance middleware with memory optimization
     this.app.use(this.performanceOptimizer.createOptimizedMiddleware());
@@ -404,14 +423,22 @@ class CodyVerseServer {
   async start() {
     await this.initialize();
     
-    this.server = this.app.listen(config.server.port, config.server.host, () => {
+    const port = process.env.PORT || 5000;
+    const host = '0.0.0.0'; // Required for Replit
+    
+    this.server = this.app.listen(port, host, () => {
       console.log(`
 🚀 Cody Verse Backend rodando!
-📍 Endereço: http://${config.server.host}:${config.server.port}
-🌍 Ambiente: ${config.server.nodeEnv}
-📊 API: http://${config.server.host}:${config.server.port}/api
-💚 Health: http://${config.server.host}:${config.server.port}/health
+📍 Endereço: http://${host}:${port}
+🌍 Ambiente: ${process.env.NODE_ENV || 'development'}
+📊 API: http://${host}:${port}/api
+💚 Health: http://${host}:${port}/health
       `);
+    });
+
+    // Handle server startup errors
+    this.server.on('error', (error) => {
+      console.error('Server startup error:', error);
     });
 
     // Graceful shutdown

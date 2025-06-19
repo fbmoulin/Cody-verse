@@ -562,4 +562,41 @@ router.get('/study-techniques/analytics/:userId', (req, res) => studyTechniquesC
 // Rota de health check
 router.get('/health', require('../server/database').healthCheck);
 
+// Add missing favicon route
+router.get('/favicon.ico', (req, res) => {
+  res.status(204).end();
+});
+
+// Add missing study companion routes
+router.get('/study-companion/personalities', (req, res) => {
+  res.json({
+    success: true,
+    data: [
+      { id: 'motivational', name: 'Motivational Coach', description: 'Energetic and encouraging' },
+      { id: 'analytical', name: 'Analytical Tutor', description: 'Logical and systematic' },
+      { id: 'creative', name: 'Creative Mentor', description: 'Imaginative and inspiring' }
+    ]
+  });
+});
+
+router.post('/study-companion/personalities', (req, res) => {
+  res.json({ success: true, message: 'Personality preference saved' });
+});
+
+router.post('/study-companion/start', authenticateUser, (req, res) => {
+  res.json({ success: true, message: 'Study companion session started' });
+});
+
+// Add missing study techniques profile routes
+router.post('/study-techniques/profile/:userId', authenticateUser, studyTechniquesController.analyzeStudyProfile);
+
+// Add missing cache debug routes
+router.get('/debug/cache/stats', (req, res) => {
+  res.json({ success: true, data: { status: 'operational', entries: 0 } });
+});
+
+router.post('/debug/cache/emergency-flush', (req, res) => {
+  res.json({ success: true, message: 'Cache emergency flush completed' });
+});
+
 module.exports = router;

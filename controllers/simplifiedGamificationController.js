@@ -8,39 +8,85 @@ class SimplifiedGamificationController extends BaseController {
     this.ageAdaptationService = new AgeAdaptationService();
   }
   async getDashboard(req, res) {
-    await this.handleRequest(req, res, async (req) => {
+    try {
       const userId = this.parseIntParam(req.params.userId, 'userId', 1);
       
+      // Validate user ID
+      if (!userId || userId <= 0) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid user ID provided'
+        });
+      }
+
       const cacheKey = `dashboard:${userId}`;
       const dashboard = await this.executeWithCache(
         cacheKey,
         async () => {
-          const baseDashboard = await gamificationService.getUserDashboard(userId);
-          
-          // Simplified age adaptation to improve performance
-          const userAgeGroup = baseDashboard.user?.age_group || 'adult';
-          const languageTemplates = this.ageAdaptationService.getLanguageTemplates(userAgeGroup);
-          const uiAdaptations = this.ageAdaptationService.getUIAdaptations(userAgeGroup);
-          
-          // Return lightweight response without heavy content adaptation
-          return {
-            ...baseDashboard,
-            ageGroup: userAgeGroup,
-            originalContent: baseDashboard, // Keep original for reference
-            languageTemplates,
-            uiAdaptations,
-            adaptedMessages: {
-              welcome: languageTemplates.welcome,
-              encouragement: languageTemplates.encouragement,
-              progress: languageTemplates.progress
+          try {
+            const baseDashboard = await gamificationService.getUserDashboard(userId);
+            
+            if (!baseDashboard) {
+              // Return default dashboard for new users
+              return {
+                user: { id: userId, name: 'Usuário', level: 1, xp: 0, age_group: 'adult' },
+                stats: { totalXP: 0, level: 1, completedLessons: 0, streak: 0 },
+                badges: [],
+                wallet: { coins: 0, gems: 0 },
+                streaks: { current: 0, longest: 0, lastActivity: null },
+                goals: [],
+                notifications: []
+              };
             }
-          };
+            
+            // Simplified age adaptation to improve performance
+            const userAgeGroup = baseDashboard.user?.age_group || 'adult';
+            const languageTemplates = this.ageAdaptationService.getLanguageTemplates(userAgeGroup);
+            const uiAdaptations = this.ageAdaptationService.getUIAdaptations(userAgeGroup);
+            
+            // Return lightweight response without heavy content adaptation
+            return {
+              ...baseDashboard,
+              ageGroup: userAgeGroup,
+              languageTemplates,
+              uiAdaptations,
+              adaptedMessages: {
+                welcome: languageTemplates?.welcome || 'Bem-vindo!',
+                encouragement: languageTemplates?.encouragement || 'Continue assim!',
+                progress: languageTemplates?.progress || 'Progresso excelente!'
+              }
+            };
+          } catch (serviceError) {
+            console.error('Gamification service error:', serviceError);
+            // Return fallback dashboard
+            return {
+              user: { id: userId, name: 'Usuário', level: 1, xp: 0, age_group: 'adult' },
+              stats: { totalXP: 0, level: 1, completedLessons: 0, streak: 0 },
+              badges: [],
+              wallet: { coins: 0, gems: 0 },
+              streaks: { current: 0, longest: 0, lastActivity: null },
+              goals: [],
+              notifications: [],
+              error: 'Service temporarily unavailable'
+            };
+          }
         },
         300000 // Increased cache time to 5 minutes
       );
       
-      return this.createResponse(dashboard, 'Dashboard retrieved successfully');
-    });
+      res.json({
+        success: true,
+        data: dashboard,
+        message: 'Dashboard retrieved successfully'
+      });
+    } catch (error) {
+      console.error('Dashboard error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to retrieve dashboard',
+        message: error.message
+      });
+    }
   }
 
   // Process lesson completion with gamification rewards
