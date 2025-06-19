@@ -176,9 +176,17 @@ class CodyVerseServer {
       this.setupFallbackRoutes();
     }
 
+    // Add fallback auth routes
+    this.setupFallbackAuthRoutes();
+
     // Auth page route
     this.app.get('/auth', (req, res) => {
-      res.sendFile(path.join(__dirname, 'client', 'auth.html'));
+      try {
+        res.sendFile(path.join(__dirname, 'client', 'auth.html'));
+      } catch (error) {
+        console.error('Error serving auth page:', error);
+        res.status(404).send('Auth page not found');
+      }
     });
 
     // Main app routes
@@ -193,6 +201,8 @@ class CodyVerseServer {
     this.app.get('/dashboard', (req, res) => {
       res.sendFile(path.join(__dirname, 'codyverse-responsive-app.html'));
     });
+
+    console.log('Routes configured with authentication support');
 
     // 404 handler
     this.app.use('*', (req, res) => {
@@ -265,6 +275,47 @@ class CodyVerseServer {
     });
 
     console.log('Fallback routes configured');
+  }
+
+  setupFallbackAuthRoutes() {
+    console.log('Setting up fallback auth routes...');
+    
+    this.app.get('/api/auth/status', (req, res) => {
+      res.json({
+        authenticated: false,
+        user: null,
+        error: 'Authentication not configured'
+      });
+    });
+
+    this.app.get('/api/auth/user', (req, res) => {
+      res.status(401).json({ 
+        message: "Authentication not configured" 
+      });
+    });
+
+    this.app.get("/api/protected", (req, res) => {
+      res.status(401).json({ 
+        message: "Authentication not configured" 
+      });
+    });
+
+    this.app.get("/api/login", (req, res) => {
+      res.status(501).json({ 
+        error: 'Authentication not configured', 
+        message: 'Replit authentication is not properly configured. Please check environment variables.' 
+      });
+    });
+
+    this.app.get("/api/callback", (req, res) => {
+      res.redirect("/auth?error=not_configured");
+    });
+
+    this.app.get("/api/logout", (req, res) => {
+      res.redirect("/");
+    });
+
+    console.log('Fallback auth routes configured');
   }
 
   async initialize() {
