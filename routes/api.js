@@ -549,9 +549,7 @@ router.get('/debug/cache/stats', (req, res) => {
   }
 });
 
-// Study Techniques Routes
-const StudyTechniquesController = require('../controllers/studyTechniquesController');
-const studyTechniquesController = new StudyTechniquesController();
+// Study Techniques Routes (using existing controller from line 19)
 
 router.post('/study-techniques/analyze', (req, res) => studyTechniquesController.analyzeStudyProfile(req, res));
 router.get('/study-techniques/personalized/:userId', (req, res) => studyTechniquesController.getPersonalizedTechniques(req, res));
