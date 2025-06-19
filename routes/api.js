@@ -8,6 +8,7 @@ const codyController = require('../controllers/codyController');
 const userController = require('../controllers/userController');
 const gamificationController = require('../controllers/simplifiedGamificationController');
 const ageAdaptationController = require('../controllers/ageAdaptationController');
+const securityController = require('../controllers/securityController');
 
 // Advanced AI Services
 const learningAnalyticsService = require('../services/learningAnalyticsService');
@@ -241,6 +242,13 @@ router.get('/monitoring/status', async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
+
+// Security and Validation Routes
+router.get('/security/validation-stats', securityController.getValidationStats);
+router.post('/security/test-field-validation', securityController.testFieldValidation);
+router.post('/security/simulate-attack', securityController.simulateSecurityTest);
+router.get('/security/monitoring', securityController.getSecurityMonitoring);
+router.put('/security/config', securityController.updateSecurityConfig);
 
 router.get('/monitoring/logs/health', async (req, res) => {
   try {

@@ -6,39 +6,45 @@ const {
   userPurchases, gamificationNotifications
 } = require('../shared/schema');
 const { eq, and, desc, asc, sum, count, gte, lte } = require('drizzle-orm');
+const validationService = require('../services/validationService');
+const logger = require('../server/logger');
+const BaseController = require('../core/BaseController');
 
-class GamificationController {
+class GamificationController extends BaseController {
   constructor() {
     this.gamificationService = gamificationService;
   }
 
   // Get user's complete gamification dashboard
   async getDashboard(req, res) {
-    try {
-      const userId = req.params.userId || req.user?.id;
+    await this.handleRequest(req, res, async (req) => {
+      const { userId } = req.params;
       
-      if (!userId) {
-        return res.status(400).json({ error: 'User ID required' });
+      // Validate user ID
+      const idValidation = validationService.validateField('userId', userId);
+      if (!idValidation.isValid) {
+        throw new Error('ID de usuário inválido');
       }
 
-      const dashboard = await this.gamificationService.getUserDashboard(userId);
+      const dashboard = await this.gamificationService.getUserDashboard(idValidation.sanitizedValue);
       
       if (!dashboard) {
-        return res.status(404).json({ error: 'User not found' });
+        return this.createErrorResponse('Usuário não encontrado', 404);
       }
 
-      res.json({
-        success: true,
-        data: dashboard
-      });
+      // Sanitize sensitive data before sending
+      const sanitizedDashboard = {
+        ...dashboard,
+        user: dashboard.user ? {
+          id: dashboard.user.id,
+          name: dashboard.user.name,
+          level: dashboard.user.level,
+          totalXP: dashboard.user.totalXP
+        } : null
+      };
 
-    } catch (error) {
-      console.error('Error getting gamification dashboard:', error);
-      res.status(500).json({ 
-        error: 'Failed to get dashboard',
-        message: error.message 
-      });
-    }
+      return this.createResponse(sanitizedDashboard, 'Dashboard carregado com sucesso');
+    });
   }
 
   // Get user's badges
