@@ -667,7 +667,32 @@ class AILearningEngine extends BaseService {
 
   // Get learning profile
   getLearningProfile(userId) {
-    return this.learningProfiles.get(userId);
+    let profile = this.learningProfiles.get(userId);
+    
+    // Create default profile if none exists
+    if (!profile) {
+      profile = {
+        userId,
+        learningStyle: 'balanced',
+        difficultyPreference: 'gradual',
+        preferredSessionDuration: 30,
+        studyTimes: ['morning'],
+        interests: ['AI fundamentals', 'programming'],
+        previousKnowledge: 'beginner',
+        goals: ['understand AI concepts', 'build practical skills'],
+        createdAt: Date.now(),
+        lastUpdated: Date.now()
+      };
+      
+      this.learningProfiles.set(userId, profile);
+      
+      logger.info('Default learning profile created', {
+        userId,
+        category: 'ai_learning'
+      });
+    }
+    
+    return profile;
   }
 
   // Update learning profile
