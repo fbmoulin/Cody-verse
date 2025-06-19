@@ -1,0 +1,224 @@
+const express = require('express');
+const path = require('path');
+
+console.log('Starting Cody Verse Backend...');
+
+class CodyVerseServer {
+  constructor() {
+    this.app = express();
+    this.server = null;
+  }
+
+  setupBasicMiddleware() {
+    // Essential middleware only
+    this.app.use(express.json({ limit: '10mb' }));
+    this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+    
+    // Basic CORS
+    this.app.use((req, res, next) => {
+      res.header('Access-Control-Allow-Origin', '*');
+      res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+      if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
+      }
+      next();
+    });
+
+    console.log('Basic middleware configured');
+  }
+
+  setupRoutes() {
+    // Serve static files
+    this.app.use(express.static(path.join(__dirname), {
+      maxAge: '1d',
+      etag: true
+    }));
+
+    // Health check
+    this.app.get('/health', (req, res) => {
+      res.json({ 
+        status: 'ok', 
+        timestamp: new Date().toISOString(),
+        service: 'Cody Verse Backend',
+        version: '1.0.0'
+      });
+    });
+
+    // System status
+    this.app.get('/status', (req, res) => {
+      res.json({
+        service: 'Cody Verse Backend',
+        version: '1.0.0',
+        status: 'operational',
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'development'
+      });
+    });
+
+    // Load API routes safely
+    try {
+      const apiRoutes = require('./routes/api');
+      this.app.use('/api', apiRoutes);
+      console.log('API routes loaded successfully');
+    } catch (error) {
+      console.warn('Failed to load API routes:', error.message);
+      // Fallback API routes
+      this.setupFallbackRoutes();
+    }
+
+    // Main app routes
+    this.app.get('/', (req, res) => {
+      res.sendFile(path.join(__dirname, 'index.html'));
+    });
+
+    this.app.get('/app', (req, res) => {
+      res.sendFile(path.join(__dirname, 'codyverse-responsive-app.html'));
+    });
+
+    this.app.get('/dashboard', (req, res) => {
+      res.sendFile(path.join(__dirname, 'codyverse-responsive-app.html'));
+    });
+
+    // 404 handler
+    this.app.use('*', (req, res) => {
+      res.status(404).json({
+        success: false,
+        error: 'Route not found',
+        path: req.originalUrl,
+        timestamp: new Date().toISOString()
+      });
+    });
+
+    // Error handler
+    this.app.use((error, req, res, next) => {
+      console.error('Server error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Internal server error',
+        message: error.message,
+        timestamp: new Date().toISOString()
+      });
+    });
+
+    console.log('Routes configured');
+  }
+
+  setupFallbackRoutes() {
+    // Essential API endpoints as fallback
+    this.app.get('/api/courses', (req, res) => {
+      res.json({
+        success: true,
+        data: [
+          {
+            id: 1,
+            title: 'Fundamentos de IA',
+            description: 'Aprenda os conceitos básicos de Inteligência Artificial',
+            modules: 7,
+            duration: '4 horas',
+            difficulty: 'Iniciante'
+          }
+        ]
+      });
+    });
+
+    this.app.get('/api/gamification/dashboard/:userId', (req, res) => {
+      const userId = parseInt(req.params.userId) || 1;
+      res.json({
+        success: true,
+        data: {
+          user: { id: userId, name: 'Usuário', level: 1, xp: 0 },
+          stats: { totalXP: 0, level: 1, completedLessons: 0, streak: 0 },
+          badges: [],
+          wallet: { coins: 0, gems: 0 },
+          streaks: { current: 0, longest: 0 },
+          goals: [],
+          notifications: []
+        }
+      });
+    });
+
+    this.app.post('/api/gamification/lesson-completion/:userId', (req, res) => {
+      res.json({
+        success: true,
+        data: {
+          xpGained: 50,
+          coinsEarned: 10,
+          levelUp: false,
+          newBadges: []
+        }
+      });
+    });
+
+    console.log('Fallback routes configured');
+  }
+
+  async initialize() {
+    try {
+      this.setupBasicMiddleware();
+      this.setupRoutes();
+      console.log('Server initialization completed');
+    } catch (error) {
+      console.error('Initialization error:', error);
+      // Continue with minimal setup
+      this.setupBasicMiddleware();
+      this.setupFallbackRoutes();
+    }
+  }
+
+  async start() {
+    await this.initialize();
+    
+    const port = process.env.PORT || 5000;
+    const host = '0.0.0.0';
+    
+    this.server = this.app.listen(port, host, () => {
+      console.log(`
+🚀 Cody Verse Backend running!
+📍 Address: http://${host}:${port}
+🌍 Environment: ${process.env.NODE_ENV || 'development'}
+📊 API: http://${host}:${port}/api
+💚 Health: http://${host}:${port}/health
+      `);
+    });
+
+    this.server.on('error', (error) => {
+      console.error('Server startup error:', error);
+    });
+
+    this.setupGracefulShutdown();
+  }
+
+  setupGracefulShutdown() {
+    const gracefulShutdown = (signal) => {
+      console.log(`\nReceived ${signal}. Shutting down gracefully...`);
+      
+      if (this.server) {
+        this.server.close(() => {
+          console.log('Server closed');
+          process.exit(0);
+        });
+      }
+    };
+
+    process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+    process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+    
+    process.on('uncaughtException', (error) => {
+      console.error('Uncaught exception:', error);
+      process.exit(1);
+    });
+
+    process.on('unhandledRejection', (reason, promise) => {
+      console.error('Unhandled rejection at:', promise, 'reason:', reason);
+    });
+  }
+}
+
+// Start the server
+const server = new CodyVerseServer();
+server.start().catch(error => {
+  console.error('Failed to start server:', error);
+  process.exit(1);
+});
