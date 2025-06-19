@@ -6,6 +6,7 @@ const errorHandler = require('./errorHandlerService');
 const newCacheService = require('./cacheService');
 const performanceAnalyzer = require('./performanceAnalyzer');
 const queryOptimizer = require('./queryOptimizer');
+const errorMonitoring = require('./errorMonitoringService');
 
 class DataService {
   // Get all courses with proper error handling and pagination
@@ -122,10 +123,13 @@ class DataService {
       return result;
     } catch (error) {
       logger.error('Database connection failed for courses', { error: error.message });
+      errorMonitoring.trackDatabaseError(error, 'getAllCourses');
       performanceAnalyzer.trackQuery('getAllCourses', Date.now() - startTime, false);
       throw new Error('Unable to retrieve courses - database connection issue');
     } finally {
-      performanceAnalyzer.trackQuery('getAllCourses', Date.now() - startTime, true);
+      if (!error) {
+        performanceAnalyzer.trackQuery('getAllCourses', Date.now() - startTime, true);
+      }
     }
   }
 

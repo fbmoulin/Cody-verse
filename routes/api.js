@@ -13,6 +13,7 @@ const ageAdaptationController = require('../controllers/ageAdaptationController'
 const learningAnalyticsService = require('../services/learningAnalyticsService');
 const aiContentGenerationService = require('../services/aiContentGenerationService');
 const performanceAnalyzer = require('../services/performanceAnalyzer');
+const errorMonitoring = require('../services/errorMonitoringService');
 
 // Controllers
 const studyTechniquesController = require('../controllers/studyTechniquesController');
@@ -211,6 +212,58 @@ router.get('/performance/metrics', async (req, res) => {
   }
 });
 
+// Error monitoring and logging endpoints
+router.get('/monitoring/errors', async (req, res) => {
+  try {
+    const errorMonitoring = require('../services/errorMonitoringService');
+    const timeRange = req.query.timeRange || '24h';
+    const report = errorMonitoring.generateErrorReport(timeRange);
+    
+    res.json({ success: true, data: report });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.get('/monitoring/status', async (req, res) => {
+  try {
+    const errorMonitoring = require('../services/errorMonitoringService');
+    const logger = require('../server/logger');
+    
+    const status = {
+      errorMonitoring: errorMonitoring.getMonitoringStatus(),
+      logging: logger.healthCheck(),
+      timestamp: new Date().toISOString()
+    };
+    
+    res.json({ success: true, data: status });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.get('/monitoring/logs/health', async (req, res) => {
+  try {
+    const logger = require('../server/logger');
+    const health = logger.healthCheck();
+    
+    res.json({ success: true, data: health });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.get('/monitoring/errors/summary', async (req, res) => {
+  try {
+    const logger = require('../server/logger');
+    const errorSummary = logger.getErrorSummary();
+    
+    res.json({ success: true, data: errorSummary });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 router.get('/performance/database', async (req, res) => {
   try {
     const analysis = await performanceAnalyzer.analyzeQueryPerformance();
@@ -252,6 +305,98 @@ router.get('/performance/health', async (req, res) => {
       error: error.message,
       timestamp: new Date().toISOString()
     });
+  }
+});
+
+// Error monitoring endpoints
+router.get('/monitoring/dashboard', (req, res) => {
+  try {
+    const dashboardData = errorMonitoring.getDashboardData();
+    res.json({ success: true, data: dashboardData });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.get('/monitoring/alerts', (req, res) => {
+  try {
+    const alerts = errorMonitoring.recentAlerts || [];
+    const limit = parseInt(req.query.limit) || 50;
+    res.json({ 
+      success: true, 
+      data: alerts.slice(0, limit),
+      total: alerts.length
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.get('/monitoring/system-health', (req, res) => {
+  try {
+    const health = errorMonitoring.getSystemHealth();
+    res.json({ success: true, data: health });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/monitoring/test-error', (req, res) => {
+  try {
+    const { type = 'critical', message = 'Test error' } = req.body;
+    
+    const testError = new Error(message);
+    testError.name = 'TestError';
+    
+    if (type === 'critical') {
+      errorMonitoring.trackCriticalError(testError, { source: 'manual_test' });
+    } else if (type === 'warning') {
+      errorMonitoring.trackWarningError(testError, { source: 'manual_test' });
+    } else if (type === 'database') {
+      errorMonitoring.trackDatabaseError(testError, 'test_operation');
+    }
+    
+    res.json({ 
+      success: true, 
+      message: `${type} error tracked successfully`,
+      error: testError.message
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.put('/monitoring/thresholds', (req, res) => {
+  try {
+    const thresholds = req.body;
+    errorMonitoring.updateThresholds(thresholds);
+    
+    res.json({ 
+      success: true, 
+      message: 'Thresholds updated successfully',
+      thresholds: errorMonitoring.errorThresholds
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.get('/logs/summary', (req, res) => {
+  try {
+    const logger = require('../server/logger');
+    const errorSummary = logger.getErrorSummary();
+    const logHealth = logger.healthCheck();
+    
+    res.json({
+      success: true,
+      data: {
+        errorSummary,
+        logHealth,
+        timestamp: new Date().toISOString()
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 

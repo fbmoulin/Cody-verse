@@ -102,40 +102,118 @@ function setupPerformance(app) {
 function setupLogging(app) {
   const morgan = require('morgan');
   const logger = require('./logger');
+  const errorMonitoring = require('../services/errorMonitoringService');
   
-  // Criar stream personalizado para morgan que usa winston
-  const stream = {
-    write: (message) => logger.http(message.trim())
-  };
+  // Enhanced request logging with error monitoring
+  app.use((req, res, next) => {
+    const start = Date.now();
+    const requestId = `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    req.requestId = requestId;
+    req.startTime = start;
+    
+    // Capture response for monitoring
+    const originalSend = res.send;
+    res.send = function(body) {
+      const duration = Date.now() - start;
+      const requestInfo = {
+        requestId,
+        method: req.method,
+        url: req.originalUrl,
+        statusCode: res.statusCode,
+        responseTime: duration,
+        userAgent: req.get('User-Agent'),
+        ip: req.ip
+      };
+      
+      // Track slow requests
+      if (duration > 1000) {
+        errorMonitoring.trackSlowRequest(requestInfo);
+      }
+      
+      // Track error responses
+      if (res.statusCode >= 500) {
+        const error = new Error(`HTTP ${res.statusCode}: ${req.method} ${req.originalUrl}`);
+        error.name = 'HTTPError';
+        errorMonitoring.trackCriticalError(error, requestInfo);
+      } else if (res.statusCode >= 400) {
+        const error = new Error(`HTTP ${res.statusCode}: ${req.method} ${req.originalUrl}`);
+        error.name = 'ClientError';
+        errorMonitoring.trackWarningError(error, requestInfo);
+      }
+      
+      return originalSend.call(this, body);
+    };
+    
+    next();
+  });
   
-  // Usar morgan com winston
-  app.use(morgan('combined', { 
-    stream,
+  // Morgan integration with custom format
+  const morganFormat = ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" - :response-time ms';
+  
+  app.use(morgan(morganFormat, { 
+    stream: {
+      write: (message) => logger.http(message.trim(), { category: 'access' })
+    },
     skip: (req, res) => {
-      return req.url === '/health' || req.url === '/api/health';
+      // Skip health checks and monitoring endpoints to reduce noise
+      return req.url === '/health' || 
+             req.url === '/api/health' ||
+             req.url.startsWith('/api/monitoring');
     }
   }));
   
-  // Logging de requisições lentas e erros
+  // Enhanced slow request and error tracking
   app.use((req, res, next) => {
     const start = Date.now();
     
     res.on('finish', () => {
       const duration = Date.now() - start;
+      const statusCode = res.statusCode;
       
+      // Log performance metrics
       if (duration > 1000) {
-        logger.warn(`Requisição lenta: ${req.method} ${req.originalUrl} - ${duration}ms`);
+        logger.performance('Slow request detected', {
+          method: req.method,
+          url: req.originalUrl,
+          status: statusCode,
+          duration: `${duration}ms`,
+          requestId: req.requestId,
+          userAgent: req.get('User-Agent'),
+          ip: req.ip
+        });
       }
       
-      if (res.statusCode >= 400) {
-        logger.error(`Erro ${res.statusCode}: ${req.method} ${req.originalUrl}`);
+      // Log error responses with context
+      if (statusCode >= 400) {
+        const logLevel = statusCode >= 500 ? 'error' : 'warn';
+        logger[logLevel](`HTTP ${statusCode} response`, {
+          method: req.method,
+          url: req.originalUrl,
+          status: statusCode,
+          duration: `${duration}ms`,
+          requestId: req.requestId,
+          category: 'http_error'
+        });
+      }
+      
+      // Log security-related events
+      if (statusCode === 401 || statusCode === 403) {
+        logger.security('Authentication/Authorization failure', {
+          method: req.method,
+          url: req.originalUrl,
+          status: statusCode,
+          ip: req.ip,
+          userAgent: req.get('User-Agent'),
+          requestId: req.requestId
+        });
       }
     });
     
     next();
   });
   
-  logger.success('Sistema de logging avançado configurado com Winston');
+  logger.success('Enhanced production logging system configured');
 }
 
 function setupParsing(app) {
@@ -153,6 +231,9 @@ function setupParsing(app) {
 }
 
 function setupErrorHandling(app) {
+  const errorMonitoring = require('../services/errorMonitoringService');
+  const logger = require('./logger');
+
   app.use((req, res, next) => {
     const error = new Error(`Rota não encontrada: ${req.method} ${req.path}`);
     error.status = 404;
@@ -163,26 +244,45 @@ function setupErrorHandling(app) {
     const status = error.status || 500;
     const message = error.message || 'Erro interno do servidor';
     
-    console.error(`Erro ${status}:`, {
-      message,
-      stack: error.stack,
-      url: req.url,
+    // Enhanced error context for monitoring
+    const errorContext = {
+      url: req.originalUrl || req.url,
       method: req.method,
-      ip: req.ip
+      ip: req.ip || req.connection.remoteAddress,
+      userAgent: req.get('User-Agent'),
+      requestId: req.requestId,
+      userId: req.user?.id,
+      statusCode: status,
+      endpoint: req.route?.path,
+      timestamp: new Date().toISOString()
+    };
+
+    // Track error with monitoring service
+    const errorId = errorMonitoring.trackError(error, errorContext);
+
+    // Enhanced logging with structured data
+    logger.logError(error, {
+      ...errorContext,
+      errorId,
+      category: 'request_error'
     });
+
+    // Production-safe error response
+    const responseMessage = config.server.nodeEnv === 'production' && status === 500 
+      ? 'Erro interno do servidor' 
+      : message;
 
     res.status(status).json({
       error: true,
       status,
-      message: config.server.nodeEnv === 'production' && status === 500 
-        ? 'Erro interno do servidor' 
-        : message,
+      message: responseMessage,
       timestamp: new Date().toISOString(),
-      path: req.path
+      path: req.path,
+      ...(config.server.nodeEnv !== 'production' && { errorId })
     });
   });
 
-  console.log('Middleware de tratamento de erros configurado');
+  console.log('Middleware de tratamento de erros avançado configurado');
 }
 
 function requestLogger(req, res, next) {
