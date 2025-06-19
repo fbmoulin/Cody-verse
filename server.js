@@ -19,6 +19,7 @@ const apiDocGenerator = require('./core/APIDocGenerator');
 const AdvancedPerformanceOptimizer = require('./core/AdvancedPerformanceOptimizer');
 const EnhancedMemoryOptimizer = require('./core/EnhancedMemoryOptimizer');
 const QueryOptimizer = require('./core/QueryOptimizer');
+const MemoryDebugger = require('./core/MemoryDebugger');
 const VisualOptimizer = require('./core/VisualOptimizer');
 // const ComprehensiveDatabaseOptimizer = require('./services/comprehensiveDatabaseOptimizer');
 
@@ -42,6 +43,7 @@ class CodyVerseServer {
     this.performanceOptimizer = new AdvancedPerformanceOptimizer();
     this.memoryOptimizer = new EnhancedMemoryOptimizer();
     this.queryOptimizer = new QueryOptimizer();
+    this.memoryDebugger = new MemoryDebugger();
     this.visualOptimizer = new VisualOptimizer();
   }
 
@@ -131,6 +133,30 @@ class CodyVerseServer {
     this.app.get('/api/performance/queries', (req, res) => {
       const queryReport = this.queryOptimizer.getQueryReport();
       res.json({ success: true, data: queryReport });
+    });
+    
+    // Add memory debugging endpoints
+    this.app.get('/api/debug/memory/analysis', (req, res) => {
+      const analysis = this.memoryDebugger.analyzeMemoryLeaks();
+      res.json({ success: true, data: analysis });
+    });
+    
+    this.app.post('/api/debug/memory/aggressive-cleanup', async (req, res) => {
+      try {
+        const result = await this.memoryDebugger.aggressiveMemoryCleanup();
+        res.json({ success: true, data: result });
+      } catch (error) {
+        res.status(500).json({ 
+          success: false, 
+          error: error.message,
+          timestamp: new Date().toISOString()
+        });
+      }
+    });
+    
+    this.app.get('/api/debug/memory/report', (req, res) => {
+      const report = this.memoryDebugger.getMemoryReport();
+      res.json({ success: true, data: report });
     });
     
     // Middleware de logging personalizado
