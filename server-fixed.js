@@ -3,6 +3,10 @@ const path = require('path');
 const compression = require('compression');
 const helmet = require('helmet');
 
+// Replit Auth components
+const { setupAuth, isAuthenticated } = require('./server/replitAuth.js');
+const { storage } = require('./server/storage.js');
+
 // Production optimizers
 const ProductionOptimizer = require('./core/ProductionOptimizer');
 const LoadBalancer = require('./core/LoadBalancer');
@@ -83,7 +87,6 @@ class CodyVerseServer {
     try {
       // Setup Replit authentication first
       await setupAuth(this.app);
-      console.log('Replit authentication configured');
       
       // Auth routes
       this.app.get('/api/auth/user', isAuthenticated, async (req, res) => {
@@ -121,6 +124,8 @@ class CodyVerseServer {
       
     } catch (error) {
       console.error('Failed to setup auth routes:', error);
+      // Continue with fallback auth setup
+      this.setupFallbackAuthRoutes();
     }
     // Optimized static file serving
     this.app.use(express.static(path.join(__dirname), {
@@ -170,6 +175,11 @@ class CodyVerseServer {
       // Fallback API routes
       this.setupFallbackRoutes();
     }
+
+    // Auth page route
+    this.app.get('/auth', (req, res) => {
+      res.sendFile(path.join(__dirname, 'client', 'auth.html'));
+    });
 
     // Main app routes
     this.app.get('/', (req, res) => {

@@ -1,20 +1,28 @@
-const client = require("openid-client");
-const { Strategy } = require("openid-client/passport");
 const passport = require("passport");
 const session = require("express-session");
 const memoize = require("memoizee");
 const connectPg = require("connect-pg-simple");
 const { storage } = require("./storage.js");
 
-if (!process.env.REPLIT_DOMAINS) {
-  throw new Error("Environment variable REPLIT_DOMAINS not provided");
+// Dynamic imports for ES modules
+let client, Strategy;
+
+// Initialize OpenID client
+async function initializeOpenIDClient() {
+  if (!client) {
+    const openidClient = await import("openid-client");
+    client = openidClient;
+    Strategy = openidClient.Strategy;
+  }
+  return client;
 }
 
 const getOidcConfig = memoize(
   async () => {
+    await initializeOpenIDClient();
     return await client.discovery(
       new URL(process.env.ISSUER_URL ?? "https://replit.com/oidc"),
-      process.env.REPL_ID
+      process.env.REPL_ID || 'default-repl-id'
     );
   },
   { maxAge: 3600 * 1000 }
@@ -63,62 +71,104 @@ async function upsertUser(claims) {
 }
 
 async function setupAuth(app) {
-  app.set("trust proxy", 1);
+  try {
+    await initializeOpenIDClient();
+    
+    app.set("trust proxy", 1);
+    app.use(getSession());
+    app.use(passport.initialize());
+    app.use(passport.session());
+
+    // Check for required environment variables
+    if (!process.env.REPL_ID) {
+      console.warn('REPL_ID not found, using fallback auth setup');
+      setupFallbackAuth(app);
+      return;
+    }
+
+    const config = await getOidcConfig();
+
+    const verify = async (tokens, verified) => {
+      const user = {};
+      updateUserSession(user, tokens);
+      await upsertUser(tokens.claims());
+      verified(null, user);
+    };
+
+    const domains = process.env.REPLIT_DOMAINS ? process.env.REPLIT_DOMAINS.split(",") : ['localhost'];
+    
+    for (const domain of domains) {
+      const strategy = new Strategy(
+        {
+          name: `replitauth:${domain}`,
+          config,
+          scope: "openid email profile offline_access",
+          callbackURL: `https://${domain}/api/callback`,
+        },
+        verify,
+      );
+      passport.use(strategy);
+    }
+
+    passport.serializeUser((user, cb) => cb(null, user));
+    passport.deserializeUser((user, cb) => cb(null, user));
+
+    app.get("/api/login", (req, res, next) => {
+      const hostname = req.hostname || 'localhost';
+      passport.authenticate(`replitauth:${hostname}`, {
+        prompt: "login consent",
+        scope: ["openid", "email", "profile", "offline_access"],
+      })(req, res, next);
+    });
+
+    app.get("/api/callback", (req, res, next) => {
+      const hostname = req.hostname || 'localhost';
+      passport.authenticate(`replitauth:${hostname}`, {
+        successReturnToOrRedirect: "/",
+        failureRedirect: "/api/login",
+      })(req, res, next);
+    });
+
+    app.get("/api/logout", (req, res) => {
+      req.logout(() => {
+        res.redirect(
+          client.buildEndSessionUrl(config, {
+            client_id: process.env.REPL_ID,
+            post_logout_redirect_uri: `${req.protocol}://${req.hostname}`,
+          }).href
+        );
+      });
+    });
+
+    console.log('Replit authentication configured successfully');
+  } catch (error) {
+    console.error('Failed to setup Replit auth:', error);
+    setupFallbackAuth(app);
+  }
+}
+
+function setupFallbackAuth(app) {
+  console.log('Setting up fallback authentication...');
+  
   app.use(getSession());
   app.use(passport.initialize());
   app.use(passport.session());
 
-  const config = await getOidcConfig();
-
-  const verify = async (tokens, verified) => {
-    const user = {};
-    updateUserSession(user, tokens);
-    await upsertUser(tokens.claims());
-    verified(null, user);
-  };
-
-  const domains = process.env.REPLIT_DOMAINS ? process.env.REPLIT_DOMAINS.split(",") : ['localhost'];
-  
-  for (const domain of domains) {
-    const strategy = new Strategy(
-      {
-        name: `replitauth:${domain}`,
-        config,
-        scope: "openid email profile offline_access",
-        callbackURL: `https://${domain}/api/callback`,
-      },
-      verify,
-    );
-    passport.use(strategy);
-  }
-
-  passport.serializeUser((user, cb) => cb(null, user));
-  passport.deserializeUser((user, cb) => cb(null, user));
-
-  app.get("/api/login", (req, res, next) => {
-    const hostname = req.hostname || 'localhost';
-    passport.authenticate(`replitauth:${hostname}`, {
-      prompt: "login consent",
-      scope: ["openid", "email", "profile", "offline_access"],
-    })(req, res, next);
+  // Fallback routes
+  app.get("/api/login", (req, res) => {
+    res.status(501).json({ 
+      error: 'Authentication not configured', 
+      message: 'Replit authentication is not properly configured. Please check environment variables.' 
+    });
   });
 
-  app.get("/api/callback", (req, res, next) => {
-    const hostname = req.hostname || 'localhost';
-    passport.authenticate(`replitauth:${hostname}`, {
-      successReturnToOrRedirect: "/",
-      failureRedirect: "/api/login",
-    })(req, res, next);
+  app.get("/api/callback", (req, res) => {
+    res.redirect("/auth?error=not_configured");
   });
 
   app.get("/api/logout", (req, res) => {
-    req.logout(() => {
-      res.redirect(
-        client.buildEndSessionUrl(config, {
-          client_id: process.env.REPL_ID,
-          post_logout_redirect_uri: `${req.protocol}://${req.hostname}`,
-        }).href
-      );
+    req.session.destroy(() => {
+      res.redirect("/");
     });
   });
 }
@@ -142,6 +192,7 @@ const isAuthenticated = async (req, res, next) => {
   }
 
   try {
+    await initializeOpenIDClient();
     const config = await getOidcConfig();
     const tokenResponse = await client.refreshTokenGrant(config, refreshToken);
     updateUserSession(user, tokenResponse);
