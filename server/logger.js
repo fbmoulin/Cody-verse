@@ -336,9 +336,17 @@ logger.healthCheck = () => {
 // Initialize error stats tracking
 logger.errorStats = new Map();
 
-// Set up periodic maintenance
-setInterval(() => {
+// Set up periodic maintenance with cleanup capability
+logger.rotationInterval = setInterval(() => {
   logger.rotateLogs();
 }, 24 * 60 * 60 * 1000); // Daily
+
+// Cleanup function for graceful shutdown
+logger.cleanup = () => {
+  if (logger.rotationInterval) {
+    clearInterval(logger.rotationInterval);
+    logger.rotationInterval = null;
+  }
+};
 
 module.exports = logger;
