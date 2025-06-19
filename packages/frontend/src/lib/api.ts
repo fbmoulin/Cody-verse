@@ -18,7 +18,7 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
   };
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
 
 export class ApiClient {
   private baseUrl: string;
