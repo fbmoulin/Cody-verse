@@ -439,8 +439,8 @@ const advancedLearningController = new AdvancedLearningController();
 
 // Learning Path Generation
 router.post('/learning/path/generate', (req, res) => advancedLearningController.generateLearningPath(req, res));
-router.get('/learning/profile', (req, res) => advancedLearningController.getLearningProfile(req, res));
-router.put('/learning/profile', (req, res) => advancedLearningController.updateLearningProfile(req, res));
+router.get('/learning/profile/:userId', (req, res) => advancedLearningController.getLearningProfile(req, res));
+router.put('/learning/profile/:userId', (req, res) => advancedLearningController.updateLearningProfile(req, res));
 
 // Study Techniques
 router.get('/learning/techniques', (req, res) => advancedLearningController.getStudyTechniques(req, res));
