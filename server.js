@@ -21,6 +21,7 @@ const EnhancedMemoryOptimizer = require('./core/EnhancedMemoryOptimizer');
 const QueryOptimizer = require('./core/QueryOptimizer');
 const MemoryDebugger = require('./core/MemoryDebugger');
 const TargetedMemoryOptimizer = require('./core/TargetedMemoryOptimizer');
+const CacheOptimizer = require('./core/CacheOptimizer');
 const VisualOptimizer = require('./core/VisualOptimizer');
 // const ComprehensiveDatabaseOptimizer = require('./services/comprehensiveDatabaseOptimizer');
 
@@ -46,6 +47,7 @@ class CodyVerseServer {
     this.queryOptimizer = new QueryOptimizer();
     this.memoryDebugger = new MemoryDebugger();
     this.targetedOptimizer = new TargetedMemoryOptimizer();
+    this.cacheOptimizer = new CacheOptimizer();
     this.visualOptimizer = new VisualOptimizer();
   }
 
@@ -220,6 +222,26 @@ class CodyVerseServer {
           error: error.message,
           timestamp: new Date().toISOString()
         });
+      }
+    });
+    
+    // Emergency cache optimization endpoints (critical memory leak fix)
+    this.app.post('/api/debug/cache/emergency-flush', async (req, res) => {
+      try {
+        const flushed = this.cacheOptimizer.emergencyFlush();
+        const stats = this.cacheOptimizer.getCacheStats();
+        res.json({ success: true, data: { flushed, stats } });
+      } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+      }
+    });
+    
+    this.app.get('/api/debug/cache/stats', (req, res) => {
+      try {
+        const stats = this.cacheOptimizer.getCacheStats();
+        res.json({ success: true, data: stats });
+      } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
       }
     });
     
