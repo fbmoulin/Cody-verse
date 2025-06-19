@@ -267,11 +267,7 @@ router.get('/export/:format',
   SecurityMiddleware.apiRateLimit(),
   AuthMiddleware.requireAnyAuth,
   AuthMiddleware.requirePermission('data.export'),
-  ValidationMiddleware.validateEnum(
-    (req) => req.params.format,
-    ['json', 'csv', 'pdf'],
-    { fieldName: 'Formato' }
-  ),
+  ValidationMiddleware.validateEnum('format', ['json', 'csv', 'pdf'], { fieldName: 'Formato' }),
   async (req, res) => {
     try {
       const { format } = req.params;
@@ -304,16 +300,14 @@ router.get('/stats',
   SecurityMiddleware.apiRateLimit(),
   AuthMiddleware.requireAnyAuth,
   AuthMiddleware.requirePermission('analytics.read'),
-  [
-    ValidationMiddleware.validateDate('startDate', {
-      maxDate: new Date(),
-      fieldName: 'Data inicial'
-    }),
-    ValidationMiddleware.validateDate('endDate', {
-      maxDate: new Date(),
-      fieldName: 'Data final'
-    })
-  ],
+  ValidationMiddleware.validateDate('startDate', {
+    maxDate: new Date(),
+    fieldName: 'Data inicial'
+  }),
+  ValidationMiddleware.validateDate('endDate', {
+    maxDate: new Date(),
+    fieldName: 'Data final'
+  }),
   async (req, res) => {
     try {
       const { startDate, endDate } = req.query;
