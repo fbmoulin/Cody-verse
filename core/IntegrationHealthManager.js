@@ -104,9 +104,10 @@ class IntegrationHealthManager extends BaseService {
         throw new Error('Database connection test failed');
       }
 
-      // Test a simple query
-      const dbManager = require('../database/DatabaseManager');
-      await dbManager.query('SELECT 1 as health_check');
+      // Test a simple query using DataAccessLayer
+      const DataAccessLayer = require('./DataAccessLayer');
+      const dal = new DataAccessLayer();
+      await dal.executeQuery('SELECT 1 as health_check', []);
 
       return {
         status: 'healthy',

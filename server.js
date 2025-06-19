@@ -16,9 +16,10 @@ const RequestMiddleware = require('./server/requestMiddleware');
 const configManager = require('./core/ConfigManager');
 const dataAccessLayer = require('./core/DataAccessLayer');
 const apiDocGenerator = require('./core/APIDocGenerator');
-const EnhancedPerformanceOptimizer = require('./core/EnhancedPerformanceOptimizer');
+const AdvancedPerformanceOptimizer = require('./core/AdvancedPerformanceOptimizer');
+const EnhancedMemoryOptimizer = require('./core/EnhancedMemoryOptimizer');
+const QueryOptimizer = require('./core/QueryOptimizer');
 const VisualOptimizer = require('./core/VisualOptimizer');
-const MemoryOptimizer = require('./core/MemoryOptimizer');
 // const ComprehensiveDatabaseOptimizer = require('./services/comprehensiveDatabaseOptimizer');
 
 // Middleware
@@ -38,10 +39,10 @@ class CodyVerseServer {
   constructor() {
     this.app = express();
     this.server = null;
-    this.performanceOptimizer = new EnhancedPerformanceOptimizer();
+    this.performanceOptimizer = new AdvancedPerformanceOptimizer();
+    this.memoryOptimizer = new EnhancedMemoryOptimizer();
+    this.queryOptimizer = new QueryOptimizer();
     this.visualOptimizer = new VisualOptimizer();
-    this.memoryOptimizer = new MemoryOptimizer();
-    // this.databaseOptimizer = new ComprehensiveDatabaseOptimizer();
   }
 
   async initialize() {
