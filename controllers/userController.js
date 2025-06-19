@@ -1,26 +1,19 @@
 const { db } = require('../server/database');
 const { users, userModuleProgress, userLessonProgress } = require('../shared/schema');
 const { eq, sql } = require('drizzle-orm');
-const validationService = require('../services/validationService');
-const logger = require('../server/logger');
-const BaseController = require('../core/BaseController');
 
-class UserController extends BaseController {
+class UserController {
   // Criar novo usuário
   async createUser(req, res) {
-    await this.handleRequest(req, res, async (req) => {
-      // Validation is handled by middleware, but double-check critical fields
-      const validation = validationService.validateRequest(
-        req.body,
-        ['username', 'email', 'age'],
-        []
-      );
+    try {
+      const { email, name } = req.body;
 
-      if (!validation.isValid) {
-        throw new Error(`Validation failed: ${validation.errors.join(', ')}`);
+      if (!email || !name) {
+        return res.status(400).json({
+          success: false,
+          error: 'Email e nome são obrigatórios'
+        });
       }
-
-      const { username, email, age } = validation.sanitizedData;
 
       // Verificar se usuário já existe
       const existingUser = await db
@@ -30,15 +23,18 @@ class UserController extends BaseController {
         .limit(1);
 
       if (existingUser.length > 0) {
-        return this.createErrorResponse('Usuário com este email já existe', 409);
+        return res.status(409).json({
+          success: false,
+          error: 'Usuário com este email já existe'
+        });
       }
 
-      // Criar novo usuário com dados sanitizados
+      // Criar novo usuário
       const newUser = await db
         .insert(users)
         .values({
-          email: email.toLowerCase().trim(),
-          name: username.trim(),
+          email,
+          name,
           createdAt: new Date(),
           totalXP: 0,
           currentStreak: 0,
@@ -46,88 +42,88 @@ class UserController extends BaseController {
         })
         .returning();
 
-      logger.info('User created successfully', {
-        userId: newUser[0].id,
-        email: email,
-        ip: req.ip
+      res.status(201).json({
+        success: true,
+        data: newUser[0],
+        message: 'Usuário criado com sucesso'
       });
-
-      return this.createResponse(newUser[0], 'Usuário criado com sucesso', 201);
-    });
+    } catch (error) {
+      console.error('Erro ao criar usuário:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Erro interno ao criar usuário'
+      });
+    }
   }
 
   // Obter usuário por ID
   async getUserById(req, res) {
-    await this.handleRequest(req, res, async (req) => {
+    try {
       const { id } = req.params;
-
-      // Validate ID (middleware already does this, but extra safety)
-      const idValidation = validationService.validateField('userId', id);
-      if (!idValidation.isValid) {
-        throw new Error('ID de usuário inválido');
-      }
 
       const user = await db
         .select()
         .from(users)
-        .where(eq(users.id, idValidation.sanitizedValue))
+        .where(eq(users.id, parseInt(id)))
         .limit(1);
 
       if (user.length === 0) {
-        return this.createErrorResponse('Usuário não encontrado', 404);
+        return res.status(404).json({
+          success: false,
+          error: 'Usuário não encontrado'
+        });
       }
 
-      return this.createResponse(user[0], 'Usuário encontrado com sucesso');
-    });
+      res.json({
+        success: true,
+        data: user[0]
+      });
+    } catch (error) {
+      console.error('Erro ao buscar usuário:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Erro interno ao buscar usuário'
+      });
+    }
   }
 
   // Atualizar usuário
   async updateUser(req, res) {
-    await this.handleRequest(req, res, async (req) => {
+    try {
       const { id } = req.params;
-      
-      // Validate and sanitize update data
-      const validation = validationService.validateRequest(
-        req.body,
-        [], // No required fields for updates
-        ['username', 'xp', 'currentStreak']
-      );
-
-      if (!validation.isValid) {
-        throw new Error(`Validation failed: ${validation.errors.join(', ')}`);
-      }
-
-      const idValidation = validationService.validateField('userId', id);
-      if (!idValidation.isValid) {
-        throw new Error('ID de usuário inválido');
-      }
-
-      const { username, xp, currentStreak } = validation.sanitizedData;
+      const { name, totalXP, currentStreak } = req.body;
 
       const updateData = {};
-      if (username) updateData.name = username.trim();
-      if (xp !== undefined) updateData.totalXP = Math.max(0, xp);
-      if (currentStreak !== undefined) updateData.currentStreak = Math.max(0, currentStreak);
+      if (name) updateData.name = name;
+      if (totalXP !== undefined) updateData.totalXP = totalXP;
+      if (currentStreak !== undefined) updateData.currentStreak = currentStreak;
       updateData.lastLoginAt = new Date();
 
       const updatedUser = await db
         .update(users)
         .set(updateData)
-        .where(eq(users.id, idValidation.sanitizedValue))
+        .where(eq(users.id, parseInt(id)))
         .returning();
 
       if (updatedUser.length === 0) {
-        return this.createErrorResponse('Usuário não encontrado', 404);
+        return res.status(404).json({
+          success: false,
+          error: 'Usuário não encontrado'
+        });
       }
 
-      logger.info('User updated successfully', {
-        userId: idValidation.sanitizedValue,
-        updates: Object.keys(updateData),
-        ip: req.ip
+      res.json({
+        success: true,
+        data: updatedUser[0],
+        message: 'Usuário atualizado com sucesso'
       });
-
-      return this.createResponse(updatedUser[0], 'Usuário atualizado com sucesso');
-    });
+    } catch (error) {
+      console.error('Erro ao atualizar usuário:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Erro interno ao atualizar usuário'
+      });
+    }
   }
 
   // Obter estatísticas do usuário

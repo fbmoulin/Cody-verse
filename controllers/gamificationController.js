@@ -6,45 +6,39 @@ const {
   userPurchases, gamificationNotifications
 } = require('../shared/schema');
 const { eq, and, desc, asc, sum, count, gte, lte } = require('drizzle-orm');
-const validationService = require('../services/validationService');
-const logger = require('../server/logger');
-const BaseController = require('../core/BaseController');
 
-class GamificationController extends BaseController {
+class GamificationController {
   constructor() {
     this.gamificationService = gamificationService;
   }
 
   // Get user's complete gamification dashboard
   async getDashboard(req, res) {
-    await this.handleRequest(req, res, async (req) => {
-      const { userId } = req.params;
+    try {
+      const userId = req.params.userId || req.user?.id;
       
-      // Validate user ID
-      const idValidation = validationService.validateField('userId', userId);
-      if (!idValidation.isValid) {
-        throw new Error('ID de usuário inválido');
+      if (!userId) {
+        return res.status(400).json({ error: 'User ID required' });
       }
 
-      const dashboard = await this.gamificationService.getUserDashboard(idValidation.sanitizedValue);
+      const dashboard = await this.gamificationService.getUserDashboard(userId);
       
       if (!dashboard) {
-        return this.createErrorResponse('Usuário não encontrado', 404);
+        return res.status(404).json({ error: 'User not found' });
       }
 
-      // Sanitize sensitive data before sending
-      const sanitizedDashboard = {
-        ...dashboard,
-        user: dashboard.user ? {
-          id: dashboard.user.id,
-          name: dashboard.user.name,
-          level: dashboard.user.level,
-          totalXP: dashboard.user.totalXP
-        } : null
-      };
+      res.json({
+        success: true,
+        data: dashboard
+      });
 
-      return this.createResponse(sanitizedDashboard, 'Dashboard carregado com sucesso');
-    });
+    } catch (error) {
+      console.error('Error getting gamification dashboard:', error);
+      res.status(500).json({ 
+        error: 'Failed to get dashboard',
+        message: error.message 
+      });
+    }
   }
 
   // Get user's badges

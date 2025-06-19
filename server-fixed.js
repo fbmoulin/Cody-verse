@@ -2,16 +2,11 @@ const express = require('express');
 const path = require('path');
 const compression = require('compression');
 const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
 
 // Production optimizers
 const ProductionOptimizer = require('./core/ProductionOptimizer');
 const LoadBalancer = require('./core/LoadBalancer');
 const DatabaseOptimizer = require('./core/DatabaseOptimizer');
-
-// Security and validation middleware
-const validationMiddleware = require('./middleware/validationMiddleware');
-const validationService = require('./services/validationService');
 
 console.log('Starting Optimized Cody Verse Backend...');
 
@@ -34,20 +29,6 @@ class CodyVerseServer {
       }));
     }
 
-    // Rate limiting for security
-    const limiter = rateLimit({
-      windowMs: 15 * 60 * 1000, // 15 minutes
-      max: 200, // Limit each IP to 200 requests per windowMs
-      message: {
-        success: false,
-        message: 'Too many requests from this IP, please try again later.',
-        timestamp: new Date().toISOString()
-      },
-      standardHeaders: true,
-      legacyHeaders: false,
-    });
-    this.app.use('/api/', limiter);
-
     // Compression for better performance
     this.app.use(compression({
       level: 6,
@@ -66,11 +47,6 @@ class CodyVerseServer {
       limit: '10mb',
       parameterLimit: 1000
     }));
-
-    // Validation and sanitization middleware
-    this.app.use('/api/', validationMiddleware.validateRateLimit());
-    this.app.use('/api/', validationMiddleware.validateIds());
-    this.app.use('/api/', validationMiddleware.validate());
     
     // Enhanced CORS with production settings
     this.app.use((req, res, next) => {
