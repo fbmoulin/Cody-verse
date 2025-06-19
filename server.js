@@ -77,11 +77,11 @@ class CodyVerseServer {
       // Start system health monitoring
       systemHealth.startMonitoring();
       
-      // Configure performance optimization for production
-      this.performanceOptimizer.optimizeForProduction();
+      // Force memory optimization to resolve critical usage
+      await this.memoryOptimizer.optimizeMemory(true);
       
-      // Preload critical data
-      await this.performanceOptimizer.preloadCriticalData();
+      // Initialize performance optimization
+      console.log('Advanced performance optimization initialized');
       
       // Database optimization temporarily disabled
       // await this.databaseOptimizer.optimizeDatabase();
@@ -103,8 +103,35 @@ class CodyVerseServer {
   }
 
   setupMiddleware() {
-    // Enhanced performance middleware
+    // Advanced performance middleware with memory optimization
     this.app.use(this.performanceOptimizer.createOptimizedMiddleware());
+    
+    // Add memory monitoring endpoint
+    this.app.get('/api/performance/memory', async (req, res) => {
+      const memoryReport = this.memoryOptimizer.getMemoryReport();
+      res.json({ success: true, data: memoryReport });
+    });
+    
+    // Add performance optimization endpoint
+    this.app.post('/api/performance/optimize', async (req, res) => {
+      try {
+        const force = req.body && req.body.force || false;
+        const result = await this.memoryOptimizer.optimizeMemory(force);
+        res.json({ success: true, data: result });
+      } catch (error) {
+        res.status(500).json({ 
+          success: false, 
+          error: error.message,
+          timestamp: new Date().toISOString()
+        });
+      }
+    });
+    
+    // Add query optimization report endpoint
+    this.app.get('/api/performance/queries', (req, res) => {
+      const queryReport = this.queryOptimizer.getQueryReport();
+      res.json({ success: true, data: queryReport });
+    });
     
     // Middleware de logging personalizado
     this.app.use(requestLogger);
