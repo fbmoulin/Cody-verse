@@ -5,6 +5,7 @@ const { eq, asc, sql, inArray } = require('drizzle-orm');
 const errorHandler = require('./errorHandlerService');
 const newCacheService = require('./cacheService');
 const performanceAnalyzer = require('./performanceAnalyzer');
+const queryOptimizer = require('./queryOptimizer');
 
 class DataService {
   // Get all courses with proper error handling and pagination
