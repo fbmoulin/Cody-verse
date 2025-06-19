@@ -22,6 +22,8 @@ const QueryOptimizer = require('./core/QueryOptimizer');
 const MemoryDebugger = require('./core/MemoryDebugger');
 const TargetedMemoryOptimizer = require('./core/TargetedMemoryOptimizer');
 const CacheOptimizer = require('./core/CacheOptimizer');
+const OptimizedCacheSystem = require('./core/OptimizedCacheSystem');
+const MemoryLeakDetector = require('./core/MemoryLeakDetector');
 const VisualOptimizer = require('./core/VisualOptimizer');
 // const ComprehensiveDatabaseOptimizer = require('./services/comprehensiveDatabaseOptimizer');
 
@@ -302,6 +304,63 @@ class CodyVerseServer {
       try {
         const stats = this.cacheOptimizer.getCacheStats();
         res.json({ success: true, data: stats });
+      } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+      }
+    });
+
+    // Advanced memory management endpoints
+    this.app.get('/api/memory/optimized-cache/stats', (req, res) => {
+      try {
+        const stats = this.optimizedCacheSystem.getStats();
+        res.json({ success: true, data: stats });
+      } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+      }
+    });
+
+    this.app.post('/api/memory/optimize', (req, res) => {
+      try {
+        this.optimizedCacheSystem.performMemoryOptimization();
+        const stats = this.optimizedCacheSystem.getStats();
+        res.json({ 
+          success: true, 
+          message: 'Memory optimization completed',
+          data: stats 
+        });
+      } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+      }
+    });
+
+    this.app.get('/api/memory/leak-detection', (req, res) => {
+      try {
+        const report = this.memoryLeakDetector.getReport();
+        res.json({ success: true, data: report });
+      } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+      }
+    });
+
+    this.app.post('/api/memory/emergency-cleanup', (req, res) => {
+      try {
+        this.optimizedCacheSystem.emergencyCleanup();
+        this.cacheOptimizer.emergencyFlush();
+        
+        if (global.gc) {
+          global.gc();
+        }
+        
+        const memUsage = process.memoryUsage();
+        res.json({ 
+          success: true, 
+          message: 'Emergency cleanup completed',
+          data: {
+            heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024),
+            heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024),
+            usagePercentage: Math.round((memUsage.heapUsed / memUsage.heapTotal) * 100)
+          }
+        });
       } catch (error) {
         res.status(500).json({ success: false, error: error.message });
       }

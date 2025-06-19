@@ -597,4 +597,52 @@ router.post('/debug/cache/emergency-flush', (req, res) => {
   res.json({ success: true, message: 'Cache emergency flush completed' });
 });
 
+// Memory Optimization Routes
+const MemoryOptimizationService = require('../services/memoryOptimizationService');
+const memoryService = new MemoryOptimizationService();
+
+router.get('/memory/stats', (req, res) => {
+  try {
+    const stats = memoryService.getStats();
+    res.json({ success: true, data: stats });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/memory/optimize', (req, res) => {
+  try {
+    const result = memoryService.optimizeMemory();
+    res.json({ success: true, data: result, message: 'Memory optimization completed' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/memory/emergency-cleanup', (req, res) => {
+  try {
+    const result = memoryService.emergencyCleanup();
+    res.json({ success: true, data: result, message: 'Emergency cleanup completed' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.get('/memory/usage', (req, res) => {
+  try {
+    const usage = process.memoryUsage();
+    const result = {
+      heapUsed: Math.round(usage.heapUsed / 1024 / 1024), // MB
+      heapTotal: Math.round(usage.heapTotal / 1024 / 1024), // MB
+      rss: Math.round(usage.rss / 1024 / 1024), // MB
+      external: Math.round(usage.external / 1024 / 1024), // MB
+      usagePercentage: Math.round((usage.heapUsed / usage.heapTotal) * 100),
+      timestamp: new Date().toISOString()
+    };
+    res.json({ success: true, data: result });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 module.exports = router;
