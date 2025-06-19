@@ -433,6 +433,51 @@ router.get('/ux/course/:courseId/load', (req, res) => uxController.loadCourseWit
 // UX Metrics
 router.get('/ux/metrics', (req, res) => uxController.getUXMetrics(req, res));
 
+// Debug and Memory Optimization Routes
+router.get('/debug/memory', async (req, res) => {
+  try {
+    const memoryOptimizer = require('../core/MemoryOptimizer');
+    const optimizer = new memoryOptimizer();
+    const report = optimizer.getMemoryReport();
+    res.json({ success: true, data: report });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/debug/memory/optimize', async (req, res) => {
+  try {
+    const memoryOptimizer = require('../core/MemoryOptimizer');
+    const optimizer = new memoryOptimizer();
+    const result = await optimizer.optimizeMemoryUsage();
+    res.json({ success: true, data: result });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.get('/debug/system', async (req, res) => {
+  try {
+    const memoryUsage = process.memoryUsage();
+    const uptime = process.uptime();
+    
+    res.json({
+      success: true,
+      data: {
+        memory: memoryUsage,
+        uptime: uptime,
+        nodeVersion: process.version,
+        platform: process.platform,
+        arch: process.arch,
+        pid: process.pid,
+        timestamp: new Date().toISOString()
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // Rota de health check
 router.get('/health', require('../server/database').healthCheck);
 
