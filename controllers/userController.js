@@ -1,8 +1,11 @@
 const { db } = require('../server/database');
 const { users, userModuleProgress, userLessonProgress } = require('../shared/schema');
 const { eq, sql } = require('drizzle-orm');
+const validationService = require('../services/validationService');
+const logger = require('../server/logger');
+const BaseController = require('../core/BaseController');
 
-class UserController {
+class UserController extends BaseController {
   // Criar novo usuário
   async createUser(req, res) {
     try {
