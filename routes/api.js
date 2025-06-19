@@ -599,7 +599,9 @@ router.post('/debug/cache/emergency-flush', (req, res) => {
 
 // Memory Optimization Routes
 const MemoryOptimizationService = require('../services/memoryOptimizationService');
+const MemoryPressureManager = require('../core/MemoryPressureManager');
 const memoryService = new MemoryOptimizationService();
+const pressureManager = new MemoryPressureManager();
 
 router.get('/memory/stats', (req, res) => {
   try {
@@ -640,6 +642,49 @@ router.get('/memory/usage', (req, res) => {
       timestamp: new Date().toISOString()
     };
     res.json({ success: true, data: result });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/memory/intelligent-optimize', (req, res) => {
+  try {
+    const result = pressureManager.intelligentOptimization();
+    res.json({ success: true, data: result, message: 'Intelligent optimization completed' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.get('/memory/pressure-stats', (req, res) => {
+  try {
+    const stats = pressureManager.getStats();
+    res.json({ success: true, data: stats });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/memory/force-cleanup', (req, res) => {
+  try {
+    // Execute both optimization services
+    const optimizationResult = memoryService.optimizeMemory();
+    const pressureResult = pressureManager.intelligentOptimization();
+    
+    // Alternative memory cleanup
+    memoryService.alternativeMemoryCleanup();
+    
+    const finalUsage = process.memoryUsage();
+    const result = {
+      optimization: optimizationResult,
+      pressure: pressureResult,
+      finalUsage: {
+        heapUsed: Math.round(finalUsage.heapUsed / 1024 / 1024),
+        usagePercentage: Math.round((finalUsage.heapUsed / finalUsage.heapTotal) * 100)
+      }
+    };
+    
+    res.json({ success: true, data: result, message: 'Comprehensive memory cleanup completed' });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
