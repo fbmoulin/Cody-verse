@@ -278,4 +278,4 @@ class DataAccessLayer extends BaseService {
   }
 }
 
-module.exports = new DataAccessLayer();
+module.exports = DataAccessLayer;

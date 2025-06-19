@@ -14,7 +14,7 @@ const RequestMiddleware = require('./server/requestMiddleware');
 
 // Core refactored components
 const configManager = require('./core/ConfigManager');
-const dataAccessLayer = require('./core/DataAccessLayer');
+const DataAccessLayer = require('./core/DataAccessLayer');
 const apiDocGenerator = require('./core/APIDocGenerator');
 const AdvancedPerformanceOptimizer = require('./core/AdvancedPerformanceOptimizer');
 const EnhancedMemoryOptimizer = require('./core/EnhancedMemoryOptimizer');
