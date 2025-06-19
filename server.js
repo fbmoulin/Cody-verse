@@ -77,8 +77,11 @@ class CodyVerseServer {
     try {
       console.log('Inicializando Cody Verse Backend...');
       
-      // Initialize optimizers first
+      // Initialize optimizers first with error handling
       await this.initializeOptimizers();
+      
+      // Basic middleware first to ensure server can respond
+      this.setupBasicMiddleware();
       
       // Validate enhanced configuration
       try {
@@ -121,11 +124,22 @@ class CodyVerseServer {
         console.warn('Health monitoring initialization failed:', error.message);
       }
       
-      // Configurar middleware
-      this.setupMiddleware();
+      // Setup enhanced middleware
+      try {
+        this.setupMiddleware();
+        console.log('Enhanced middleware configured');
+      } catch (error) {
+        console.warn('Enhanced middleware failed, using basic middleware:', error.message);
+      }
       
-      // Configurar rotas
-      this.setupRoutes();
+      // Setup routes
+      try {
+        this.setupRoutes();
+        console.log('Routes configured');
+      } catch (error) {
+        console.warn('Route setup failed, using basic routes:', error.message);
+        this.setupBasicRoutes();
+      }
       
       console.log('Servidor inicializado com sucesso');
     } catch (error) {
