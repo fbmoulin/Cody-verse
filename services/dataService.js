@@ -126,10 +126,6 @@ class DataService {
       errorMonitoring.trackDatabaseError(error, 'getAllCourses');
       performanceAnalyzer.trackQuery('getAllCourses', Date.now() - startTime, false);
       throw new Error('Unable to retrieve courses - database connection issue');
-    } finally {
-      if (!error) {
-        performanceAnalyzer.trackQuery('getAllCourses', Date.now() - startTime, true);
-      }
     }
   }
 
