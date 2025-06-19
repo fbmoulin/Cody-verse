@@ -37,19 +37,35 @@ class DataService {
 
       const courses = await Promise.race([queryPromise, timeoutPromise]);
 
+      if (!courses.length) {
+        logger.warn('No courses found in database');
+        return {
+          success: true,
+          data: [],
+          source: 'database'
+        };
+      }
+
       const coursesWithLessons = await Promise.all(
         courses.map(async (course) => {
           const courseLessons = await this.getLessonsByModuleId(course.id);
           return {
-            ...course,
-            lessonCount: courseLessons.length
+            id: course.id,
+            title: course.title,
+            description: course.description,
+            difficulty: course.difficulty,
+            duration: course.duration,
+            totalXP: course.totalXP,
+            orderIndex: course.orderIndex,
+            lessonCount: courseLessons.length,
+            lessons: courseLessons
           };
         })
       );
 
       // Cache successful results for 15 minutes
       cacheService.set(cacheKey, coursesWithLessons, 15 * 60 * 1000);
-      logger.database('Courses retrieved from database and cached');
+      logger.info('Courses retrieved from database and cached', { count: coursesWithLessons.length });
 
       return {
         success: true,
@@ -125,11 +141,24 @@ class DataService {
 
       const courseLessons = await Promise.race([queryPromise, timeoutPromise]);
 
-      // Cache results for 20 minutes (even if empty)
-      cacheService.set(cacheKey, courseLessons, 20 * 60 * 1000);
-      logger.info('Lessons retrieved from database and cached', { moduleId, count: courseLessons.length });
+      // Transform lessons to match expected format
+      const formattedLessons = courseLessons.map(lesson => ({
+        id: lesson.id,
+        moduleId: lesson.moduleId,
+        title: lesson.title,
+        type: lesson.type,
+        content: lesson.content || {},
+        duration: lesson.duration,
+        xpReward: lesson.xpReward,
+        orderIndex: lesson.orderIndex,
+        isActive: lesson.isActive
+      }));
 
-      return courseLessons;
+      // Cache results for 20 minutes (even if empty)
+      cacheService.set(cacheKey, formattedLessons, 20 * 60 * 1000);
+      logger.info('Lessons retrieved from database and cached', { moduleId, count: formattedLessons.length });
+
+      return formattedLessons;
     } catch (error) {
       logger.warn('Failed to load lessons for module', moduleId, error.message);
       // Return empty array instead of throwing error
