@@ -80,10 +80,20 @@ class CodyVerseServer {
   }
 
   setupRoutes() {
-    // Serve static files
+    // Optimized static file serving
     this.app.use(express.static(path.join(__dirname), {
-      maxAge: '1d',
-      etag: true
+      maxAge: this.isProduction ? '7d' : '1h',
+      etag: true,
+      lastModified: true,
+      cacheControl: true,
+      immutable: this.isProduction,
+      setHeaders: (res, path) => {
+        if (path.endsWith('.js') || path.endsWith('.css')) {
+          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        } else if (path.endsWith('.html')) {
+          res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+        }
+      }
     }));
 
     // Health check

@@ -9,9 +9,21 @@ const path = require('path');
 const ProductionOptimizer = require('./core/ProductionOptimizer');
 const ScalableArchitecture = require('./core/ScalableArchitecture');
 
-// Core services
-const logger = require('./server/logger');
-const ConfigManager = require('./core/ConfigManager');
+// Core services - with error handling
+let logger, ConfigManager;
+try {
+  logger = require('./server/logger');
+} catch (error) {
+  console.log('Logger not available, using console');
+  logger = console;
+}
+
+try {
+  ConfigManager = require('./core/ConfigManager');
+} catch (error) {
+  console.log('ConfigManager not available, using defaults');
+  ConfigManager = class { constructor() {} };
+}
 
 console.log('Starting CodyVerse Production Server...');
 
@@ -19,10 +31,23 @@ class CodyVerseProductionServer {
   constructor() {
     this.app = express();
     this.server = null;
-    this.config = new ConfigManager();
-    this.optimizer = new ProductionOptimizer();
-    this.architecture = new ScalableArchitecture();
+    this.config = ConfigManager ? new ConfigManager() : {};
     this.isShuttingDown = false;
+    
+    // Initialize optimizers with error handling
+    try {
+      this.optimizer = new ProductionOptimizer();
+    } catch (error) {
+      console.log('ProductionOptimizer not available, continuing without optimization');
+      this.optimizer = null;
+    }
+    
+    try {
+      this.architecture = new ScalableArchitecture();
+    } catch (error) {
+      console.log('ScalableArchitecture not available, using basic setup');
+      this.architecture = null;
+    }
     
     // Performance tracking
     this.metrics = {
@@ -35,13 +60,27 @@ class CodyVerseProductionServer {
 
   async initialize() {
     try {
-      logger.info('Initializing production server', { category: 'startup' });
+      console.log('Initializing production server...');
 
-      // 1. Setup production optimizations
-      await this.optimizer.optimizeForProduction();
+      // 1. Setup production optimizations (optional)
+      if (this.optimizer) {
+        try {
+          await this.optimizer.optimizeForProduction();
+          console.log('Production optimizations applied');
+        } catch (error) {
+          console.log('Optimization failed, continuing:', error.message);
+        }
+      }
       
-      // 2. Initialize scalable architecture
-      await this.architecture.initializeScalableComponents();
+      // 2. Initialize scalable architecture (optional)
+      if (this.architecture) {
+        try {
+          await this.architecture.initializeScalableComponents();
+          console.log('Scalable architecture initialized');
+        } catch (error) {
+          console.log('Architecture initialization failed, continuing:', error.message);
+        }
+      }
       
       // 3. Configure security middleware
       this.setupSecurityMiddleware();
@@ -61,17 +100,10 @@ class CodyVerseProductionServer {
       // 8. Configure graceful shutdown
       this.setupGracefulShutdown();
 
-      logger.info('Production server initialized successfully', {
-        category: 'startup',
-        duration: Date.now() - this.metrics.startTime
-      });
+      console.log('Production server initialized successfully');
 
     } catch (error) {
-      logger.error('Failed to initialize production server', {
-        category: 'startup',
-        error: error.message,
-        stack: error.stack
-      });
+      console.error('Failed to initialize production server:', error.message);
       throw error;
     }
   }
@@ -120,7 +152,7 @@ class CodyVerseProductionServer {
 
     this.app.use(limiter);
 
-    logger.info('Security middleware configured', { category: 'security' });
+    console.log('Security middleware configured');
   }
 
   setupPerformanceMiddleware() {
