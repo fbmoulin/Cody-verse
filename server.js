@@ -48,15 +48,28 @@ class CodyVerseServer {
 
   async initializeOptimizers() {
     if (!this.optimizersInitialized) {
-      this.performanceOptimizer = new AdvancedPerformanceOptimizer();
-      this.memoryOptimizer = new EnhancedMemoryOptimizer();
-      this.queryOptimizer = new QueryOptimizer();
-      this.memoryDebugger = new MemoryDebugger();
-      this.targetedOptimizer = new TargetedMemoryOptimizer();
-      this.cacheOptimizer = new CacheOptimizer();
-      this.visualOptimizer = new VisualOptimizer();
-      this.optimizersInitialized = true;
-      console.log('Performance optimizers initialized');
+      try {
+        this.performanceOptimizer = new AdvancedPerformanceOptimizer();
+        this.memoryOptimizer = new EnhancedMemoryOptimizer();
+        this.queryOptimizer = new QueryOptimizer();
+        this.memoryDebugger = new MemoryDebugger();
+        this.targetedOptimizer = new TargetedMemoryOptimizer();
+        this.cacheOptimizer = new CacheOptimizer();
+        this.visualOptimizer = new VisualOptimizer();
+        this.optimizersInitialized = true;
+        console.log('Performance optimizers initialized');
+      } catch (error) {
+        console.warn('Optimizer initialization failed, continuing without optimizers:', error.message);
+        // Create fallback optimizers to prevent crashes
+        this.performanceOptimizer = { createOptimizedMiddleware: () => (req, res, next) => next() };
+        this.memoryOptimizer = { getMemoryReport: () => ({ status: 'disabled' }), optimizeMemory: () => ({ status: 'disabled' }) };
+        this.queryOptimizer = { getQueryReport: () => ({ status: 'disabled' }) };
+        this.memoryDebugger = { analyzeMemoryLeaks: () => ({ status: 'disabled' }), aggressiveMemoryCleanup: () => ({ status: 'disabled' }), getMemoryReport: () => ({ status: 'disabled' }) };
+        this.targetedOptimizer = { targetedCleanup: () => ({ status: 'disabled' }) };
+        this.cacheOptimizer = {};
+        this.visualOptimizer = {};
+        this.optimizersInitialized = true;
+      }
     }
   }
 
@@ -64,9 +77,16 @@ class CodyVerseServer {
     try {
       console.log('Inicializando Cody Verse Backend...');
       
+      // Initialize optimizers first
+      await this.initializeOptimizers();
+      
       // Validate enhanced configuration
-      configManager.validate();
-      console.log('Enhanced configuration validated');
+      try {
+        configManager.validate();
+        console.log('Enhanced configuration validated');
+      } catch (error) {
+        console.warn('Configuration validation failed, using defaults:', error.message);
+      }
       
       // Initialize enhanced connection pool
       try {
@@ -86,16 +106,20 @@ class CodyVerseServer {
       }
 
       // Initialize API documentation
-      apiDocGenerator.autoRegisterRoutes();
-      console.log('API documentation initialized');
+      try {
+        apiDocGenerator.autoRegisterRoutes();
+        console.log('API documentation initialized');
+      } catch (error) {
+        console.warn('API documentation initialization failed:', error.message);
+      }
 
       // Start system health monitoring
-      systemHealth.startMonitoring();
-      
-      console.log('Advanced performance optimization initialized');
-      
-      // Database optimization temporarily disabled
-      // await this.databaseOptimizer.optimizeDatabase();
+      try {
+        systemHealth.startMonitoring();
+        console.log('System health monitoring started');
+      } catch (error) {
+        console.warn('Health monitoring initialization failed:', error.message);
+      }
       
       // Configurar middleware
       this.setupMiddleware();
@@ -103,13 +127,13 @@ class CodyVerseServer {
       // Configurar rotas
       this.setupRoutes();
       
-      // Dados já foram inicializados via SQL
-      console.log('Dados base carregados do banco PostgreSQL');
-      
       console.log('Servidor inicializado com sucesso');
     } catch (error) {
       console.error('Erro na inicialização:', error);
-      process.exit(1);
+      // Don't exit, try to continue with basic functionality
+      console.log('Continuing with basic server functionality...');
+      this.setupBasicMiddleware();
+      this.setupBasicRoutes();
     }
   }
 
