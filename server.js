@@ -46,6 +46,20 @@ class CodyVerseServer {
     this.optimizersInitialized = false;
   }
 
+  async initializeOptimizers() {
+    if (!this.optimizersInitialized) {
+      this.performanceOptimizer = new AdvancedPerformanceOptimizer();
+      this.memoryOptimizer = new EnhancedMemoryOptimizer();
+      this.queryOptimizer = new QueryOptimizer();
+      this.memoryDebugger = new MemoryDebugger();
+      this.targetedOptimizer = new TargetedMemoryOptimizer();
+      this.cacheOptimizer = new CacheOptimizer();
+      this.visualOptimizer = new VisualOptimizer();
+      this.optimizersInitialized = true;
+      console.log('Performance optimizers initialized');
+    }
+  }
+
   async initialize() {
     try {
       console.log('Inicializando Cody Verse Backend...');
@@ -78,7 +92,6 @@ class CodyVerseServer {
       // Start system health monitoring
       systemHealth.startMonitoring();
       
-      // Initialize performance optimization (defer memory optimization)
       console.log('Advanced performance optimization initialized');
       
       // Database optimization temporarily disabled
