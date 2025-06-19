@@ -9,6 +9,11 @@ const { storage } = require('./server/storage.js');
 const AuthMiddleware = require('./server/authMiddleware.js');
 const authRoutes = require('./server/authRoutes.js');
 
+// Validation and Security Middleware
+const ValidationMiddleware = require('./middleware/validationMiddleware.js');
+const SanitizationMiddleware = require('./middleware/sanitizationMiddleware.js');
+const SecurityMiddleware = require('./middleware/securityMiddleware.js');
+
 // Production optimizers
 const ProductionOptimizer = require('./core/ProductionOptimizer');
 const LoadBalancer = require('./core/LoadBalancer');
@@ -124,8 +129,15 @@ class CodyVerseServer {
         });
       });
 
-      // Enhanced authentication routes
-      this.app.use('/api/auth', authRoutes);
+      // Enhanced authentication routes with validation
+      this.app.use('/api/auth', 
+        SanitizationMiddleware.sanitizeResponseMiddleware(['password', 'tokenHash']),
+        authRoutes
+      );
+
+      // Validated routes with comprehensive security
+      const validatedRoutes = require('./routes/validatedRoutes.js');
+      this.app.use('/api/v1', validatedRoutes);
       
     } catch (error) {
       console.error('Failed to setup auth routes:', error);
@@ -332,6 +344,10 @@ class CodyVerseServer {
 
     // Enhanced auth routes fallback
     this.app.use('/api/auth', authRoutes);
+
+    // Fallback validated routes
+    const validatedRoutes = require('./routes/validatedRoutes.js');
+    this.app.use('/api/v1', validatedRoutes);
 
     console.log('Fallback auth routes configured');
   }

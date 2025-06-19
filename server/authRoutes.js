@@ -1,11 +1,18 @@
 const express = require('express');
 const AuthMiddleware = require('./authMiddleware.js');
 const { storage } = require('./storage.js');
+const ValidationMiddleware = require('../middleware/validationMiddleware.js');
+const SanitizationMiddleware = require('../middleware/sanitizationMiddleware.js');
+const SecurityMiddleware = require('../middleware/securityMiddleware.js');
 
 const router = express.Router();
 
 // Generate JWT token for authenticated user
-router.post('/token/jwt', AuthMiddleware.requireAuth, async (req, res) => {
+router.post('/token/jwt', 
+  SecurityMiddleware.authRateLimit(),
+  AuthMiddleware.requireAuth,
+  ValidationMiddleware.validateJWTGeneration(),
+  async (req, res) => {
   try {
     const userId = req.user.claims.sub;
     const user = await storage.getUser(userId);
@@ -34,7 +41,12 @@ router.post('/token/jwt', AuthMiddleware.requireAuth, async (req, res) => {
 });
 
 // Generate API token for authenticated user
-router.post('/token/api', AuthMiddleware.requireAuth, async (req, res) => {
+router.post('/token/api',
+  SecurityMiddleware.authRateLimit(),
+  AuthMiddleware.requireAuth,
+  ValidationMiddleware.validateAPITokenCreation(),
+  SanitizationMiddleware.sanitizeTokenData(),
+  async (req, res) => {
   try {
     const userId = req.user.claims.sub;
     const { name, permissions, expiresIn } = req.body;
@@ -144,7 +156,11 @@ router.get('/profile', AuthMiddleware.requireAnyAuth, async (req, res) => {
 });
 
 // Update user preferences
-router.patch('/profile/preferences', AuthMiddleware.requireAnyAuth, async (req, res) => {
+router.patch('/profile/preferences', 
+  AuthMiddleware.requireAnyAuth,
+  ValidationMiddleware.validateUserPreferences(),
+  SanitizationMiddleware.sanitizeUserData(),
+  async (req, res) => {
   try {
     let userId = null;
     
