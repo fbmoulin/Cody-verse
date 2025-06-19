@@ -469,6 +469,8 @@ const IntegrationHealthController = require('../controllers/integrationHealthCon
 const integrationHealthController = new IntegrationHealthController();
 
 router.get('/integrations/health', (req, res) => integrationHealthController.getSystemHealth(req, res));
+router.get('/integrations/all-health', (req, res) => integrationHealthController.getDetailedHealthReport(req, res));
+router.get('/integrations/critical-issues', (req, res) => integrationHealthController.getCriticalIssues(req, res));
 router.get('/integrations/health/:integrationId', (req, res) => integrationHealthController.getIntegrationHealth(req, res));
 router.post('/integrations/health/check-all', (req, res) => integrationHealthController.runAllHealthChecks(req, res));
 router.post('/integrations/recovery/:integrationId', (req, res) => integrationHealthController.recoverIntegration(req, res));
