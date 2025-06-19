@@ -6,6 +6,8 @@ const helmet = require('helmet');
 // Replit Auth components
 const { setupAuth, isAuthenticated } = require('./server/replitAuth.js');
 const { storage } = require('./server/storage.js');
+const AuthMiddleware = require('./server/authMiddleware.js');
+const authRoutes = require('./server/authRoutes.js');
 
 // Production optimizers
 const ProductionOptimizer = require('./core/ProductionOptimizer');
@@ -121,6 +123,9 @@ class CodyVerseServer {
           user: req.user.claims 
         });
       });
+
+      // Enhanced authentication routes
+      this.app.use('/api/auth', authRoutes);
       
     } catch (error) {
       console.error('Failed to setup auth routes:', error);
@@ -186,6 +191,16 @@ class CodyVerseServer {
       } catch (error) {
         console.error('Error serving auth page:', error);
         res.status(404).send('Auth page not found');
+      }
+    });
+
+    // Admin auth dashboard
+    this.app.get('/admin/auth', (req, res) => {
+      try {
+        res.sendFile(path.join(__dirname, 'client', 'admin-auth.html'));
+      } catch (error) {
+        console.error('Error serving admin auth page:', error);
+        res.status(404).send('Admin auth page not found');
       }
     });
 
@@ -314,6 +329,9 @@ class CodyVerseServer {
     this.app.get("/api/logout", (req, res) => {
       res.redirect("/");
     });
+
+    // Enhanced auth routes fallback
+    this.app.use('/api/auth', authRoutes);
 
     console.log('Fallback auth routes configured');
   }

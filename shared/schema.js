@@ -18,6 +18,34 @@ const replitUsers = pgTable("replit_users", {
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
+  role: varchar("role").default("student"), // student, teacher, admin
+  isActive: boolean("is_active").default(true),
+  lastLoginAt: timestamp("last_login_at"),
+  preferences: jsonb("preferences").default({}),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// API tokens for programmatic access
+const apiTokens = pgTable("api_tokens", {
+  id: varchar("id").primaryKey().notNull(),
+  userId: varchar("user_id").references(() => replitUsers.id),
+  tokenName: varchar("token_name").notNull(),
+  tokenHash: varchar("token_hash").notNull(),
+  permissions: jsonb("permissions").default([]),
+  lastUsedAt: timestamp("last_used_at"),
+  expiresAt: timestamp("expires_at"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// User roles and permissions
+const userRoles = pgTable("user_roles", {
+  id: varchar("id").primaryKey().notNull(),
+  name: varchar("name").notNull().unique(),
+  description: varchar("description"),
+  permissions: jsonb("permissions").default([]),
+  isSystemRole: boolean("is_system_role").default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -303,6 +331,8 @@ module.exports = {
   // Replit Auth tables
   sessions,
   replitUsers,
+  apiTokens,
+  userRoles,
   // Original tables
   users,
   courseModules,
