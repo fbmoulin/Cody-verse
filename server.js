@@ -42,13 +42,8 @@ class CodyVerseServer {
   constructor() {
     this.app = express();
     this.server = null;
-    this.performanceOptimizer = new AdvancedPerformanceOptimizer();
-    this.memoryOptimizer = new EnhancedMemoryOptimizer();
-    this.queryOptimizer = new QueryOptimizer();
-    this.memoryDebugger = new MemoryDebugger();
-    this.targetedOptimizer = new TargetedMemoryOptimizer();
-    this.cacheOptimizer = new CacheOptimizer();
-    this.visualOptimizer = new VisualOptimizer();
+    // Defer optimizer initialization until after server starts
+    this.optimizersInitialized = false;
   }
 
   async initialize() {
@@ -83,10 +78,7 @@ class CodyVerseServer {
       // Start system health monitoring
       systemHealth.startMonitoring();
       
-      // Force memory optimization to resolve critical usage
-      await this.memoryOptimizer.optimizeMemory(true);
-      
-      // Initialize performance optimization
+      // Initialize performance optimization (defer memory optimization)
       console.log('Advanced performance optimization initialized');
       
       // Database optimization temporarily disabled

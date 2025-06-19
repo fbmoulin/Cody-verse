@@ -525,6 +525,40 @@ router.get('/debug/system', async (req, res) => {
   }
 });
 
+// Missing Cache Debug Routes
+router.post('/debug/cache/emergency-flush', async (req, res) => {
+  try {
+    const CacheOptimizer = require('../core/CacheOptimizer');
+    const cacheOptimizer = new CacheOptimizer();
+    const flushed = cacheOptimizer.emergencyFlush();
+    const stats = cacheOptimizer.getCacheStats();
+    res.json({ success: true, data: { flushed, stats } });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.get('/debug/cache/stats', (req, res) => {
+  try {
+    const CacheOptimizer = require('../core/CacheOptimizer');
+    const cacheOptimizer = new CacheOptimizer();
+    const stats = cacheOptimizer.getCacheStats();
+    res.json({ success: true, data: stats });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Study Techniques Routes
+const StudyTechniquesController = require('../controllers/studyTechniquesController');
+const studyTechniquesController = new StudyTechniquesController();
+
+router.post('/study-techniques/analyze', (req, res) => studyTechniquesController.analyzeStudyProfile(req, res));
+router.get('/study-techniques/personalized/:userId', (req, res) => studyTechniquesController.getPersonalizedTechniques(req, res));
+router.post('/study-techniques/pomodoro/start', (req, res) => studyTechniquesController.startPomodoroSession(req, res));
+router.post('/study-techniques/session/end', (req, res) => studyTechniquesController.endStudySession(req, res));
+router.get('/study-techniques/analytics/:userId', (req, res) => studyTechniquesController.getStudyAnalytics(req, res));
+
 // Rota de health check
 router.get('/health', require('../server/database').healthCheck);
 
