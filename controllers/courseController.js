@@ -2,12 +2,22 @@ const dataService = require('../services/dataService');
 const { lessonsData } = require('../server/staticData');
 
 class CourseController {
-  // Obter todos os cursos
+  // Obter todos os cursos com paginação
   async getAllCourses(req, res) {
     const logger = require('../server/logger');
     
     try {
-      const result = await dataService.getAllCourses();
+      const page = parseInt(req.query.page) || 1;
+      const limit = Math.min(parseInt(req.query.limit) || 50, 100); // Max 100 per page
+      const includeLessons = req.query.includeLessons !== 'false';
+      
+      const result = await dataService.getAllCourses({ page, limit, includeLessons });
+      
+      // Add performance metadata
+      res.set('X-Total-Count', result.pagination?.total || result.data.length);
+      res.set('X-Page', page.toString());
+      res.set('X-Per-Page', limit.toString());
+      
       res.json({
         ...result,
         count: result.data.length

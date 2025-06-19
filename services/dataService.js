@@ -1,77 +1,122 @@
 const { db } = require('../server/database');
 const { courseModules, lessons, codyInteractions } = require('../shared/schema');
 const { courseModulesData, lessonsData } = require('../server/staticData');
-const { eq, asc } = require('drizzle-orm');
+const { eq, asc, sql, inArray } = require('drizzle-orm');
 const errorHandler = require('./errorHandlerService');
 const newCacheService = require('./cacheService');
 
 class DataService {
-  // Get all courses with proper error handling
-  async getAllCourses() {
+  // Get all courses with proper error handling and pagination
+  async getAllCourses(options = {}) {
     const logger = require('../server/logger');
     const cacheService = require('../core/services/cache_service');
-    const cacheKey = 'all_courses';
+    const { page = 1, limit = 50, includeLessons = true } = options;
+    const offset = (page - 1) * limit;
+    const cacheKey = `courses_p${page}_l${limit}_i${includeLessons}`;
     
     try {
       // Check cache first
-      const cachedCourses = cacheService.get(cacheKey);
-      if (cachedCourses) {
-        logger.info('Courses retrieved from cache');
-        return {
-          success: true,
-          data: cachedCourses,
-          source: 'cache'
-        };
+      const cachedResult = cacheService.get(cacheKey);
+      if (cachedResult) {
+        logger.info('Courses retrieved from cache', { page, limit });
+        return cachedResult;
       }
 
-      // Set a timeout for database operations
-      const queryPromise = db
+      // Get total count for pagination
+      const countPromise = db
+        .select({ count: sql`count(*)` })
+        .from(courseModules)
+        .where(eq(courseModules.isActive, true));
+
+      // Get paginated courses
+      const coursesPromise = db
         .select()
         .from(courseModules)
         .where(eq(courseModules.isActive, true))
-        .orderBy(asc(courseModules.orderIndex));
+        .orderBy(asc(courseModules.orderIndex))
+        .limit(limit)
+        .offset(offset);
       
       const timeoutPromise = new Promise((_, reject) => 
         setTimeout(() => reject(new Error('Database query timeout')), 3000)
       );
 
-      const courses = await Promise.race([queryPromise, timeoutPromise]);
+      const [countResult, courses] = await Promise.race([
+        Promise.all([countPromise, coursesPromise]), 
+        timeoutPromise
+      ]);
+
+      const totalCount = parseInt(countResult[0].count);
 
       if (!courses.length) {
-        logger.warn('No courses found in database');
-        return {
+        const emptyResult = {
           success: true,
           data: [],
+          pagination: {
+            page,
+            limit,
+            total: totalCount,
+            totalPages: Math.ceil(totalCount / limit),
+            hasNext: false,
+            hasPrev: false
+          },
           source: 'database'
         };
+        cacheService.set(cacheKey, emptyResult, 10 * 60 * 1000); // Cache for 10 minutes
+        return emptyResult;
       }
 
-      const coursesWithLessons = await Promise.all(
-        courses.map(async (course) => {
-          const courseLessons = await this.getLessonsByModuleId(course.id);
-          return {
-            id: course.id,
-            title: course.title,
-            description: course.description,
-            difficulty: course.difficulty,
-            duration: course.duration,
-            totalXP: course.totalXP,
-            orderIndex: course.orderIndex,
-            lessonCount: courseLessons.length,
-            lessons: courseLessons
-          };
-        })
-      );
+      let coursesWithLessons = courses;
+      
+      if (includeLessons) {
+        // Batch load lessons for all courses to optimize performance
+        const lessonCounts = await this.getBatchLessonCounts(courses.map(c => c.id));
+        
+        coursesWithLessons = courses.map((course) => ({
+          id: course.id,
+          title: course.title,
+          description: course.description,
+          difficulty: course.difficulty,
+          duration: course.duration,
+          totalXP: course.totalXP,
+          orderIndex: course.orderIndex,
+          lessonCount: lessonCounts[course.id] || 0
+        }));
+      } else {
+        coursesWithLessons = courses.map((course) => ({
+          id: course.id,
+          title: course.title,
+          description: course.description,
+          difficulty: course.difficulty,
+          duration: course.duration,
+          totalXP: course.totalXP,
+          orderIndex: course.orderIndex
+        }));
+      }
 
-      // Cache successful results for 15 minutes
-      cacheService.set(cacheKey, coursesWithLessons, 15 * 60 * 1000);
-      logger.info('Courses retrieved from database and cached', { count: coursesWithLessons.length });
-
-      return {
+      const result = {
         success: true,
         data: coursesWithLessons,
+        pagination: {
+          page,
+          limit,
+          total: totalCount,
+          totalPages: Math.ceil(totalCount / limit),
+          hasNext: page < Math.ceil(totalCount / limit),
+          hasPrev: page > 1
+        },
         source: 'database'
       };
+
+      // Cache successful results for 15 minutes
+      cacheService.set(cacheKey, result, 15 * 60 * 1000);
+      logger.info('Courses retrieved from database and cached', { 
+        count: coursesWithLessons.length, 
+        page, 
+        total: totalCount 
+      });
+
+      return result;
     } catch (error) {
       logger.error('Database connection failed for courses', { error: error.message });
       throw new Error('Unable to retrieve courses - database connection issue');
@@ -203,6 +248,32 @@ class DataService {
       success: false,
       error: 'Lesson not found'
     };
+  }
+
+  // Batch get lesson counts for multiple modules (performance optimization)
+  async getBatchLessonCounts(moduleIds) {
+    if (!moduleIds || moduleIds.length === 0) return {};
+    
+    try {
+      const results = await db
+        .select({
+          moduleId: lessons.moduleId,
+          count: sql`count(*)`
+        })
+        .from(lessons)
+        .where(inArray(lessons.moduleId, moduleIds))
+        .groupBy(lessons.moduleId);
+
+      const counts = {};
+      results.forEach(result => {
+        counts[result.moduleId] = parseInt(result.count);
+      });
+
+      return counts;
+    } catch (error) {
+      console.warn('Failed to get batch lesson counts:', error.message);
+      return {};
+    }
   }
 
   // Save interaction (with fallback for database errors)

@@ -50,18 +50,46 @@ function setupSecurity(app) {
 }
 
 function setupPerformance(app) {
+  // Advanced compression with conditional settings
   app.use(compression({
     filter: (req, res) => {
       if (req.headers['x-no-compression']) {
         return false;
       }
+      // Skip compression for already compressed content
+      if (res.getHeader('content-encoding')) {
+        return false;
+      }
       return compression.filter(req, res);
     },
     level: 6,
-    threshold: 1024
+    threshold: 1024,
+    // Different compression levels based on content type
+    chunkSize: 16 * 1024,
+    windowBits: 15,
+    memLevel: 8
   }));
 
-  console.log('Middleware de performance configurado');
+  // Add performance headers
+  app.use((req, res, next) => {
+    const start = process.hrtime.bigint();
+    
+    res.on('finish', () => {
+      const duration = Number(process.hrtime.bigint() - start) / 1000000; // Convert to milliseconds
+      res.setHeader('X-Response-Time', `${duration.toFixed(2)}ms`);
+    });
+    
+    // Cache control headers for static resources
+    if (req.url.match(/\.(css|js|png|jpg|jpeg|gif|ico|svg)$/)) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000'); // 1 year
+    } else if (req.url.startsWith('/api/')) {
+      res.setHeader('Cache-Control', 'no-cache, must-revalidate');
+    }
+    
+    next();
+  });
+
+  console.log('Middleware de performance avançado configurado');
 }
 
 function setupLogging(app) {
