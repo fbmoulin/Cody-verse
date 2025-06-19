@@ -146,14 +146,29 @@ class GamificationTestSuite {
   }
 
   async testCacheEfficiency() {
-    const cacheKey = 'test_cache_key';
-    const testData = { test: 'data', timestamp: Date.now() };
-    
-    // Test notification manager caching
+    const initialStats = this.notificationManager.getCacheStats();
+
     const notification = this.notificationManager.createXPNotification(100, 'Test context');
-    
+
     if (!notification.id || !notification.timestamp) {
       throw new Error('Notification missing required cache identifiers');
+    }
+
+    if (!this.notificationManager.queue.find(n => n.id === notification.id)) {
+      throw new Error('Notification not stored in queue');
+    }
+
+    this.notificationManager.getNotification(notification.id);
+    this.notificationManager.getNotification('missing_id');
+
+    const finalStats = this.notificationManager.getCacheStats();
+
+    if (finalStats.hits !== initialStats.hits + 1) {
+      throw new Error('Cache hit not recorded correctly');
+    }
+
+    if (finalStats.misses !== initialStats.misses + 1) {
+      throw new Error('Cache miss not recorded correctly');
     }
 
     this.logTest('testCacheEfficiency', true, 'Cache efficiency tests passed');
