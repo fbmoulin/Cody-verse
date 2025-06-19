@@ -16,6 +16,10 @@ author = "agent"
 task = "workflow.run"
 args = "Educational Platform"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Monorepo Backend"
+
 [[workflows.workflow]]
 name = "Educational Platform"
 author = "agent"
@@ -23,6 +27,15 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node server-fixed.js"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Monorepo Backend"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd packages/backend && npm run dev"
 waitForPort = 5000
 
 [deployment]

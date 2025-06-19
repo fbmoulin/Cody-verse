@@ -17,6 +17,10 @@
   "dependencies": {
     "@headlessui/react": "^2.2.4",
     "@types/memoizee": "^0.4.12",
+    "@types/node": "^24.0.3",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "autoprefixer": "^10.4.21",
     "bcryptjs": "^3.0.2",
     "clsx": "^2.1.1",
     "compression": "^1.8.0",
@@ -39,12 +43,14 @@
     "lucide-react": "^0.514.0",
     "memoizee": "^0.4.17",
     "morgan": "^1.10.0",
+    "next": "^15.3.4",
     "node-cache": "^5.1.2",
     "object-sizeof": "^2.6.5",
     "openai": "^5.5.1",
     "openid-client": "^6.5.1",
     "passport": "^0.7.0",
     "pg": "^8.16.0",
+    "postcss": "^8.5.6",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hot-toast": "^2.5.2",
@@ -52,10 +58,12 @@
     "react-router-dom": "^7.6.2",
     "supertest": "^7.1.1",
     "tailwind-merge": "^3.3.1",
+    "tailwindcss": "^4.1.10",
     "turbo": "^2.5.4",
     "typescript": "^5.8.3",
     "validator": "^13.15.15",
     "winston": "^3.17.0",
-    "xss": "^1.0.15"
+    "xss": "^1.0.15",
+    "zod": "^3.25.67"
   }
 }

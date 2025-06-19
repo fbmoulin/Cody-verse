@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "projects": {
+    "shared": {
+      "root": "packages/shared",
+      "sourceRoot": "packages/shared/src",
+      "projectType": "library"
+    },
+    "backend": {
+      "root": "packages/backend",
+      "sourceRoot": "packages/backend/src",
+      "projectType": "application"
+    },
+    "frontend": {
+      "root": "packages/frontend",
+      "sourceRoot": "packages/frontend/src",
+      "projectType": "application"
+    }
+  }
+}
