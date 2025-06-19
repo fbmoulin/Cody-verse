@@ -20,6 +20,7 @@ const AdvancedPerformanceOptimizer = require('./core/AdvancedPerformanceOptimize
 const EnhancedMemoryOptimizer = require('./core/EnhancedMemoryOptimizer');
 const QueryOptimizer = require('./core/QueryOptimizer');
 const MemoryDebugger = require('./core/MemoryDebugger');
+const TargetedMemoryOptimizer = require('./core/TargetedMemoryOptimizer');
 const VisualOptimizer = require('./core/VisualOptimizer');
 // const ComprehensiveDatabaseOptimizer = require('./services/comprehensiveDatabaseOptimizer');
 
@@ -44,6 +45,7 @@ class CodyVerseServer {
     this.memoryOptimizer = new EnhancedMemoryOptimizer();
     this.queryOptimizer = new QueryOptimizer();
     this.memoryDebugger = new MemoryDebugger();
+    this.targetedOptimizer = new TargetedMemoryOptimizer();
     this.visualOptimizer = new VisualOptimizer();
   }
 
@@ -157,6 +159,68 @@ class CodyVerseServer {
     this.app.get('/api/debug/memory/report', (req, res) => {
       const report = this.memoryDebugger.getMemoryReport();
       res.json({ success: true, data: report });
+    });
+    
+    // Add targeted memory optimization endpoint
+    this.app.post('/api/debug/memory/targeted-cleanup', async (req, res) => {
+      try {
+        const result = await this.targetedOptimizer.targetedCleanup();
+        res.json({ success: true, data: result });
+      } catch (error) {
+        res.status(500).json({ 
+          success: false, 
+          error: error.message,
+          timestamp: new Date().toISOString()
+        });
+      }
+    });
+    
+    // Add emergency memory cleanup endpoint
+    this.app.post('/api/debug/memory/emergency-cleanup', async (req, res) => {
+      try {
+        // Clear module cache aggressively
+        const modulesBefore = Object.keys(require.cache).length;
+        const cleared = [];
+        
+        for (const moduleId of Object.keys(require.cache)) {
+          if (!moduleId.includes('node_modules') && 
+              !moduleId.includes('/core/') &&
+              !moduleId.includes('server.js') &&
+              !moduleId.includes('/routes/')) {
+            try {
+              delete require.cache[moduleId];
+              cleared.push(moduleId);
+            } catch (e) {
+              // Module in use
+            }
+          }
+        }
+        
+        const modulesAfter = Object.keys(require.cache).length;
+        
+        // Force garbage collection
+        if (global.gc) {
+          for (let i = 0; i < 5; i++) {
+            global.gc();
+          }
+        }
+        
+        res.json({ 
+          success: true, 
+          data: {
+            modulesBefore,
+            modulesAfter,
+            modulesCleared: cleared.length,
+            clearedModules: cleared.slice(0, 10) // Show first 10
+          }
+        });
+      } catch (error) {
+        res.status(500).json({ 
+          success: false, 
+          error: error.message,
+          timestamp: new Date().toISOString()
+        });
+      }
     });
     
     // Middleware de logging personalizado
