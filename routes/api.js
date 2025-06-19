@@ -464,6 +464,22 @@ router.post('/learning/session/complete', (req, res) => advancedLearningControll
 // Demo Endpoints
 router.post('/learning/demo/session', (req, res) => advancedLearningController.createDemoLearningSession(req, res));
 
+// Integration Health Monitoring Routes
+const IntegrationHealthController = require('../controllers/integrationHealthController');
+const integrationHealthController = new IntegrationHealthController();
+
+router.get('/integrations/health', (req, res) => integrationHealthController.getSystemHealth(req, res));
+router.get('/integrations/health/:integrationId', (req, res) => integrationHealthController.getIntegrationHealth(req, res));
+router.post('/integrations/health/check-all', (req, res) => integrationHealthController.runAllHealthChecks(req, res));
+router.post('/integrations/recovery/:integrationId', (req, res) => integrationHealthController.recoverIntegration(req, res));
+router.get('/integrations/issues/critical', (req, res) => integrationHealthController.getCriticalIssues(req, res));
+router.get('/integrations/availability/:integrationId', (req, res) => integrationHealthController.checkIntegrationAvailability(req, res));
+router.get('/integrations/circuit-breakers', (req, res) => integrationHealthController.getCircuitBreakerStatus(req, res));
+router.post('/integrations/circuit-breakers/:integrationId/reset', (req, res) => integrationHealthController.resetCircuitBreaker(req, res));
+router.get('/integrations/metrics', (req, res) => integrationHealthController.getIntegrationMetrics(req, res));
+router.get('/integrations/report/detailed', (req, res) => integrationHealthController.getDetailedHealthReport(req, res));
+router.post('/integrations/test/recovery/:integrationId', (req, res) => integrationHealthController.testIntegrationRecovery(req, res));
+
 // Debug and Memory Optimization Routes
 router.get('/debug/memory', async (req, res) => {
   try {

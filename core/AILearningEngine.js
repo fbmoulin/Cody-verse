@@ -9,11 +9,50 @@ class AILearningEngine extends BaseService {
   constructor() {
     super('AILearningEngine');
     // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-    this.openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    this.initializeOpenAI();
     this.learningProfiles = new Map();
     this.studyTechniques = new Map();
     this.spacedRepetitionSchedules = new Map();
+    this.retryConfig = {
+      maxRetries: 3,
+      baseDelay: 1000,
+      maxDelay: 10000
+    };
+    this.circuitBreaker = {
+      failures: 0,
+      lastFailure: null,
+      threshold: 5,
+      timeout: 300000 // 5 minutes
+    };
     this.initializeLearningEngine();
+  }
+
+  initializeOpenAI() {
+    try {
+      if (!process.env.OPENAI_API_KEY) {
+        logger.warn('OpenAI API key not found - AI features will be limited', {
+          category: 'ai_learning'
+        });
+        this.openai = null;
+        return;
+      }
+      
+      this.openai = new OpenAI({ 
+        apiKey: process.env.OPENAI_API_KEY,
+        timeout: 30000, // 30 second timeout
+        maxRetries: 2
+      });
+      
+      logger.info('OpenAI client initialized successfully', {
+        category: 'ai_learning'
+      });
+    } catch (error) {
+      logger.error('Failed to initialize OpenAI client', {
+        error: error.message,
+        category: 'ai_learning'
+      });
+      this.openai = null;
+    }
   }
 
   initializeLearningEngine() {
@@ -113,9 +152,64 @@ class AILearningEngine extends BaseService {
     };
   }
 
-  // AI-Powered Learning Path Generation
+  // Circuit breaker check
+  isCircuitOpen() {
+    if (this.circuitBreaker.failures >= this.circuitBreaker.threshold) {
+      const timeSinceLastFailure = Date.now() - this.circuitBreaker.lastFailure;
+      return timeSinceLastFailure < this.circuitBreaker.timeout;
+    }
+    return false;
+  }
+
+  // Exponential backoff retry
+  async executeWithRetry(operation, operationName) {
+    if (!this.openai) {
+      throw new Error('OpenAI client not available - check API key configuration');
+    }
+
+    if (this.isCircuitOpen()) {
+      throw new Error(`Circuit breaker open for ${operationName} - service temporarily unavailable`);
+    }
+
+    for (let attempt = 0; attempt <= this.retryConfig.maxRetries; attempt++) {
+      try {
+        const result = await operation();
+        // Reset circuit breaker on success
+        this.circuitBreaker.failures = 0;
+        return result;
+      } catch (error) {
+        this.circuitBreaker.failures++;
+        this.circuitBreaker.lastFailure = Date.now();
+
+        logger.warn(`${operationName} attempt ${attempt + 1} failed`, {
+          error: error.message,
+          attempt: attempt + 1,
+          maxRetries: this.retryConfig.maxRetries,
+          category: 'ai_learning'
+        });
+
+        if (attempt === this.retryConfig.maxRetries) {
+          logger.error(`${operationName} failed after ${this.retryConfig.maxRetries + 1} attempts`, {
+            error: error.message,
+            failures: this.circuitBreaker.failures,
+            category: 'ai_learning'
+          });
+          throw error;
+        }
+
+        // Exponential backoff with jitter
+        const delay = Math.min(
+          this.retryConfig.baseDelay * Math.pow(2, attempt) + Math.random() * 1000,
+          this.retryConfig.maxDelay
+        );
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+
+  // AI-Powered Learning Path Generation with enhanced error handling
   async generatePersonalizedLearningPath(userId, userProfile, courseId) {
-    try {
+    const operation = async () => {
       const prompt = `
         Create a personalized learning path for a student with the following profile:
         
@@ -170,7 +264,28 @@ class AILearningEngine extends BaseService {
         temperature: 0.7
       });
 
-      const learningPath = JSON.parse(response.choices[0].message.content);
+      let learningPath;
+      try {
+        learningPath = JSON.parse(response.choices[0].message.content);
+      } catch (parseError) {
+        logger.error('Failed to parse OpenAI response', {
+          error: parseError.message,
+          response: response.choices[0].message.content,
+          category: 'ai_learning'
+        });
+        throw new Error('Invalid response format from AI service');
+      }
+
+      // Validate response structure
+      if (!learningPath.learningPath || !learningPath.learningPath.phases) {
+        throw new Error('Invalid learning path structure received from AI service');
+      }
+
+      return learningPath;
+    };
+
+    try {
+      const learningPath = await this.executeWithRetry(operation, 'generatePersonalizedLearningPath');
       
       // Store the learning path
       this.learningProfiles.set(userId, {
@@ -195,8 +310,61 @@ class AILearningEngine extends BaseService {
         error: error.message,
         category: 'ai_learning'
       });
-      throw new Error('Unable to generate personalized learning path');
+      
+      // Return fallback path if AI service fails
+      return this.generateFallbackLearningPath(userProfile);
     }
+  }
+
+  // Fallback learning path when AI service is unavailable
+  generateFallbackLearningPath(userProfile) {
+    logger.info('Generating fallback learning path', {
+      learningStyle: userProfile.learningStyle,
+      category: 'ai_learning'
+    });
+
+    const basePath = {
+      learningPath: {
+        totalDuration: "6-8 weeks",
+        phases: [
+          {
+            phase: "Foundation",
+            lessons: ["Introduction to AI", "Basic Concepts"],
+            techniques: this.getOptimalTechniques(userProfile.learningStyle).slice(0, 2),
+            timeAllocation: "1.5 hours per lesson",
+            checkpoints: ["Understanding AI basics", "Completing first exercises"]
+          },
+          {
+            phase: "Core Learning",
+            lessons: ["Machine Learning Fundamentals", "Neural Networks"],
+            techniques: this.getOptimalTechniques(userProfile.learningStyle).slice(2, 4),
+            timeAllocation: "2 hours per lesson",
+            checkpoints: ["Building first model", "Understanding neural networks"]
+          },
+          {
+            phase: "Application",
+            lessons: ["Practical Projects", "Real-world Applications"],
+            techniques: this.getOptimalTechniques(userProfile.learningStyle).slice(0, 3),
+            timeAllocation: "2.5 hours per lesson",
+            checkpoints: ["Completing project", "Presenting solution"]
+          }
+        ],
+        adaptations: {
+          forStrengths: `Optimized for ${userProfile.learningStyle} learning style`,
+          forWeaknesses: "Additional practice exercises and review sessions"
+        }
+      }
+    };
+
+    return basePath;
+  }
+
+  getOptimalTechniques(learningStyle) {
+    const techniques = Array.from(this.studyTechniques.values());
+    return techniques
+      .filter(t => t.adaptableFor.includes(learningStyle) || t.adaptableFor.includes('all'))
+      .sort((a, b) => b.effectiveness - a.effectiveness)
+      .map(t => t.name);
   }
 
   // Advanced Study Technique Implementation
