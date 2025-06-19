@@ -39,7 +39,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd packages/backend && npx tsx watch src/index.ts"
+args = "cd packages/backend && npm run dev"
 waitForPort = 5001
 
 [[workflows.workflow]]
