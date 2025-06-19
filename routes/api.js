@@ -400,6 +400,39 @@ router.get('/logs/summary', (req, res) => {
   }
 });
 
+// UX Enhancement Routes
+const UXController = require('../controllers/uxController');
+const uxController = new UXController();
+
+// Loading States
+router.get('/ux/loading-states', (req, res) => uxController.getLoadingStates(req, res));
+router.post('/ux/loading/start', (req, res) => uxController.startLoading(req, res));
+router.post('/ux/loading/stop', (req, res) => uxController.stopLoading(req, res));
+
+// Skeleton Components
+router.get('/ux/skeleton/:type', (req, res) => uxController.getSkeletonComponent(req, res));
+router.get('/ux/skeleton.css', (req, res) => uxController.getSkeletonCSS(req, res));
+
+// Offline Mode
+router.get('/ux/offline/status', (req, res) => uxController.getOfflineStatus(req, res));
+router.get('/ux/offline/cache/:key', (req, res) => uxController.getCachedData(req, res));
+router.post('/ux/offline/mode', (req, res) => uxController.setOfflineMode(req, res));
+router.post('/ux/offline/queue', (req, res) => uxController.queueOfflineAction(req, res));
+router.post('/ux/offline/sync', (req, res) => uxController.syncOfflineActions(req, res));
+
+// Progress Indicators
+router.post('/ux/progress', (req, res) => uxController.createProgressIndicator(req, res));
+router.put('/ux/progress/:id', (req, res) => uxController.updateProgress(req, res));
+router.get('/ux/progress/:id', (req, res) => uxController.getProgressIndicator(req, res));
+router.get('/ux/progress/:id/html', (req, res) => uxController.getProgressHTML(req, res));
+
+// Enhanced Loading Routes
+router.get('/ux/courses/enhanced', (req, res) => uxController.getEnhancedCourseList(req, res));
+router.get('/ux/course/:courseId/load', (req, res) => uxController.loadCourseWithStates(req, res));
+
+// UX Metrics
+router.get('/ux/metrics', (req, res) => uxController.getUXMetrics(req, res));
+
 // Rota de health check
 router.get('/health', require('../server/database').healthCheck);
 

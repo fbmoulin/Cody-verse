@@ -258,7 +258,16 @@ function setupErrorHandling(app) {
     };
 
     // Track error with monitoring service
-    const errorId = errorMonitoring.trackError(error, errorContext);
+    let errorId = null;
+    try {
+      if (errorMonitoring && typeof errorMonitoring.trackError === 'function') {
+        errorId = errorMonitoring.trackError(error, errorContext);
+      } else if (errorMonitoring && typeof errorMonitoring.trackCriticalError === 'function') {
+        errorId = errorMonitoring.trackCriticalError(error, errorContext);
+      }
+    } catch (trackingError) {
+      logger.error('Error tracking failed', { trackingError: trackingError.message });
+    }
 
     // Enhanced logging with structured data
     logger.logError(error, {

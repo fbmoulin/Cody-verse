@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodyVerse - UX Enhanced Demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* UX Enhancement Styles */
+        .skeleton-card, .skeleton-list-item, .skeleton-stat-card {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        .skeleton-line {
+            height: 16px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 4px;
+            margin: 8px 0;
+        }
+
+        .skeleton-line.short { width: 60%; }
+        .skeleton-title { height: 20px; width: 80%; }
+        .skeleton-circle { width: 40px; height: 40px; border-radius: 50%; }
+        .skeleton-image { height: 120px; width: 100%; }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .progress-indicator {
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background-color: #e5e5e5;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 16px;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .step-marker {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #e5e5e5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .progress-step.completed .step-marker {
+            background-color: #4f46e5;
+            color: white;
+        }
+
+        .progress-step.current .step-marker {
+            background-color: #7c3aed;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .step-label {
+            font-size: 12px;
+            text-align: center;
+            color: #666;
+        }
+
+        .offline-indicator {
+            background-color: #fbbf24;
+            color: #92400e;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4f46e5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success { background-color: #10b981; }
+        .notification.error { background-color: #ef4444; }
+        .notification.warning { background-color: #f59e0b; }
+        .notification.info { background-color: #3b82f6; }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-indigo-600">CodyVerse</h1>
+                    <span class="ml-2 text-sm text-gray-500">UX Enhanced Demo</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div id="connection-status" class="flex items-center">
+                        <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                        <span class="text-sm text-gray-600">Online</span>
+                    </div>
+                    <button onclick="toggleOfflineMode()" class="px-3 py-1 text-sm bg-gray-200 rounded-md hover:bg-gray-300">
+                        <i class="fas fa-wifi mr-1"></i>
+                        Toggle Offline
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- UX Controls -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">UX Enhancement Controls</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button onclick="demonstrateLoadingStates()" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                    <i class="fas fa-spinner mr-2"></i>
+                    Demo Loading States
+                </button>
+                <button onclick="demonstrateSkeletonScreens()" class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700">
+                    <i class="fas fa-ghost mr-2"></i>
+                    Demo Skeleton Screens
+                </button>
+                <button onclick="demonstrateProgressIndicators()" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                    <i class="fas fa-tasks mr-2"></i>
+                    Demo Progress Indicators
+                </button>
+            </div>
+        </div>
+
+        <!-- Offline Mode Indicator -->
+        <div id="offline-indicator" class="offline-indicator hidden">
+            <i class="fas fa-wifi-slash"></i>
+            <span>Você está no modo offline. Algumas funcionalidades podem ser limitadas.</span>
+        </div>
+
+        <!-- Course Loading Demo -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-gray-900">Enhanced Course Loading</h2>
+                <button onclick="loadCourseWithStates()" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                    <i class="fas fa-play mr-2"></i>
+                    Load Course
+                </button>
+            </div>
+            
+            <div id="course-loading-area">
+                <div class="text-center text-gray-500 py-8">
+                    <i class="fas fa-play-circle text-4xl mb-4"></i>
+                    <p>Clique em "Load Course" para ver o carregamento aprimorado</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Indicators Demo -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Progress Indicators</h2>
+            
+            <div class="space-y-6">
+                <!-- Lesson Progress -->
+                <div>
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">Lesson Progress</h3>
+                    <div id="lesson-progress" class="progress-indicator">
+                        <div class="progress-header">
+                            <span class="progress-label">Início</span>
+                            <span class="progress-percentage">0%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-steps">
+                            <div class="progress-step current">
+                                <div class="step-marker">1</div>
+                                <div class="step-label">Início</div>
+                            </div>
+                            <div class="progress-step">
+                                <div class="step-marker">2</div>
+                                <div class="step-label">Leitura</div>
+                            </div>
+                            <div class="progress-step">
+                                <div class="step-marker">3</div>
+                                <div class="step-label">Exercícios</div>
+                            </div>
+                            <div class="progress-step">
+                                <div class="step-marker">4</div>
+                                <div class="step-label">Avaliação</div>
+                            </div>
+                            <div class="progress-step">
+                                <div class="step-marker">5</div>
+                                <div class="step-label">Conclusão</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module Progress -->
+                <div>
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">Module Progress</h3>
+                    <div id="module-progress" class="progress-indicator">
+                        <div class="progress-header">
+                            <span class="progress-label">Iniciado</span>
+                            <span class="progress-percentage">33%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="width: 33%"></div>
+                        </div>
+                        <div class="progress-steps">
+                            <div class="progress-step completed">
+                                <div class="step-marker">1</div>
+                                <div class="step-label">Iniciado</div>
+                            </div>
+                            <div class="progress-step current">
+                                <div class="step-marker">2</div>
+                                <div class="step-label">Em Progresso</div>
+                            </div>
+                            <div class="progress-step">
+                                <div class="step-marker">3</div>
+                                <div class="step-label">Concluído</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Skeleton Screens Demo -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Skeleton Screens</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="skeleton-demo">
+                <!-- This will be populated with skeleton components -->
+            </div>
+        </div>
+
+        <!-- Loaded Content Demo -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Loaded Content</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="loaded-content">
+                <!-- This will show actual content after loading -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Notification Container -->
+    <div id="notification-container"></div>
+
+    <script>
+        // Global state
+        let isOffline = false;
+        let loadingStates = new Map();
+        let progressIndicators = new Map();
+
+        // Notification system
+        function showNotification(message, type = 'info', duration = 3000) {
+            const container = document.getElementById('notification-container');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'times' : type === 'warning' ? 'exclamation' : 'info'}-circle mr-2"></i>
+                ${message}
+            `;
+            
+            container.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => container.removeChild(notification), 300);
+            }, duration);
+        }
+
+        // Offline mode toggle
+        function toggleOfflineMode() {
+            isOffline = !isOffline;
+            const status = document.getElementById('connection-status');
+            const indicator = document.getElementById('offline-indicator');
+            
+            if (isOffline) {
+                status.innerHTML = '<div class="w-2 h-2 bg-red-500 rounded-full mr-2"></div><span class="text-sm text-gray-600">Offline</span>';
+                indicator.classList.remove('hidden');
+                showNotification('Modo offline ativado', 'warning');
+            } else {
+                status.innerHTML = '<div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div><span class="text-sm text-gray-600">Online</span>';
+                indicator.classList.add('hidden');
+                showNotification('Modo online ativado', 'success');
+            }
+        }
+
+        // Loading states demonstration
+        async function demonstrateLoadingStates() {
+            const area = document.getElementById('course-loading-area');
+            
+            // Show loading spinner
+            area.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="loading-spinner mx-auto mb-4"></div>
+                    <p class="text-gray-600">Carregando dados do curso...</p>
+                </div>
+            `;
+            
+            // Simulate loading delay
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Show loaded content
+            area.innerHTML = `
+                <div class="fade-in">
+                    <div class="flex items-center p-4 bg-indigo-50 rounded-lg">
+                        <div class="flex-shrink-0">
+                            <div class="w-16 h-16 bg-indigo-200 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-brain text-indigo-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Fundamentos de IA</h3>
+                            <p class="text-gray-600">Introdução aos conceitos básicos de Inteligência Artificial</p>
+                            <div class="mt-2 flex items-center text-sm text-gray-500">
+                                <span class="mr-4"><i class="fas fa-clock mr-1"></i>4-6 semanas</span>
+                                <span class="mr-4"><i class="fas fa-layer-group mr-1"></i>7 módulos</span>
+                                <span><i class="fas fa-tasks mr-1"></i>21 lições</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            showNotification('Curso carregado com sucesso!', 'success');
+        }
+
+        // Skeleton screens demonstration
+        function demonstrateSkeletonScreens() {
+            const demo = document.getElementById('skeleton-demo');
+            
+            // Show skeleton cards
+            demo.innerHTML = `
+                <div class="skeleton-card p-4">
+                    <div class="skeleton-image mb-4"></div>
+                    <div class="skeleton-line skeleton-title mb-2"></div>
+                    <div class="skeleton-line mb-2"></div>
+                    <div class="skeleton-line short"></div>
+                </div>
+                <div class="skeleton-card p-4">
+                    <div class="skeleton-image mb-4"></div>
+                    <div class="skeleton-line skeleton-title mb-2"></div>
+                    <div class="skeleton-line mb-2"></div>
+                    <div class="skeleton-line short"></div>
+                </div>
+                <div class="skeleton-card p-4">
+                    <div class="skeleton-image mb-4"></div>
+                    <div class="skeleton-line skeleton-title mb-2"></div>
+                    <div class="skeleton-line mb-2"></div>
+                    <div class="skeleton-line short"></div>
+                </div>
+            `;
+            
+            // After 2 seconds, show actual content
+            setTimeout(() => {
+                const loaded = document.getElementById('loaded-content');
+                loaded.innerHTML = `
+                    <div class="fade-in bg-white border rounded-lg p-4 shadow-sm">
+                        <div class="w-full h-32 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg mb-4 flex items-center justify-center">
+                            <i class="fas fa-brain text-white text-3xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Fundamentos de IA</h3>
+                        <p class="text-gray-600 mb-4">Introdução aos conceitos básicos de Inteligência Artificial</p>
+                        <button class="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                            Iniciar Curso
+                        </button>
+                    </div>
+                    <div class="fade-in bg-white border rounded-lg p-4 shadow-sm">
+                        <div class="w-full h-32 bg-gradient-to-r from-green-500 to-teal-600 rounded-lg mb-4 flex items-center justify-center">
+                            <i class="fas fa-robot text-white text-3xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Machine Learning</h3>
+                        <p class="text-gray-600 mb-4">Aplicações práticas de aprendizado de máquina</p>
+                        <button class="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                            Iniciar Curso
+                        </button>
+                    </div>
+                    <div class="fade-in bg-white border rounded-lg p-4 shadow-sm">
+                        <div class="w-full h-32 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg mb-4 flex items-center justify-center">
+                            <i class="fas fa-network-wired text-white text-3xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Redes Neurais</h3>
+                        <p class="text-gray-600 mb-4">Entenda como funcionam as redes neurais artificiais</p>
+                        <button class="w-full px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700">
+                            Iniciar Curso
+                        </button>
+                    </div>
+                `;
+                
+                demo.innerHTML = '';
+                showNotification('Conteúdo carregado com skeleton screens!', 'success');
+            }, 2000);
+        }
+
+        // Progress indicators demonstration
+        async function demonstrateProgressIndicators() {
+            const lessonProgress = document.getElementById('lesson-progress');
+            const moduleProgress = document.getElementById('module-progress');
+            
+            // Simulate lesson progress
+            for (let step = 1; step <= 5; step++) {
+                await new Promise(resolve => setTimeout(resolve, 800));
+                
+                const percentage = (step / 5) * 100;
+                const labels = ['Início', 'Leitura', 'Exercícios', 'Avaliação', 'Conclusão'];
+                
+                lessonProgress.querySelector('.progress-bar').style.width = `${percentage}%`;
+                lessonProgress.querySelector('.progress-percentage').textContent = `${Math.round(percentage)}%`;
+                lessonProgress.querySelector('.progress-label').textContent = labels[step - 1];
+                
+                // Update step markers
+                const steps = lessonProgress.querySelectorAll('.progress-step');
+                steps.forEach((stepEl, index) => {
+                    stepEl.className = 'progress-step';
+                    if (index < step) {
+                        stepEl.classList.add('completed');
+                    } else if (index === step - 1) {
+                        stepEl.classList.add('current');
+                    }
+                });
+            }
+            
+            showNotification('Lição concluída com sucesso!', 'success');
+        }
+
+        // Enhanced course loading with API integration
+        async function loadCourseWithStates() {
+            const area = document.getElementById('course-loading-area');
+            
+            try {
+                // Start loading
+                area.innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="loading-spinner mx-auto mb-4"></div>
+                        <p class="text-gray-600">Conectando ao servidor...</p>
+                        <div class="mt-4">
+                            <div class="progress-indicator">
+                                <div class="progress-header">
+                                    <span class="progress-label">Conectando</span>
+                                    <span class="progress-percentage">33%</span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" style="width: 33%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Update progress
+                area.innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="loading-spinner mx-auto mb-4"></div>
+                        <p class="text-gray-600">Carregando dados do curso...</p>
+                        <div class="mt-4">
+                            <div class="progress-indicator">
+                                <div class="progress-header">
+                                    <span class="progress-label">Carregando</span>
+                                    <span class="progress-percentage">66%</span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" style="width: 66%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                await new Promise(resolve => setTimeout(resolve, 800));
+                
+                // Final progress
+                area.innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="loading-spinner mx-auto mb-4"></div>
+                        <p class="text-gray-600">Processando dados...</p>
+                        <div class="mt-4">
+                            <div class="progress-indicator">
+                                <div class="progress-header">
+                                    <span class="progress-label">Processando</span>
+                                    <span class="progress-percentage">100%</span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" style="width: 100%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Show final content
+                area.innerHTML = `
+                    <div class="fade-in">
+                        <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg p-6 text-white mb-6">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-brain text-3xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-2xl font-bold">Fundamentos de IA</h3>
+                                    <p class="opacity-90">Introdução aos conceitos básicos de Inteligência Artificial</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-white border rounded-lg p-4 text-center">
+                                <div class="text-3xl font-bold text-indigo-600 mb-2">7</div>
+                                <div class="text-gray-600">Módulos</div>
+                            </div>
+                            <div class="bg-white border rounded-lg p-4 text-center">
+                                <div class="text-3xl font-bold text-purple-600 mb-2">21</div>
+                                <div class="text-gray-600">Lições</div>
+                            </div>
+                            <div class="bg-white border rounded-lg p-4 text-center">
+                                <div class="text-3xl font-bold text-green-600 mb-2">0%</div>
+                                <div class="text-gray-600">Progresso</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 flex justify-center">
+                            <button class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                                <i class="fas fa-play mr-2"></i>
+                                Iniciar Curso
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                showNotification('Curso carregado com sucesso!', 'success');
+                
+            } catch (error) {
+                area.innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="text-red-500 mb-4">
+                            <i class="fas fa-exclamation-triangle text-4xl"></i>
+                        </div>
+                        <p class="text-gray-600">Erro ao carregar o curso</p>
+                        <button onclick="loadCourseWithStates()" class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                            Tentar Novamente
+                        </button>
+                    </div>
+                `;
+                
+                showNotification('Erro ao carregar curso', 'error');
+            }
+        }
+
+        // Initialize demo
+        document.addEventListener('DOMContentLoaded', function() {
+            showNotification('UX Enhanced Demo carregado!', 'success');
+        });
+    </script>
+</body>
+</html>
