@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodyVerse - Advanced AI Learning Features</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .learning-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .learning-card:hover {
+            transform: translateY(-2px);
+            border-color: #4f46e5;
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.1);
+        }
+        
+        .technique-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 2px;
+        }
+        
+        .effectiveness-bar {
+            height: 8px;
+            background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .spaced-repetition-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .ai-insights-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .learning-path-card {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .loading-dots::after {
+            content: '';
+            animation: dots 1.5s infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+
+        .concept-card {
+            border-left: 4px solid #4f46e5;
+            background: linear-gradient(90deg, rgba(79, 70, 229, 0.05) 0%, transparent 100%);
+        }
+
+        .progress-ring {
+            width: 60px;
+            height: 60px;
+        }
+
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 font-sans">
+    <!-- Header -->
+    <header class="bg-white shadow-lg border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-brain text-indigo-600 text-2xl mr-3"></i>
+                    <h1 class="text-2xl font-bold text-gray-900">CodyVerse AI Learning</h1>
+                    <span class="ml-3 px-3 py-1 bg-indigo-100 text-indigo-700 text-sm rounded-full font-medium">
+                        Powered by GPT-4
+                    </span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-sm text-gray-600">
+                        <i class="fas fa-user-graduate mr-1"></i>
+                        Advanced Learning Demo
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Feature Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Personalized Learning Paths -->
+            <div class="learning-path-card learning-card rounded-xl p-6 text-center">
+                <div class="w-16 h-16 mx-auto mb-4 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-route text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Caminhos Personalizados</h3>
+                <p class="opacity-90 mb-4">IA cria trilhas de aprendizado únicas baseadas no seu perfil</p>
+                <button onclick="generateLearningPath()" class="bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                    Gerar Trilha
+                </button>
+            </div>
+
+            <!-- AI Study Techniques -->
+            <div class="ai-insights-card learning-card rounded-xl p-6 text-center">
+                <div class="w-16 h-16 mx-auto mb-4 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-lightbulb text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Técnicas IA</h3>
+                <p class="opacity-90 mb-4">Métodos de estudo científicos adaptados por inteligência artificial</p>
+                <button onclick="showStudyTechniques()" class="bg-white text-pink-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                    Explorar Técnicas
+                </button>
+            </div>
+
+            <!-- Spaced Repetition -->
+            <div class="spaced-repetition-card learning-card rounded-xl p-6 text-center">
+                <div class="w-16 h-16 mx-auto mb-4 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-calendar-check text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Repetição Espaçada</h3>
+                <p class="opacity-90 mb-4">Algoritmo inteligente para máxima retenção de conhecimento</p>
+                <button onclick="showSpacedRepetition()" class="bg-white text-purple-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                    Ver Cronograma
+                </button>
+            </div>
+        </div>
+
+        <!-- Interactive Demo Section -->
+        <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                <i class="fas fa-play-circle text-indigo-600 mr-2"></i>
+                Demonstração Interativa
+            </h2>
+            
+            <!-- Learning Profile Setup -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Configure Seu Perfil de Aprendizado</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Estilo de Aprendizado</label>
+                            <select id="learningStyle" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                <option value="visual">Visual (diagramas, gráficos)</option>
+                                <option value="auditory">Auditivo (explicações, discussões)</option>
+                                <option value="kinesthetic">Cinestésico (prática, experimentação)</option>
+                                <option value="logical">Lógico (análise, padrões)</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nível de Experiência</label>
+                            <select id="experienceLevel" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                <option value="beginner">Iniciante</option>
+                                <option value="intermediate">Intermediário</option>
+                                <option value="advanced">Avançado</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tempo Disponível</label>
+                            <select id="studyTime" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                <option value="30min-1h/day">30 min - 1h por dia</option>
+                                <option value="1-2h/day">1-2 horas por dia</option>
+                                <option value="2-4h/day">2-4 horas por dia</option>
+                                <option value="4+h/day">Mais de 4 horas por dia</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Sessão de Aprendizado AI</h3>
+                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-lg">
+                        <div class="text-center">
+                            <button onclick="startAILearningSession()" 
+                                    class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:from-indigo-700 hover:to-purple-700 transition-all transform hover:scale-105">
+                                <i class="fas fa-rocket mr-2"></i>
+                                Iniciar Sessão AI
+                            </button>
+                        </div>
+                        <div class="mt-4 text-sm text-gray-600 text-center">
+                            A IA criará conteúdo personalizado e técnicas adaptadas ao seu perfil
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="hidden">
+            <!-- Learning Path Results -->
+            <div id="learningPathResults" class="bg-white rounded-xl shadow-lg p-8 mb-8 hidden">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">
+                    <i class="fas fa-map text-indigo-600 mr-2"></i>
+                    Sua Trilha de Aprendizado Personalizada
+                </h3>
+                <div id="learningPathContent"></div>
+            </div>
+
+            <!-- Study Techniques Results -->
+            <div id="studyTechniquesResults" class="bg-white rounded-xl shadow-lg p-8 mb-8 hidden">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">
+                    <i class="fas fa-cogs text-pink-600 mr-2"></i>
+                    Técnicas de Estudo Disponíveis
+                </h3>
+                <div id="studyTechniquesContent"></div>
+            </div>
+
+            <!-- Spaced Repetition Results -->
+            <div id="spacedRepetitionResults" class="bg-white rounded-xl shadow-lg p-8 mb-8 hidden">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">
+                    <i class="fas fa-calendar-alt text-purple-600 mr-2"></i>
+                    Sistema de Repetição Espaçada
+                </h3>
+                <div id="spacedRepetitionContent"></div>
+            </div>
+
+            <!-- AI Learning Session Results -->
+            <div id="aiSessionResults" class="bg-white rounded-xl shadow-lg p-8 mb-8 hidden">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">
+                    <i class="fas fa-brain text-indigo-600 mr-2"></i>
+                    Sessão de Aprendizado AI
+                </h3>
+                <div id="aiSessionContent"></div>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-xl p-8 max-w-md mx-4 text-center">
+                <div class="w-16 h-16 mx-auto mb-4">
+                    <div class="loading-spinner mx-auto w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">IA Processando</h3>
+                <p class="text-gray-600 loading-dots">Gerando conteúdo personalizado</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Global state
+        let currentProfile = null;
+        let currentSession = null;
+
+        // Show loading overlay
+        function showLoading(message = 'Processando...') {
+            const overlay = document.getElementById('loadingOverlay');
+            const messageEl = overlay.querySelector('.loading-dots');
+            messageEl.textContent = message;
+            overlay.classList.remove('hidden');
+        }
+
+        // Hide loading overlay
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+        }
+
+        // Show results section
+        function showResults() {
+            document.getElementById('resultsSection').classList.remove('hidden');
+        }
+
+        // Generate Learning Path
+        async function generateLearningPath() {
+            showLoading('Gerando trilha de aprendizado personalizada...');
+            
+            try {
+                const profile = getUserProfile();
+                
+                const response = await fetch('/api/learning/path/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        courseId: 'ai-fundamentals',
+                        userProfile: profile
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayLearningPath(result.data.learningPath);
+                    showResults();
+                } else {
+                    throw new Error(result.error || 'Erro ao gerar trilha de aprendizado');
+                }
+            } catch (error) {
+                console.error('Error generating learning path:', error);
+                alert('Erro ao gerar trilha de aprendizado: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Show Study Techniques
+        async function showStudyTechniques() {
+            showLoading('Carregando técnicas de estudo...');
+            
+            try {
+                const response = await fetch('/api/learning/techniques');
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayStudyTechniques(result.data);
+                    showResults();
+                } else {
+                    throw new Error(result.error || 'Erro ao carregar técnicas');
+                }
+            } catch (error) {
+                console.error('Error loading study techniques:', error);
+                alert('Erro ao carregar técnicas de estudo: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Show Spaced Repetition
+        async function showSpacedRepetition() {
+            showLoading('Carregando sistema de repetição espaçada...');
+            
+            try {
+                // Get spaced repetition stats
+                const statsResponse = await fetch('/api/learning/spaced-repetition/stats');
+                const statsResult = await statsResponse.json();
+
+                // Get concepts due for review
+                const dueResponse = await fetch('/api/learning/spaced-repetition/due');
+                const dueResult = await dueResponse.json();
+
+                if (statsResult.success && dueResult.success) {
+                    displaySpacedRepetition(statsResult.data, dueResult.data);
+                    showResults();
+                } else {
+                    throw new Error('Erro ao carregar dados de repetição espaçada');
+                }
+            } catch (error) {
+                console.error('Error loading spaced repetition:', error);
+                alert('Erro ao carregar repetição espaçada: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Start AI Learning Session
+        async function startAILearningSession() {
+            showLoading('IA criando sessão personalizada...');
+            
+            try {
+                const profile = getUserProfile();
+                
+                const response = await fetch('/api/learning/demo/session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(profile)
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentSession = result.data;
+                    displayAISession(result.data);
+                    showResults();
+                } else {
+                    throw new Error(result.error || 'Erro ao criar sessão AI');
+                }
+            } catch (error) {
+                console.error('Error starting AI session:', error);
+                alert('Erro ao iniciar sessão AI: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Get user profile from form
+        function getUserProfile() {
+            return {
+                learningStyle: document.getElementById('learningStyle').value,
+                experienceLevel: document.getElementById('experienceLevel').value,
+                studyTime: document.getElementById('studyTime').value,
+                interests: ['inteligência artificial', 'machine learning', 'redes neurais'],
+                preferredPace: 'moderate'
+            };
+        }
+
+        // Display Learning Path
+        function displayLearningPath(learningPath) {
+            const container = document.getElementById('learningPathContent');
+            
+            if (!learningPath || !learningPath.phases) {
+                container.innerHTML = '<p class="text-gray-600">Trilha de aprendizado não disponível.</p>';
+                document.getElementById('learningPathResults').classList.remove('hidden');
+                return;
+            }
+
+            let html = `
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-lg font-semibold">Duração Total: ${learningPath.totalDuration || 'A definir'}</h4>
+                        <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium">
+                            ${learningPath.phases?.length || 0} Fases
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="space-y-6">
+            `;
+
+            if (learningPath.phases) {
+                learningPath.phases.forEach((phase, index) => {
+                    html += `
+                        <div class="border border-gray-200 rounded-lg p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-sm mr-3">
+                                    ${index + 1}
+                                </div>
+                                <h5 class="text-lg font-semibold">${phase.phase || `Fase ${index + 1}`}</h5>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <h6 class="font-medium text-gray-700 mb-2">Lições</h6>
+                                    <ul class="space-y-1">
+                                        ${(phase.lessons || []).map(lesson => `
+                                            <li class="text-sm text-gray-600">• ${lesson}</li>
+                                        `).join('')}
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <h6 class="font-medium text-gray-700 mb-2">Técnicas Recomendadas</h6>
+                                    <div class="flex flex-wrap gap-1">
+                                        ${(phase.techniques || []).map(technique => `
+                                            <span class="technique-badge bg-blue-100 text-blue-800">${technique}</span>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            ${phase.timeAllocation ? `
+                                <div class="mt-4">
+                                    <span class="text-sm text-gray-600">
+                                        <i class="fas fa-clock mr-1"></i>
+                                        Tempo estimado: ${phase.timeAllocation}
+                                    </span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+            }
+
+            html += '</div>';
+
+            if (learningPath.adaptations) {
+                html += `
+                    <div class="mt-8 p-6 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg">
+                        <h5 class="font-semibold text-gray-900 mb-3">
+                            <i class="fas fa-magic mr-2 text-green-600"></i>
+                            Adaptações Personalizadas
+                        </h5>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            ${learningPath.adaptations.forStrengths ? `
+                                <div>
+                                    <h6 class="font-medium text-green-700 mb-2">Para Seus Pontos Fortes</h6>
+                                    <p class="text-gray-600">${learningPath.adaptations.forStrengths}</p>
+                                </div>
+                            ` : ''}
+                            ${learningPath.adaptations.forWeaknesses ? `
+                                <div>
+                                    <h6 class="font-medium text-blue-700 mb-2">Apoio para Desenvolvimento</h6>
+                                    <p class="text-gray-600">${learningPath.adaptations.forWeaknesses}</p>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+            document.getElementById('learningPathResults').classList.remove('hidden');
+        }
+
+        // Display Study Techniques
+        function displayStudyTechniques(techniques) {
+            const container = document.getElementById('studyTechniquesContent');
+            
+            let html = '<div class="grid grid-cols-1 md:grid-cols-2 gap-6">';
+            
+            techniques.forEach(technique => {
+                const effectiveness = Math.round(technique.effectiveness * 100);
+                html += `
+                    <div class="border border-gray-200 rounded-lg p-6 hover:border-indigo-300 transition-colors">
+                        <div class="flex items-center justify-between mb-3">
+                            <h5 class="text-lg font-semibold">${technique.name}</h5>
+                            <span class="text-sm font-medium text-indigo-600">${effectiveness}% eficaz</span>
+                        </div>
+                        
+                        <div class="effectiveness-bar mb-4">
+                            <div class="h-full bg-gradient-to-r from-indigo-500 to-purple-500" 
+                                 style="width: ${effectiveness}%"></div>
+                        </div>
+                        
+                        <p class="text-gray-600 text-sm mb-4">${technique.description}</p>
+                        
+                        <div class="mb-4">
+                            <h6 class="text-sm font-medium text-gray-700 mb-2">Adequado para:</h6>
+                            <div class="flex flex-wrap gap-1">
+                                ${technique.adaptableFor.map(style => `
+                                    <span class="technique-badge bg-gray-100 text-gray-700">${style}</span>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <button onclick="implementTechnique('${technique.id}')" 
+                                class="w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                            <i class="fas fa-play mr-2"></i>
+                            Implementar Técnica
+                        </button>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+            document.getElementById('studyTechniquesResults').classList.remove('hidden');
+        }
+
+        // Display Spaced Repetition
+        function displaySpacedRepetition(stats, dueConcepts) {
+            const container = document.getElementById('spacedRepetitionContent');
+            
+            let html = `
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="text-center p-4 bg-blue-50 rounded-lg">
+                        <div class="text-3xl font-bold text-blue-600">${stats.totalConcepts}</div>
+                        <div class="text-sm text-gray-600">Conceitos Total</div>
+                    </div>
+                    <div class="text-center p-4 bg-yellow-50 rounded-lg">
+                        <div class="text-3xl font-bold text-yellow-600">${stats.dueNow}</div>
+                        <div class="text-sm text-gray-600">Para Revisar Agora</div>
+                    </div>
+                    <div class="text-center p-4 bg-green-50 rounded-lg">
+                        <div class="text-3xl font-bold text-green-600">${stats.masteredConcepts}</div>
+                        <div class="text-sm text-gray-600">Dominados</div>
+                    </div>
+                    <div class="text-center p-4 bg-purple-50 rounded-lg">
+                        <div class="text-3xl font-bold text-purple-600">${stats.retentionRate}%</div>
+                        <div class="text-sm text-gray-600">Taxa de Retenção</div>
+                    </div>
+                </div>
+            `;
+
+            if (dueConcepts.length > 0) {
+                html += `
+                    <div class="mb-6">
+                        <h5 class="text-lg font-semibold mb-4">Conceitos para Revisar</h5>
+                        <div class="space-y-4">
+                `;
+                
+                dueConcepts.slice(0, 5).forEach(concept => {
+                    const overdueDays = Math.floor((Date.now() - concept.nextReview) / (24 * 60 * 60 * 1000));
+                    html += `
+                        <div class="concept-card p-4 rounded-lg">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h6 class="font-medium">${concept.conceptId}</h6>
+                                    <p class="text-sm text-gray-600">
+                                        Repetições: ${concept.repetitions} | 
+                                        Intervalo: ${concept.interval} dias |
+                                        EF: ${concept.easeFactor.toFixed(2)}
+                                    </p>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-sm font-medium ${overdueDays > 0 ? 'text-red-600' : 'text-green-600'}">
+                                        ${overdueDays > 0 ? `${overdueDays} dias atrasado` : 'Na hora'}
+                                    </div>
+                                    <button onclick="reviewConcept('${concept.conceptId}')" 
+                                            class="mt-2 px-3 py-1 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700">
+                                        Revisar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div></div>';
+            } else {
+                html += `
+                    <div class="text-center py-8">
+                        <i class="fas fa-check-circle text-green-500 text-4xl mb-4"></i>
+                        <h5 class="text-lg font-semibold text-gray-900 mb-2">Tudo em dia!</h5>
+                        <p class="text-gray-600">Nenhum conceito precisa ser revisado no momento.</p>
+                        <button onclick="addDemoConcepts()" class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                            Adicionar Conceitos Demo
+                        </button>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+            document.getElementById('spacedRepetitionResults').classList.remove('hidden');
+        }
+
+        // Display AI Session
+        function displayAISession(session) {
+            const container = document.getElementById('aiSessionContent');
+            
+            let html = `
+                <div class="mb-6 p-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-lg font-semibold">Sessão ID: ${session.sessionId}</h4>
+                        <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium">
+                            ${session.estimatedDuration} minutos
+                        </span>
+                    </div>
+                    <p class="text-gray-600">Tipo: ${session.sessionType} | Iniciado: ${new Date(session.startTime).toLocaleTimeString()}</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            `;
+
+            // Adapted Content
+            if (session.adaptedContent) {
+                html += `
+                    <div class="space-y-6">
+                        <div>
+                            <h5 class="text-lg font-semibold mb-4">
+                                <i class="fas fa-magic mr-2 text-indigo-600"></i>
+                                Conteúdo Adaptado
+                            </h5>
+                            
+                            <div class="bg-white border border-gray-200 rounded-lg p-6">
+                                <h6 class="font-semibold text-gray-900 mb-3">${session.adaptedContent.title}</h6>
+                                <p class="text-gray-600 text-sm mb-4">${session.adaptedContent.introduction}</p>
+                                
+                                <div class="prose prose-sm max-w-none">
+                                    ${session.adaptedContent.mainContent?.substring(0, 300)}...
+                                </div>
+                                
+                                ${session.adaptedContent.examples ? `
+                                    <div class="mt-4">
+                                        <h6 class="font-medium text-gray-700 mb-2">Exemplos</h6>
+                                        <ul class="text-sm text-gray-600 space-y-1">
+                                            ${session.adaptedContent.examples.slice(0, 3).map(example => 
+                                                `<li>• ${example}</li>`
+                                            ).join('')}
+                                        </ul>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Study Technique Implementation
+            if (session.implementation) {
+                html += `
+                    <div class="space-y-6">
+                        <div>
+                            <h5 class="text-lg font-semibold mb-4">
+                                <i class="fas fa-cogs mr-2 text-pink-600"></i>
+                                Técnica: ${session.recommendedTechnique?.name}
+                            </h5>
+                            
+                            <div class="space-y-4">
+                `;
+                
+                if (session.implementation.steps) {
+                    session.implementation.steps.forEach((step, index) => {
+                        html += `
+                            <div class="bg-white border border-gray-200 rounded-lg p-4">
+                                <div class="flex items-center mb-2">
+                                    <div class="w-6 h-6 bg-pink-600 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">
+                                        ${index + 1}
+                                    </div>
+                                    <h6 class="font-medium">${step.phase}</h6>
+                                    <span class="ml-auto text-sm text-gray-500">${step.duration}</span>
+                                </div>
+                                <p class="text-sm text-gray-600 ml-9">${step.instructions}</p>
+                            </div>
+                        `;
+                    });
+                }
+                
+                html += `
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+
+            // Concepts for Review
+            if (session.conceptsForReview && session.conceptsForReview.length > 0) {
+                html += `
+                    <div class="mt-8">
+                        <h5 class="text-lg font-semibold mb-4">
+                            <i class="fas fa-calendar-check mr-2 text-purple-600"></i>
+                            Conceitos para Revisar (${session.conceptsForReview.length})
+                        </h5>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                `;
+                
+                session.conceptsForReview.forEach(concept => {
+                    html += `
+                        <div class="concept-card p-4 rounded-lg">
+                            <h6 class="font-medium mb-2">${concept.conceptId}</h6>
+                            <div class="text-sm text-gray-600">
+                                <span>Repetições: ${concept.repetitions}</span> |
+                                <span>EF: ${concept.easeFactor.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div></div>';
+            }
+
+            // Action Buttons
+            html += `
+                <div class="mt-8 flex justify-center space-x-4">
+                    <button onclick="completeSession()" 
+                            class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                        <i class="fas fa-check mr-2"></i>
+                        Finalizar Sessão
+                    </button>
+                    <button onclick="startAILearningSession()" 
+                            class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                        <i class="fas fa-refresh mr-2"></i>
+                        Nova Sessão
+                    </button>
+                </div>
+            `;
+
+            container.innerHTML = html;
+            document.getElementById('aiSessionResults').classList.remove('hidden');
+        }
+
+        // Implement specific technique
+        async function implementTechnique(techniqueId) {
+            showLoading('Implementando técnica de estudo...');
+            
+            try {
+                const demoContent = {
+                    title: "Redes Neurais Artificiais",
+                    description: "Conceitos fundamentais de redes neurais",
+                    body: "Estudo sobre arquiteturas e funcionamento de redes neurais"
+                };
+
+                const response = await fetch('/api/learning/techniques/implement', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        technique: techniqueId,
+                        content: demoContent,
+                        userProgress: { 
+                            learningStyle: getUserProfile().learningStyle,
+                            completionPercentage: 0 
+                        }
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Técnica implementada com sucesso! Confira os detalhes na sessão AI.');
+                } else {
+                    throw new Error(result.error || 'Erro ao implementar técnica');
+                }
+            } catch (error) {
+                console.error('Error implementing technique:', error);
+                alert('Erro ao implementar técnica: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Review concept (spaced repetition)
+        async function reviewConcept(conceptId) {
+            const quality = prompt('Avalie sua lembrança do conceito (0-5, onde 5 = lembrei perfeitamente):', '4');
+            if (quality === null) return;
+
+            showLoading('Atualizando cronograma...');
+            
+            try {
+                const response = await fetch('/api/learning/spaced-repetition/schedule', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        conceptId,
+                        performance: {
+                            quality: parseInt(quality),
+                            responseTime: Math.random() * 10000 + 2000 // Demo response time
+                        }
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(`Cronograma atualizado! Próxima revisão em ${result.data.interval} dias.`);
+                    showSpacedRepetition(); // Refresh display
+                } else {
+                    throw new Error(result.error || 'Erro ao atualizar cronograma');
+                }
+            } catch (error) {
+                console.error('Error reviewing concept:', error);
+                alert('Erro ao revisar conceito: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Add demo concepts for spaced repetition
+        async function addDemoConcepts() {
+            showLoading('Adicionando conceitos de demonstração...');
+            
+            const demoConcepts = [
+                'Perceptron',
+                'Backpropagation',
+                'Gradient Descent',
+                'Overfitting',
+                'Neural Networks'
+            ];
+
+            try {
+                for (const concept of demoConcepts) {
+                    await fetch('/api/learning/spaced-repetition/schedule', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            conceptId: concept,
+                            performance: {
+                                quality: Math.floor(Math.random() * 3) + 3, // 3-5 range
+                                responseTime: Math.random() * 5000 + 2000
+                            }
+                        })
+                    });
+                }
+
+                alert('Conceitos de demonstração adicionados com sucesso!');
+                showSpacedRepetition(); // Refresh display
+            } catch (error) {
+                console.error('Error adding demo concepts:', error);
+                alert('Erro ao adicionar conceitos: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Complete learning session
+        async function completeSession() {
+            if (!currentSession) {
+                alert('Nenhuma sessão ativa para finalizar.');
+                return;
+            }
+
+            showLoading('Finalizando sessão e gerando insights...');
+            
+            try {
+                const sessionResults = {
+                    sessionDuration: Math.floor((Date.now() - currentSession.startTime) / 1000 / 60), // minutes
+                    completionRate: 85 + Math.random() * 15, // 85-100%
+                    averageScore: 70 + Math.random() * 30, // 70-100%
+                    conceptsMastered: Math.floor(Math.random() * 5) + 3,
+                    quizScores: [85, 92, 78, 88],
+                    timePerTopic: {
+                        'Neural Networks': 25,
+                        'Perceptron': 15,
+                        'Backpropagation': 20
+                    },
+                    strongAreas: ['Visual Learning', 'Pattern Recognition'],
+                    improvementAreas: ['Mathematical Concepts']
+                };
+
+                const conceptPerformances = currentSession.conceptsForReview?.map(concept => ({
+                    conceptId: concept.conceptId,
+                    quality: Math.floor(Math.random() * 3) + 3, // 3-5
+                    responseTime: Math.random() * 5000 + 2000
+                })) || [];
+
+                const response = await fetch('/api/learning/session/complete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: currentSession.sessionId,
+                        results: sessionResults,
+                        conceptPerformances
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Sessão finalizada com sucesso! Insights de aprendizado gerados.');
+                    console.log('Session completion result:', result.data);
+                } else {
+                    throw new Error(result.error || 'Erro ao finalizar sessão');
+                }
+            } catch (error) {
+                console.error('Error completing session:', error);
+                alert('Erro ao finalizar sessão: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Initialize demo
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Advanced AI Learning Demo loaded!');
+        });
+    </script>
+</body>
+</html>

@@ -433,6 +433,37 @@ router.get('/ux/course/:courseId/load', (req, res) => uxController.loadCourseWit
 // UX Metrics
 router.get('/ux/metrics', (req, res) => uxController.getUXMetrics(req, res));
 
+// Advanced Learning Features Routes
+const AdvancedLearningController = require('../controllers/advancedLearningController');
+const advancedLearningController = new AdvancedLearningController();
+
+// Learning Path Generation
+router.post('/learning/path/generate', (req, res) => advancedLearningController.generateLearningPath(req, res));
+router.get('/learning/profile', (req, res) => advancedLearningController.getLearningProfile(req, res));
+router.put('/learning/profile', (req, res) => advancedLearningController.updateLearningProfile(req, res));
+
+// Study Techniques
+router.get('/learning/techniques', (req, res) => advancedLearningController.getStudyTechniques(req, res));
+router.post('/learning/techniques/implement', (req, res) => advancedLearningController.implementStudyTechnique(req, res));
+
+// Spaced Repetition
+router.post('/learning/spaced-repetition/schedule', (req, res) => advancedLearningController.scheduleSpacedRepetition(req, res));
+router.get('/learning/spaced-repetition/due', (req, res) => advancedLearningController.getConceptsDueForReview(req, res));
+router.get('/learning/spaced-repetition/stats', (req, res) => advancedLearningController.getSpacedRepetitionStats(req, res));
+
+// Content Adaptation
+router.post('/learning/content/adapt', (req, res) => advancedLearningController.adaptContent(req, res));
+
+// Learning Analytics
+router.post('/learning/insights/generate', (req, res) => advancedLearningController.generateLearningInsights(req, res));
+
+// Advanced Learning Sessions
+router.post('/learning/session/start', (req, res) => advancedLearningController.startAdvancedLearningSession(req, res));
+router.post('/learning/session/complete', (req, res) => advancedLearningController.completeLearningSession(req, res));
+
+// Demo Endpoints
+router.post('/learning/demo/session', (req, res) => advancedLearningController.createDemoLearningSession(req, res));
+
 // Debug and Memory Optimization Routes
 router.get('/debug/memory', async (req, res) => {
   try {
