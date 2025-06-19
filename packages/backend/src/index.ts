@@ -22,6 +22,9 @@ app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Import routes
+import apiRoutes from './routes/api';
+
 // Rotas básicas
 app.get('/health', (req, res) => {
   res.json({
@@ -38,10 +41,16 @@ app.get('/api', (req, res) => {
     version: '1.0.0',
     endpoints: [
       'GET /health - Health check',
-      'GET /api - API information'
+      'GET /api - API information',
+      'GET /api/users - Users list',
+      'GET /api/courses - Courses list',
+      'GET /api/health/detailed - Detailed health check'
     ]
   });
 });
+
+// API routes
+app.use('/api', apiRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {
