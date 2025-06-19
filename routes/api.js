@@ -12,6 +12,7 @@ const ageAdaptationController = require('../controllers/ageAdaptationController'
 // Advanced AI Services
 const learningAnalyticsService = require('../services/learningAnalyticsService');
 const aiContentGenerationService = require('../services/aiContentGenerationService');
+const performanceAnalyzer = require('../services/performanceAnalyzer');
 
 // Controllers
 const studyTechniquesController = require('../controllers/studyTechniquesController');
@@ -186,23 +187,72 @@ router.post('/age-adaptation/exercises', ageController.generateAgeBasedExercises
 router.get('/age-adaptation/profile', ageController.getAgeProfile.bind(ageController));
 router.post('/age-adaptation/rewards', ageController.adaptGamificationRewards.bind(ageController));
 
-// Performance metrics endpoint
-router.get('/performance/metrics', (req, res) => {
-  const performanceData = {
-    avgResponseTime: Math.floor(Math.random() * 30) + 25, // 25-55ms
-    cacheHitRate: Math.floor(Math.random() * 10) + 90, // 90-100%
-    optimizedQueries: 247 + Math.floor(Math.random() * 50),
-    activeConnections: Math.floor(Math.random() * 8) + 8, // 8-16
-    responseTimeTrend: Array.from({length: 10}, () => 
-      Math.floor(Math.random() * 20) + 30 // 30-50ms
-    ),
-    timestamp: new Date().toISOString()
-  };
-  
-  res.json({
-    success: true,
-    data: performanceData
-  });
+// Performance monitoring endpoints
+router.get('/performance/metrics', async (req, res) => {
+  try {
+    const cacheService = require('../core/services/cache_service');
+    const report = performanceAnalyzer.getPerformanceReport();
+    const cacheStats = cacheService.getStats();
+    
+    res.json({
+      success: true,
+      data: {
+        queryPerformance: report,
+        cacheStats: {
+          size: cacheStats.size,
+          hitRate: Math.round((cacheStats.hits || 0) / Math.max((cacheStats.hits || 0) + (cacheStats.misses || 0), 1) * 100),
+          memoryUsage: cacheStats.memoryUsage
+        },
+        timestamp: new Date().toISOString()
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.get('/performance/database', async (req, res) => {
+  try {
+    const analysis = await performanceAnalyzer.analyzeQueryPerformance();
+    res.json({ success: true, data: analysis });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/performance/clear-cache', (req, res) => {
+  try {
+    const cacheService = require('../core/services/cache_service');
+    cacheService.clear();
+    res.json({ success: true, message: 'Cache cleared successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.get('/performance/health', async (req, res) => {
+  try {
+    const healthData = {
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      memory: process.memoryUsage(),
+      database: await performanceAnalyzer.executeQuery('SELECT NOW() as timestamp'),
+      services: {
+        cache: 'operational',
+        database: 'operational',
+        api: 'operational'
+      }
+    };
+    res.json({ success: true, data: healthData });
+  } catch (error) {
+    res.status(503).json({ 
+      success: false, 
+      status: 'unhealthy',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
 });
 
 // Rota de health check

@@ -248,19 +248,48 @@ class CodyVerseServer {
   }
 
   setupGracefulShutdown() {
+    let isShuttingDown = false;
+    
     const gracefulShutdown = async (signal) => {
+      if (isShuttingDown) {
+        console.log('Shutdown já em andamento...');
+        return;
+      }
+      
+      isShuttingDown = true;
       console.log(`\nRecebido ${signal}. Finalizando servidor graciosamente...`);
       
       if (this.server) {
         this.server.close(async () => {
           console.log('Servidor HTTP fechado');
           
-          // Enhanced graceful shutdown
-          await systemHealth.gracefulShutdown();
-          await closeConnections();
-          await connectionPool.close();
+          try {
+            // Graceful shutdown in proper order
+            console.log('Initiating graceful shutdown...');
+            await systemHealth.gracefulShutdown();
+            
+            // Only close database connections once
+            try {
+              await closeConnections();
+            } catch (error) {
+              if (!error.message.includes('Called end on pool more than once')) {
+                console.error('Error closing database connections:', error.message);
+              }
+            }
+            
+            try {
+              await connectionPool.close();
+            } catch (error) {
+              if (!error.message.includes('Called end on pool more than once')) {
+                console.error('Error closing connection pool:', error.message);
+              }
+            }
+            
+            console.log('Graceful shutdown completed');
+          } catch (error) {
+            console.error('Error during graceful shutdown:', error.message);
+          }
           
-          console.log('Shutdown completo');
           process.exit(0);
         });
       }
