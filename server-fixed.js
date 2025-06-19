@@ -79,7 +79,49 @@ class CodyVerseServer {
     console.log('Enhanced middleware configured');
   }
 
-  setupRoutes() {
+  async setupRoutes() {
+    try {
+      // Setup Replit authentication first
+      await setupAuth(this.app);
+      console.log('Replit authentication configured');
+      
+      // Auth routes
+      this.app.get('/api/auth/user', isAuthenticated, async (req, res) => {
+        try {
+          const userId = req.user.claims.sub;
+          const user = await storage.getUser(userId);
+          res.json(user);
+        } catch (error) {
+          console.error("Error fetching user:", error);
+          res.status(500).json({ message: "Failed to fetch user" });
+        }
+      });
+
+      this.app.get('/api/auth/status', (req, res) => {
+        res.json({
+          authenticated: req.isAuthenticated(),
+          user: req.user ? {
+            id: req.user.claims?.sub,
+            email: req.user.claims?.email,
+            firstName: req.user.claims?.first_name,
+            lastName: req.user.claims?.last_name,
+            profileImageUrl: req.user.claims?.profile_image_url
+          } : null
+        });
+      });
+
+      this.app.get("/api/protected", isAuthenticated, async (req, res) => {
+        const userId = req.user?.claims?.sub;
+        res.json({ 
+          message: "This is a protected route", 
+          userId: userId,
+          user: req.user.claims 
+        });
+      });
+      
+    } catch (error) {
+      console.error('Failed to setup auth routes:', error);
+    }
     // Optimized static file serving
     this.app.use(express.static(path.join(__dirname), {
       maxAge: this.isProduction ? '7d' : '1h',

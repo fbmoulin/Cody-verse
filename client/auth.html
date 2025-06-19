@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodyVerse - Área do Usuário</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .welcome-text {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .user-info {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            border: 3px solid #667eea;
+        }
+
+        .user-name {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .user-email {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            margin: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8fafc;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-logout {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-logout:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .auth-status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: 500;
+        }
+
+        .status-authenticated {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .status-unauthenticated {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .feature-list {
+            text-align: left;
+            margin: 20px 0;
+        }
+
+        .feature-list li {
+            margin: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .feature-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="logo">🤖 CodyVerse</div>
+        
+        <div id="loading-state">
+            <div class="loading"></div>
+            <p>Verificando autenticação...</p>
+        </div>
+
+        <div id="unauthenticated-state" style="display: none;">
+            <div class="auth-status status-unauthenticated">
+                <strong>Não autenticado</strong> - Faça login para acessar a plataforma
+            </div>
+            
+            <div class="welcome-text">
+                Bem-vindo ao CodyVerse! Uma plataforma educacional inteligente com IA para aprender programação e conceitos de tecnologia.
+            </div>
+
+            <ul class="feature-list">
+                <li>Aprendizado personalizado com IA</li>
+                <li>Gamificação e recompensas</li>
+                <li>Técnicas de estudo avançadas</li>
+                <li>Acompanhamento de progresso</li>
+                <li>Conteúdo adaptativo por idade</li>
+            </ul>
+
+            <div style="margin-top: 30px;">
+                <a href="/api/login" class="btn btn-primary">
+                    🔐 Entrar com Replit
+                </a>
+            </div>
+        </div>
+
+        <div id="authenticated-state" style="display: none;">
+            <div class="auth-status status-authenticated">
+                <strong>Autenticado com sucesso!</strong>
+            </div>
+
+            <div class="user-info">
+                <img id="user-avatar" class="user-avatar" src="" alt="Avatar do usuário">
+                <div id="user-name" class="user-name">Carregando...</div>
+                <div id="user-email" class="user-email">Carregando...</div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <a href="/" class="btn btn-primary">
+                    🚀 Ir para a Plataforma
+                </a>
+                <a href="/api/logout" class="btn btn-logout">
+                    🚪 Sair
+                </a>
+            </div>
+        </div>
+
+        <div id="error-state" style="display: none;">
+            <div class="auth-status status-unauthenticated">
+                <strong>Erro de autenticação</strong>
+            </div>
+            <p id="error-message"></p>
+            <div style="margin-top: 20px;">
+                <a href="/api/login" class="btn btn-secondary">
+                    🔄 Tentar novamente
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class AuthManager {
+            constructor() {
+                this.loadingState = document.getElementById('loading-state');
+                this.unauthenticatedState = document.getElementById('unauthenticated-state');
+                this.authenticatedState = document.getElementById('authenticated-state');
+                this.errorState = document.getElementById('error-state');
+                this.init();
+            }
+
+            async init() {
+                try {
+                    const response = await fetch('/api/auth/status');
+                    const data = await response.json();
+
+                    if (data.authenticated && data.user) {
+                        this.showAuthenticatedState(data.user);
+                    } else {
+                        this.showUnauthenticatedState();
+                    }
+                } catch (error) {
+                    console.error('Erro ao verificar autenticação:', error);
+                    this.showErrorState('Erro ao conectar com o servidor');
+                }
+            }
+
+            showAuthenticatedState(user) {
+                this.hideAllStates();
+                this.authenticatedState.style.display = 'block';
+
+                // Preenche informações do usuário
+                const avatar = document.getElementById('user-avatar');
+                const name = document.getElementById('user-name');
+                const email = document.getElementById('user-email');
+
+                if (user.profileImageUrl) {
+                    avatar.src = user.profileImageUrl;
+                    avatar.style.display = 'block';
+                } else {
+                    avatar.style.display = 'none';
+                }
+
+                name.textContent = user.name || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Usuario';
+                email.textContent = user.email || 'Email não disponível';
+            }
+
+            showUnauthenticatedState() {
+                this.hideAllStates();
+                this.unauthenticatedState.style.display = 'block';
+            }
+
+            showErrorState(message) {
+                this.hideAllStates();
+                this.errorState.style.display = 'block';
+                document.getElementById('error-message').textContent = message;
+            }
+
+            hideAllStates() {
+                this.loadingState.style.display = 'none';
+                this.unauthenticatedState.style.display = 'none';
+                this.authenticatedState.style.display = 'none';
+                this.errorState.style.display = 'none';
+            }
+        }
+
+        // Inicializa o gerenciador de autenticação
+        document.addEventListener('DOMContentLoaded', () => {
+            new AuthManager();
+        });
+    </script>
+</body>
+</html>

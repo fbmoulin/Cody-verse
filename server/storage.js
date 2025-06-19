@@ -3,7 +3,7 @@ const { db } = require("./db.js");
 const { eq } = require("drizzle-orm");
 
 // Interface for storage operations
-export class DatabaseStorage {
+class DatabaseStorage {
   // User operations - mandatory for Replit Auth
   async getUser(id) {
     try {
