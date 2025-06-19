@@ -1,8 +1,8 @@
-import { createServer } from "http";
-import { storage } from "./storage.js";
-import { setupAuth, isAuthenticated } from "./replitAuth.js";
+const { createServer } = require("http");
+const { storage } = require("./storage.js");
+const { setupAuth, isAuthenticated } = require("./replitAuth.js");
 
-export async function registerRoutes(app) {
+async function registerRoutes(app) {
   // Auth middleware
   await setupAuth(app);
 
@@ -43,3 +43,5 @@ export async function registerRoutes(app) {
   const httpServer = createServer(app);
   return httpServer;
 }
+
+module.exports = { registerRoutes };

@@ -1,13 +1,13 @@
-import { users } from "../shared/schema.js";
-import { db } from "./db.js";
-import { eq } from "drizzle-orm";
+const { replitUsers } = require("../shared/schema.js");
+const { db } = require("./db.js");
+const { eq } = require("drizzle-orm");
 
 // Interface for storage operations
 export class DatabaseStorage {
   // User operations - mandatory for Replit Auth
   async getUser(id) {
     try {
-      const [user] = await db.select().from(users).where(eq(users.id, id));
+      const [user] = await db.select().from(replitUsers).where(eq(replitUsers.id, id));
       return user;
     } catch (error) {
       console.error('Error getting user:', error);
@@ -18,10 +18,10 @@ export class DatabaseStorage {
   async upsertUser(userData) {
     try {
       const [user] = await db
-        .insert(users)
+        .insert(replitUsers)
         .values(userData)
         .onConflictDoUpdate({
-          target: users.id,
+          target: replitUsers.id,
           set: {
             ...userData,
             updatedAt: new Date(),
@@ -36,4 +36,5 @@ export class DatabaseStorage {
   }
 }
 
-export const storage = new DatabaseStorage();
+const storage = new DatabaseStorage();
+module.exports = { storage };

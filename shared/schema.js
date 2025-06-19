@@ -1,4 +1,26 @@
-const { pgTable, serial, text, integer, timestamp, boolean, jsonb } = require('drizzle-orm/pg-core');
+const { pgTable, serial, text, integer, timestamp, boolean, jsonb, varchar, index } = require('drizzle-orm/pg-core');
+
+// Session storage table for Replit Auth - REQUIRED
+const sessions = pgTable(
+  "sessions",
+  {
+    sid: varchar("sid").primaryKey(),
+    sess: jsonb("sess").notNull(),
+    expire: timestamp("expire").notNull(),
+  },
+  (table) => [index("IDX_session_expire").on(table.expire)],
+);
+
+// Enhanced users table for Replit Auth
+const replitUsers = pgTable("replit_users", {
+  id: varchar("id").primaryKey().notNull(), // Replit user ID
+  email: varchar("email").unique(),
+  firstName: varchar("first_name"),
+  lastName: varchar("last_name"),
+  profileImageUrl: varchar("profile_image_url"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
 
 // Tabela de usuários
 const users = pgTable('users', {
@@ -278,6 +300,10 @@ const gamificationNotifications = pgTable('gamification_notifications', {
 });
 
 module.exports = {
+  // Replit Auth tables
+  sessions,
+  replitUsers,
+  // Original tables
   users,
   courseModules,
   lessons,

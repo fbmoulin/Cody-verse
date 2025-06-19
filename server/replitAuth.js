@@ -1,10 +1,10 @@
-import * as client from "openid-client";
-import { Strategy } from "openid-client/passport";
-import passport from "passport";
-import session from "express-session";
-import memoize from "memoizee";
-import connectPg from "connect-pg-simple";
-import { storage } from "./storage.js";
+const client = require("openid-client");
+const { Strategy } = require("openid-client/passport");
+const passport = require("passport");
+const session = require("express-session");
+const memoize = require("memoizee");
+const connectPg = require("connect-pg-simple");
+const { storage } = require("./storage.js");
 
 if (!process.env.REPLIT_DOMAINS) {
   throw new Error("Environment variable REPLIT_DOMAINS not provided");
@@ -20,7 +20,7 @@ const getOidcConfig = memoize(
   { maxAge: 3600 * 1000 }
 );
 
-export function getSession() {
+function getSession() {
   const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week
   const pgStore = connectPg(session);
   const sessionStore = new pgStore({
@@ -62,7 +62,7 @@ async function upsertUser(claims) {
   });
 }
 
-export async function setupAuth(app) {
+async function setupAuth(app) {
   app.set("trust proxy", 1);
   app.use(getSession());
   app.use(passport.initialize());
@@ -123,7 +123,7 @@ export async function setupAuth(app) {
   });
 }
 
-export const isAuthenticated = async (req, res, next) => {
+const isAuthenticated = async (req, res, next) => {
   const user = req.user;
 
   if (!req.isAuthenticated() || !user?.expires_at) {
@@ -151,3 +151,5 @@ export const isAuthenticated = async (req, res, next) => {
     return;
   }
 };
+
+module.exports = { setupAuth, isAuthenticated, getSession };
