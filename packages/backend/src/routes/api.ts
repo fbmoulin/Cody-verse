@@ -4,7 +4,18 @@
 
 import { Router } from 'express';
 import type { Request, Response } from 'express';
-import { createSuccessResponse, createErrorResponse } from '@codyverse/shared';
+// Temporary inline utilities until shared package linking is resolved
+const createSuccessResponse = <T>(data: T, message?: string) => ({
+  success: true,
+  data,
+  message
+});
+
+const createErrorResponse = (error: string, message?: string) => ({
+  success: false,
+  error,
+  message
+});
 
 const router = Router();
 

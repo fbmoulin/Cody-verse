@@ -20,6 +20,10 @@ args = "Educational Platform"
 task = "workflow.run"
 args = "Monorepo Backend"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Frontend Development"
+
 [[workflows.workflow]]
 name = "Educational Platform"
 author = "agent"
@@ -35,8 +39,17 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd packages/backend && npm run dev"
+args = "cd packages/backend && npx tsx watch src/index.ts"
 waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Frontend Development"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd packages/frontend && npm run dev"
+waitForPort = 3000
 
 [deployment]
 run = ["sh", "-c", "flutter pub get && flutter run -d web-server --web-hostname 0.0.0.0 --web-port 5000"]
