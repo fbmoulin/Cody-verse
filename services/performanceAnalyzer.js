@@ -60,8 +60,8 @@ class PerformanceAnalyzer {
     const query = `
       SELECT 
         schemaname,
-        tablename,
-        indexname,
+        relname as tablename,
+        indexrelname as indexname,
         idx_tup_read,
         idx_tup_fetch,
         idx_scan,
@@ -90,7 +90,7 @@ class PerformanceAnalyzer {
     const query = `
       SELECT 
         schemaname,
-        tablename,
+        relname as tablename,
         n_tup_ins as inserts,
         n_tup_upd as updates,
         n_tup_del as deletes,

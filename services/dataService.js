@@ -4,10 +4,12 @@ const { courseModulesData, lessonsData } = require('../server/staticData');
 const { eq, asc, sql, inArray } = require('drizzle-orm');
 const errorHandler = require('./errorHandlerService');
 const newCacheService = require('./cacheService');
+const performanceAnalyzer = require('./performanceAnalyzer');
 
 class DataService {
   // Get all courses with proper error handling and pagination
   async getAllCourses(options = {}) {
+    const startTime = Date.now();
     const logger = require('../server/logger');
     const cacheService = require('../core/services/cache_service');
     const { page = 1, limit = 50, includeLessons = true } = options;
@@ -119,7 +121,10 @@ class DataService {
       return result;
     } catch (error) {
       logger.error('Database connection failed for courses', { error: error.message });
+      performanceAnalyzer.trackQuery('getAllCourses', Date.now() - startTime, false);
       throw new Error('Unable to retrieve courses - database connection issue');
+    } finally {
+      performanceAnalyzer.trackQuery('getAllCourses', Date.now() - startTime, true);
     }
   }
 
