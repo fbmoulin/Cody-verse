@@ -1,172 +1,186 @@
-# Análise Técnica Profissional — `fbmoulin/kratos-pdf-extractor-autonomo`
+# Full & Deep App Analysis Review — `fbmoulin/kratos-pdf-extractor-autonomo`
 
-## Status da coleta
+## 1) Executive status (objective)
 
-Não foi possível acessar o repositório solicitado no ambiente atual por falta de credenciais/autorização para leitura do GitHub remoto.
+No estado atual deste ambiente, o repositório `kratos-pdf-extractor-autonomo` **não está acessível para leitura**. Sem código-fonte, não é tecnicamente possível emitir uma revisão factual da implementação interna (agentes, prompts, pipelines, segurança e testes) sem especulação.
 
-Evidências de execução:
+### Evidências técnicas reproduzíveis
 
-- `git clone https://github.com/fbmoulin/kratos-pdf-extractor-autonomo /tmp/kratos-pdf-extractor-autonomo` → `fatal: could not read Username for 'https://github.com': No such device or address`
-- `git ls-remote https://github.com/fbmoulin/kratos-pdf-extractor-autonomo.git` → mesmo erro de autenticação
-- `curl https://api.github.com/repos/fbmoulin/kratos-pdf-extractor-autonomo` → `{ "message": "Not Found" }`
+- `git clone https://github.com/fbmoulin/kratos-pdf-extractor-autonomo /tmp/kratos-pdf-extractor-autonomo`
+  - retorno: `fatal: could not read Username for 'https://github.com': No such device or address`
+- `git ls-remote https://github.com/fbmoulin/kratos-pdf-extractor-autonomo.git`
+  - retorno: mesmo erro de autenticação
+- `curl https://api.github.com/repos/fbmoulin/kratos-pdf-extractor-autonomo`
+  - retorno: `{ "message": "Not Found" }`
+- `curl https://codeload.github.com/fbmoulin/kratos-pdf-extractor-autonomo/zip/refs/heads/main`
+  - retorno HTTP: `404`
 
----
-
-## O que eu faria (análise profunda e criteriosa), com foco em agentes e prompts
-
-Abaixo está o framework profissional que aplicarei assim que houver acesso ao código-fonte (clone local, tarball ou compartilhamento de arquivos).
-
-## 1) Mapa de arquitetura de agentes
-
-### Objetivo
-Entender **quem decide**, **quem executa**, **quem observa** e **quem corrige** no ciclo autônomo.
-
-### Itens de verificação
-- Topologia dos agentes (single-agent, planner/executor, hierárquico, swarm).
-- Contratos entre agentes (mensagens, schemas, tipos, versionamento).
-- Limites de responsabilidade (evitar sobreposição de papéis).
-- Estratégia de fallback (quando o agente principal falha).
-- Estado e memória (curto prazo, longo prazo, memória vetorial, cache).
-
-### Sinais de maturidade
-- Papéis explícitos e estáveis.
-- Fluxo de decisão rastreável.
-- Isolamento de efeitos colaterais (I/O separado da razão).
-
-### Sinais de risco
-- “Agente Deus” com permissões amplas.
-- Comunicação textual sem schema (quebra fácil).
-- Falta de idempotência em tarefas repetíveis.
+> Interpretação: o repositório está privado, inexistente ou com nome/owner divergente do informado.
 
 ---
 
-## 2) Engenharia de prompts (núcleo da confiabilidade)
+## 2) O que já foi feito para avançar mesmo sem acesso
+
+Para não bloquear sua entrega, preparei um **playbook profissional completo** de auditoria de app e adicionei uma automação local para executar o diagnóstico imediatamente assim que o código ficar disponível.
+
+### Entregáveis adicionados
+
+1. Este relatório com estrutura de auditoria em profundidade.
+2. Script `tools/audit_agents_prompts.sh` para inventário técnico e varredura inicial de agentes/prompts/segurança/model tooling.
+
+---
+
+## 3) Metodologia de análise profissional (nível sênior)
+
+## 3.1 Arquitetura de agentes
 
 ### Objetivo
-Medir robustez semântica, previsibilidade e resistência a prompt-injection.
+Avaliar se o sistema multiagente (ou agente único) possui desenho robusto, rastreável e seguro.
 
-### Rubrica de avaliação de prompts
-1. **Clareza de papel**
-   - O prompt define função, escopo e limites?
-2. **Objetivo operacional**
-   - Entregável está objetivo e testável?
-3. **Restrições e políticas**
-   - Há regras explícitas de segurança/compliance?
-4. **Formato de saída**
-   - JSON/schema obrigatório quando necessário?
-5. **Critérios de qualidade**
-   - Exige validação, autocheck ou critério de aceitação?
-6. **Gestão de contexto**
-   - Evita contexto excessivo; faz seleção e resumo?
-7. **Defesa contra injeção**
-   - Delimita instruções confiáveis vs. conteúdo externo?
-8. **Controle de ferramentas**
-   - Define quando usar tool e quando recusar?
+### Critérios de revisão
+- **Topologia**: planner/executor/critic/router/validator claramente definidos.
+- **Contrato**: mensagens estruturadas (schema), versionamento e compatibilidade.
+- **Determinismo operacional**: idempotência, reprocessamento e retries.
+- **Controle de estado**: memória de sessão vs. memória persistente; TTL; invalidação.
+- **Limites de responsabilidade**: cada agente responde por uma classe de decisão.
 
-### Antipadrões comuns
+### Red flags
+- Agente central sem limitação de escopo (“God agent”).
+- Mensagens livres sem contrato forte.
+- Falta de fallback e ausência de estratégia de degradação.
+
+---
+
+## 3.2 Engenharia de prompts (foco principal solicitado)
+
+### Rubrica de qualidade (0–5 por item)
+1. **Papel e missão**: prompt define persona operacional sem ambiguidade.
+2. **Escopo e não-escopo**: tarefas permitidas/proibidas explícitas.
+3. **Formato de saída**: JSON/schema obrigatório quando aplicável.
+4. **Critérios de aceite**: validações mínimas e autocheck.
+5. **Ferramentas**: regras de uso/recusa por categoria de tool.
+6. **Dados não confiáveis**: delimitação clara para evitar injection.
+7. **Context window discipline**: seleção/sumarização de contexto.
+8. **Políticas de segurança**: exfiltração, segredos, dados pessoais.
+
+### Antipadrões recorrentes
 - Prompt monolítico com múltiplos papéis conflitantes.
-- Ausência de formato estruturado de saída.
-- Instruções vagas (“seja inteligente”, “faça o melhor”).
-- Dependência de “cadeia de pensamento” sem guardrails.
+- Falta de contrato de output (resposta textual livre para consumo automatizado).
+- Regras de segurança implícitas e não testáveis.
+- Ausência de instruções de “quando parar” e “quando escalar para humano”.
 
-### Melhorias típicas
-- Separar prompts por fase: planejamento, execução, validação.
-- Introduzir `output_contract` (schema JSON).
-- Adicionar checklist de segurança antes de tool calls.
-- Definir linguagem e granularidade por tarefa.
+### Hardening recomendado
+- Separar prompts por fase: **plan → execute → validate**.
+- Adotar schemas versionados (`v1`, `v1.1`) e validação em runtime.
+- Inserir “policy gate” antes de qualquer tool call.
+- Implementar prompt unit tests (casos normais + adversariais).
 
 ---
 
-## 3) Segurança de agentes e prompts
+## 3.3 Segurança (aplicada a agentes + PDF parsing)
 
 ### Vetores críticos
-- Prompt injection via PDF (conteúdo malicioso no documento).
-- Exfiltração de dados por tool (HTTP, filesystem, logs).
-- Escalada de permissões por instruções indiretas.
-- Vazamento de segredos em mensagens e traces.
+- Prompt injection embutida no conteúdo do PDF.
+- Instruções maliciosas em metadados/OCR.
+- Exfiltração por tools de rede/shell.
+- Vazamento de segredos em logs e traces.
 
 ### Controles mínimos esperados
-- Sanitização de entrada (PDF text, OCR, metadados).
-- Separação entre dados não confiáveis e instruções de sistema.
-- Allowlist de ferramentas, domínios e paths.
-- Redação de segredos em logs.
-- Política de negação por padrão (default deny).
-
-### Testes de segurança recomendados
-- Suite de prompt-injection com casos adversariais.
-- Testes de jailbreak de papel e políticas.
-- Testes de regressão de políticas em CI.
+- Trust boundary explícito: “document content is untrusted input”.
+- Sanitização e canonicalização de texto OCR.
+- Allowlist de domínios/comandos/caminhos.
+- Masking de segredos e PII em logs.
+- Política de negação por padrão para ferramentas perigosas.
 
 ---
 
-## 4) Observabilidade, avaliação e governança
+## 3.4 Qualidade de extração (domínio PDF)
 
-### O que deve existir
-- Traces por etapa (input, decisão, ferramenta, output).
-- Métricas: latência, custo, taxa de erro, taxa de retry.
-- Métricas de qualidade: precisão de extração, cobertura por campo.
-- Dataset de avaliação com ground truth.
+### O que deve ser medido
+- Precisão por campo (ex.: número do processo, CPF/CNPJ, datas).
+- Recall por tipo documental.
+- Taxa de erro por layout (tabela, colunas, rodapé, carimbo).
+- Taxa de “baixa confiança” que exige revisão humana.
 
-### Nível profissional
-- Avaliação offline (benchmark fixo) + online (produção).
-- Scorecards por versão de prompt.
-- Experimentos A/B de prompt e roteamento de agentes.
-
----
-
-## 5) Qualidade específica para “PDF Extractor”
-
-### Pontos críticos do domínio
-- Layout complexo (tabelas, colunas, rodapé/cabeçalho).
-- OCR e idioma misto.
-- Normalização de entidades (datas, moedas, IDs).
-- Ambiguidade semântica entre campos similares.
-
-### Controles de qualidade
-- Confiança por campo (`confidence_score`).
-- Evidência por campo (trecho/página/origem).
-- Validação semântica (regex + regra de negócio).
-- Modo humano-no-loop para baixa confiança.
+### Requisitos de saída robusta
+- `confidence_score` por campo.
+- evidência (`page`, `bbox`, `snippet`) por campo extraído.
+- validação semântica (regex + regras de negócio).
+- trilha de auditoria por documento.
 
 ---
 
-## 6) Checklist de auditoria imediata (assim que houver acesso)
+## 3.5 Observabilidade e governança
 
-1. Inventariar prompts e templates (`system`, `developer`, `task`, `validator`).
-2. Mapear agentes e ferramentas por arquivo.
-3. Classificar prompts em: robustos / frágeis / críticos.
-4. Rodar lint de prompts (consistência de formato e políticas).
-5. Executar bateria de testes adversariais (injeção e bypass).
-6. Medir qualidade com corpus de PDFs representativos.
-7. Propor plano de hardening em 3 ondas:
-   - Onda 1: correções de alto risco e baixo esforço.
-   - Onda 2: padronização estrutural de prompts.
-   - Onda 3: automação de avaliação e governança contínua.
+### Sinais de maturidade
+- Tracing ponta a ponta por etapa de decisão.
+- Métricas de custo/latência/taxa de retry/taxa de fallback.
+- Scorecard por versão de prompt/agente.
+- Avaliação contínua em CI com dataset fixo.
 
----
-
-## Entregáveis que fornecerei com acesso ao repo
-
-- Relatório técnico com **pontuação por dimensão** (0–5):
-  - Arquitetura de agentes
-  - Engenharia de prompts
-  - Segurança
-  - Observabilidade
-  - Qualidade de extração
-  - Operação/CI/CD
-- Matriz de riscos (impacto × probabilidade × esforço de correção).
-- Refatorações concretas de prompts (antes/depois).
-- Sugestão de suíte de testes automatizados para agentes/prompts.
+### Lacunas comuns
+- Logs sem correlação entre etapas.
+- Ausência de baseline para comparação entre versões.
+- Falta de SLO para qualidade de extração.
 
 ---
 
-## Como destravar a análise profunda agora
+## 4) Plano prático de auditoria (assim que o repo for acessível)
 
-Qualquer uma das opções abaixo resolve:
+## Onda 1 (0–2 dias) — risco alto / esforço baixo
+- Inventário de todos os prompts e fluxos de agente.
+- Mapeamento de permissões de ferramentas.
+- Correções emergenciais de injection/exfiltração.
 
-1. Tornar o repositório público temporariamente.
-2. Compartilhar um token de leitura já configurado no ambiente.
-3. Enviar um arquivo `.zip`/`.tar.gz` do projeto neste ambiente.
-4. Colar os principais arquivos de agentes e prompts para auditoria imediata.
+## Onda 2 (2–5 dias) — padronização e previsibilidade
+- Refatoração para contratos de output estruturado.
+- Split de prompts por fase e papel.
+- Testes adversariais automatizados mínimos.
 
-Com acesso, eu devolvo uma análise completa e prescritiva em nível de revisão técnica sênior.
+## Onda 3 (5–10 dias) — operação de excelência
+- Harness de avaliação contínua.
+- Dashboards de qualidade/custo/latência.
+- Governança de mudanças em prompts (review + versionamento).
+
+---
+
+## 5) Como executar a análise automaticamente
+
+Com o repositório local disponível, rode:
+
+```bash
+./tools/audit_agents_prompts.sh /caminho/do/repo
+```
+
+Saídas geradas:
+- `files.txt` (inventário)
+- `agent_prompt_hits.txt` (ocorrências relevantes)
+- `candidate_files.txt` (candidatos de prompts/agentes)
+- `security_hits.txt` (riscos e segredos)
+- `model_tool_hits.txt` (stack de modelos/tools)
+- `quality_files.txt` (testes e CI)
+- `summary.md` (sumário executivo)
+
+---
+
+## 6) Requisitos para liberar a revisão factual completa
+
+Para eu entregar a **análise profunda real do código** (com findings por arquivo, severidade e plano de correção), preciso de uma destas opções:
+
+1. Tornar o repo público temporariamente.
+2. Disponibilizar token de leitura no ambiente.
+3. Enviar `.zip`/`.tar.gz` do projeto.
+4. Confirmar owner/nome exato caso haja divergência.
+
+---
+
+## 7) Resultado esperado após liberação de acesso
+
+Você receberá:
+- Matriz de riscos (Impacto × Probabilidade × Esforço).
+- Score de maturidade por dimensão (0–5).
+- Revisão linha-a-linha dos prompts críticos.
+- Plano de refatoração com exemplos antes/depois.
+- Backlog priorizado para 30/60/90 dias.
+
+Sem acesso ao código, qualquer “análise profunda do app” seria especulativa. Com acesso, consigo entregar uma revisão técnica objetiva e auditável em ciclo curto.
