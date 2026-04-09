@@ -48,6 +48,15 @@ npm run migrate:dev
 npm run dev
 ```
 
+### Repositório alternativo solicitado
+
+Se você quiser trabalhar usando o repositório indicado nesta tarefa, use:
+
+```bash
+git clone https://github.com/fbmoulin/Kratos-master-advogado-procurador-defensor.git
+cd Kratos-master-advogado-procurador-defensor
+```
+
 ## 📦 Pacotes
 
 ### @codyverse/shared
