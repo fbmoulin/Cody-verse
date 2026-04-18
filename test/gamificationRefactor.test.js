@@ -164,7 +164,7 @@ class GamificationTestSuite {
     const finalStats = this.notificationManager.getCacheStats();
 
     if (finalStats.hits !== initialStats.hits + 1) {
-      throw new Error('Cache hit not recorded correctly');
+throw new Error(`Cache hit count incorrect. Expected: ${initialStats.hits + 1}, Got: ${finalStats.hits}`);
     }
 
     if (finalStats.misses !== initialStats.misses + 1) {
