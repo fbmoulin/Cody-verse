@@ -1,8 +1,11 @@
 const BaseService = require('./BaseService');
+const cacheService = require('../services/cacheService');
 
 class NotificationManager extends BaseService {
   constructor() {
     super('NotificationManager');
+    this.queue = [];
+    this.cacheNamespace = 'notifications';
     this.notificationTypes = {
       XP_GAIN: 'xp_gain',
       LEVEL_UP: 'level_up',
@@ -74,7 +77,7 @@ class NotificationManager extends BaseService {
       throw new Error(`Unknown notification type: ${type}`);
     }
 
-    return {
+    const notification = {
       id: this.generateNotificationId(),
       type,
       icon: template.icon,
@@ -86,6 +89,12 @@ class NotificationManager extends BaseService {
       timestamp: new Date().toISOString(),
       data
     };
+
+    // Store in cache and queue
+    cacheService.set(`${this.cacheNamespace}:${notification.id}`, notification);
+    this.queue.push(notification);
+
+    return notification;
   }
 
   interpolateTemplate(template, data) {
@@ -243,6 +252,14 @@ class NotificationManager extends BaseService {
     }
 
     return notifications;
+  }
+
+  getNotification(id) {
+    return cacheService.get(`${this.cacheNamespace}:${id}`);
+  }
+
+  getCacheStats() {
+    return cacheService.getStats();
   }
 
   // Convert to client-side format
